@@ -1,0 +1,436 @@
+<title>SAA 判断ポイント</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --bg:#F4F6F8; --surface:#FFFFFF; --surface-2:#EDF0F4;
+  --ink:#131720; --ink-2:#4A5265; --rule:#DCE1E9;
+  --accent:#2E4F9E; --accent-soft:#E7EDFB;
+  --mark-bg:#FFE6A0; --mark-ink:#3D2E00;
+  --ans:#0E6B57; --ans-soft:#E3F1EC;
+  --shadow:0 1px 2px rgba(19,23,32,.06),0 8px 24px -16px rgba(19,23,32,.22);
+  --head:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+  --body:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","Noto Sans JP",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1116; --surface:#161A22; --surface-2:#1D222C;
+  --ink:#E7EBF2; --ink-2:#98A1B2; --rule:#272D39;
+  --accent:#93AEF0; --accent-soft:#1B2436;
+  --mark-bg:#5B4B11; --mark-ink:#FFE9A8;
+  --ans:#4FC3A8; --ans-soft:#14302B;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -18px rgba(0,0,0,.8);
+}}
+:root[data-theme="dark"]{
+  --bg:#0E1116; --surface:#161A22; --surface-2:#1D222C;
+  --ink:#E7EBF2; --ink-2:#98A1B2; --rule:#272D39;
+  --accent:#93AEF0; --accent-soft:#1B2436;
+  --mark-bg:#5B4B11; --mark-ink:#FFE9A8;
+  --ans:#4FC3A8; --ans-soft:#14302B;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -18px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.75;-webkit-text-size-adjust:100%;}
+b{font-weight:700}
+code{font-family:var(--mono);font-size:.88em;background:var(--surface-2);
+  padding:.1em .35em;border-radius:4px;border:1px solid var(--rule)}
+mark{background:var(--mark-bg);color:var(--mark-ink);padding:0 .15em;border-radius:2px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* ---- header ---- */
+.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--rule)}
+.top-in{max-width:1160px;margin:0 auto;padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:8px;font-family:var(--head);font-weight:700;
+  letter-spacing:.01em;cursor:pointer;white-space:nowrap}
+.brand .mk{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;
+  color:var(--accent);border:1px solid var(--accent);padding:1px 5px;border-radius:3px}
+.search{flex:1 1 220px;min-width:0;display:flex;align-items:center;gap:8px;background:var(--surface);
+  border:1px solid var(--rule);border-radius:999px;padding:6px 14px;box-shadow:var(--shadow)}
+.search input{flex:1;min-width:0;border:none;background:none;font:inherit;color:inherit;outline:none}
+.search svg{flex:none;opacity:.55}
+.iconbtn{flex:none;border:1px solid var(--rule);background:var(--surface);border-radius:999px;
+  padding:6px 12px;font-size:13px;font-family:var(--head);font-weight:500}
+@media(min-width:900px){.menu-btn{display:none}}
+
+/* ---- shell ---- */
+.shell{max-width:1160px;margin:0 auto;padding:24px 16px 72px;display:grid;gap:32px;
+  grid-template-columns:1fr}
+@media(min-width:900px){.shell{grid-template-columns:248px minmax(0,1fr);gap:44px;padding-top:32px}}
+
+/* ---- nav ---- */
+.nav{align-self:start}
+@media(min-width:900px){.nav{position:sticky;top:78px;max-height:calc(100vh - 100px);overflow:auto;
+  padding-right:6px}}
+@media(max-width:899px){
+  .nav{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:8px;box-shadow:var(--shadow)}
+}
+.navgrp{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.16em;
+  color:var(--ink-2);margin:16px 0 6px 10px}
+.navgrp:first-child{margin-top:4px}
+.navlink{display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:6px 10px;
+  border-radius:8px;line-height:1.4;font-size:13.5px}
+.navlink:hover{background:var(--surface-2)}
+.navlink[aria-current="true"]{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.navlink .n{font-family:var(--mono);font-size:11px;color:var(--ink-2);flex:none;width:3.4em;white-space:nowrap}
+.navlink[aria-current="true"] .n{color:var(--accent)}
+.navlink .dot{margin-left:auto;width:7px;height:7px;border-radius:50%;flex:none;background:transparent;
+  border:1px solid var(--rule)}
+.navlink.done .dot{background:var(--ans);border-color:var(--ans)}
+
+/* ---- content ---- */
+main{min-width:0}
+.eyebrow{font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--accent)}
+h1{font-family:var(--head);font-weight:700;font-size:clamp(24px,5.4vw,32px);line-height:1.3;
+  margin:6px 0 0;text-wrap:balance;letter-spacing:.01em}
+.lead{margin:14px 0 0;padding:14px 16px;background:var(--surface);border:1px solid var(--rule);
+  border-left:3px solid var(--accent);border-radius:0 10px 10px 0;color:var(--ink-2);font-size:14px;box-shadow:var(--shadow)}
+.lead b{color:var(--ink)}
+section.sec{margin-top:40px;scroll-margin-top:84px}
+h2{font-family:var(--head);font-weight:700;font-size:19px;line-height:1.4;margin:0;
+  display:flex;gap:10px;align-items:baseline;text-wrap:balance;
+  padding-bottom:10px;border-bottom:1px solid var(--rule)}
+h2 .n{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);flex:none}
+h3{font-family:var(--head);font-size:15px;font-weight:700;margin:26px 0 0}
+.sec p{margin:14px 0 0}
+.label{font-family:var(--head);font-weight:700;font-size:13px;letter-spacing:.02em;
+  margin:26px 0 0;color:var(--ink);display:flex;align-items:center;gap:8px}
+.label::before{content:"";width:12px;height:2px;background:var(--accent);flex:none}
+.lede{margin:16px 0 0;display:flex;gap:12px;align-items:flex-start;background:var(--accent-soft);
+  padding:12px 14px;border-radius:10px}
+.lede .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;color:var(--accent);
+  border:1px solid currentColor;border-radius:3px;padding:1px 5px;flex:none;margin-top:4px;white-space:nowrap}
+.lede div{font-size:14.5px}
+.note{margin:16px 0 0;padding:12px 14px;border:1px dashed var(--rule);border-radius:10px;
+  color:var(--ink-2);font-size:13.5px;background:var(--surface)}
+.sec ul,.sec ol{margin:12px 0 0;padding-left:1.25em}
+.sec li{margin-top:7px}
+.sec ul{list-style:none;padding-left:0}
+.sec ul>li{position:relative;padding-left:1.1em}
+.sec ul>li::before{content:"";position:absolute;left:.15em;top:.72em;width:5px;height:5px;
+  border-radius:50%;background:var(--accent);opacity:.6}
+
+/* decision list (2-column tables) */
+.dl{margin:16px 0 0;border:1px solid var(--rule);border-radius:12px;background:var(--surface);
+  overflow:hidden;box-shadow:var(--shadow)}
+.dl .cap{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;padding:8px 14px;background:var(--surface-2);
+  font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;color:var(--ink-2)}
+.dl .cap span:last-child{color:var(--ans)}
+.row{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;
+  padding:11px 14px;border-top:1px solid var(--rule);font-size:14px}
+.row .ar{color:var(--ink-2);font-family:var(--mono);font-size:12px;opacity:.7}
+.row .a{color:var(--ans);font-weight:500}
+.row .a b{color:var(--ans)}
+@media(max-width:620px){
+  .dl .cap{grid-template-columns:1fr}
+  .dl .cap span:last-child{display:none}
+  .row{grid-template-columns:1fr;gap:3px;padding:12px 14px}
+  .row .ar{display:none}
+  .row .a{padding-left:1.1em;position:relative}
+  .row .a::before{content:"\2192";position:absolute;left:0;color:var(--ink-2);font-family:var(--mono);font-size:12px}
+}
+/* wide tables */
+.tw{margin:16px 0 0;overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--surface);
+  box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:440px}
+th{font-family:var(--head);font-weight:700;font-size:11.5px;letter-spacing:.06em;text-align:left;
+  background:var(--surface-2);color:var(--ink-2);padding:9px 13px;white-space:nowrap}
+td{padding:10px 13px;border-top:1px solid var(--rule);vertical-align:top}
+td:first-child{font-weight:500}
+tbody tr td:last-child:not(:first-child){color:var(--ans)}
+tbody tr td:last-child:not(:first-child) b{color:var(--ans)}
+
+/* ---- home ---- */
+.hero{padding:8px 0 0}
+.axes{margin:22px 0 0;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.axis{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:13px 15px;box-shadow:var(--shadow)}
+.axis .k{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;color:var(--accent)}
+.axis .t{font-family:var(--head);font-weight:700;font-size:14px;margin-top:3px}
+.axis .d{font-size:13px;color:var(--ink-2);margin-top:4px;line-height:1.6}
+.grid{margin:18px 0 0;display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(232px,1fr))}
+.card{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--rule);
+  border-radius:12px;padding:13px 15px;box-shadow:var(--shadow);transition:transform .12s ease,border-color .12s ease}
+.card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.card .n{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--accent)}
+.card .t{font-family:var(--head);font-weight:700;font-size:15px;margin-top:2px}
+.card .m{font-size:12px;color:var(--ink-2);margin-top:6px;display:flex;align-items:center;gap:6px}
+.card.done .m::after{content:"\8AAD\4E86";color:var(--ans);font-family:var(--mono);font-size:10px;
+  border:1px solid var(--ans);border-radius:3px;padding:0 4px;margin-left:auto}
+.secthead{font-family:var(--head);font-weight:700;font-size:13px;color:var(--ink-2);margin:30px 0 0;
+  letter-spacing:.04em;display:flex;align-items:center;gap:10px}
+.secthead::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+/* ---- footer nav ---- */
+.footnav{margin-top:48px;padding-top:20px;border-top:1px solid var(--rule);display:flex;gap:10px;
+  flex-wrap:wrap;align-items:center}
+.fbtn{border:1px solid var(--rule);background:var(--surface);border-radius:10px;padding:9px 14px;
+  font-size:13px;font-family:var(--head);font-weight:500;box-shadow:var(--shadow)}
+.fbtn:hover{border-color:var(--accent);color:var(--accent)}
+.fbtn.mark{margin-left:auto}
+.fbtn.mark.on{background:var(--ans-soft);border-color:var(--ans);color:var(--ans);font-weight:700}
+
+/* ---- search results ---- */
+.rescount{font-size:13px;color:var(--ink-2);margin:14px 0 0;font-family:var(--mono)}
+.resgrp{margin-top:26px}
+.resgrp h3{margin:0 0 8px;font-size:13px;color:var(--ink-2);font-family:var(--mono);font-weight:600;letter-spacing:.08em}
+.hit{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--rule);
+  border-radius:10px;padding:11px 14px;margin-top:8px;font-size:13.5px;line-height:1.65;box-shadow:var(--shadow)}
+.hit:hover{border-color:var(--accent)}
+.hit .where{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--accent);display:block;margin-bottom:3px}
+.hit .ans{color:var(--ans);font-weight:500}
+.empty{margin-top:24px;color:var(--ink-2);font-size:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand" id="brand" role="button" tabindex="0"><span class="mk">SAA</span><span>判断ポイント</span></div>
+    <label class="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <input id="q" type="search" placeholder="サービス名・キーワードで検索" aria-label="検索">
+    </label>
+    <button class="iconbtn menu-btn" id="menu" aria-expanded="false">目次</button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="nav" id="nav" aria-label="章の一覧"></nav>
+  <main id="main"></main>
+</div>
+
+<script src="content.js"></script>
+<script>
+(function(){
+  "use strict";
+  var DATA = window.SAA_CONTENT || [];
+  var main = document.getElementById('main'), nav = document.getElementById('nav'),
+      q = document.getElementById('q'), menu = document.getElementById('menu');
+  function isNarrow(){ return window.matchMedia('(max-width:899px)').matches; }
+
+  var read = {};
+  try { read = JSON.parse(localStorage.getItem('saa.read') || '{}') || {}; } catch(e) { read = {}; }
+  function saveRead(){ try { localStorage.setItem('saa.read', JSON.stringify(read)); } catch(e){} }
+
+  function parts(ch){
+    var m = ch.title.match(/^(.*)（出題比率\s*([0-9]+%)）\s*$/);
+    return m ? { t: m[1], r: m[2] } : { t: ch.title, r: '' };
+  }
+  function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return c === '&' ? '&amp;' : c === '<' ? '&lt;' : '&gt;'; }); }
+  function strip(h){ var d = document.createElement('div'); d.innerHTML = h; return d.textContent || ''; }
+  function escRe(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  function hl(html, terms){
+    if(!terms.length) return html;
+    var re = new RegExp('(' + terms.map(escRe).join('|') + ')', 'gi');
+    return html.split(/(<[^>]+>)/).map(function(part){
+      return part.charAt(0) === '<' ? part : part.replace(re, '<mark>$1</mark>');
+    }).join('');
+  }
+
+  function renderBlock(b){
+    if(b.t === 'lede') return '<div class="lede"><span class="tag">' + b.label + '</span><div>' + b.html + '</div></div>';
+    if(b.t === 'note') return '<div class="note">' + b.html + '</div>';
+    if(b.t === 'h3')   return '<h3>' + b.html + '</h3>';
+    if(b.t === 'p'){
+      if(/^<b>[^<]*<\/b>$/.test(b.html)) return '<p class="label">' + esc(strip(b.html)) + '</p>';
+      return '<p>' + b.html + '</p>';
+    }
+    if(b.t === 'ul' || b.t === 'ol'){
+      return '<' + b.t + '>' + b.items.map(function(i){ return '<li>' + i + '</li>'; }).join('') + '</' + b.t + '>';
+    }
+    if(b.t === 'table'){
+      if(b.head.length === 2){
+        return '<div class="dl"><div class="cap"><span>' + esc(strip(b.head[0])) + '</span><span></span><span>' +
+          esc(strip(b.head[1])) + '</span></div>' +
+          b.rows.map(function(r){
+            return '<div class="row"><div>' + (r[0] || '') + '</div><div class="ar">&rarr;</div><div class="a">' + (r[1] || '') + '</div></div>';
+          }).join('') + '</div>';
+      }
+      return '<div class="tw"><table><thead><tr>' + b.head.map(function(h){ return '<th>' + h + '</th>'; }).join('') +
+        '</tr></thead><tbody>' + b.rows.map(function(r){
+          return '<tr>' + r.map(function(c){ return '<td>' + c + '</td>'; }).join('') + '</tr>';
+        }).join('') + '</tbody></table></div>';
+    }
+    return '';
+  }
+
+  var INDEX = [];
+  DATA.forEach(function(ch){
+    ch.sections.forEach(function(s){
+      var where = { c: ch.id, s: s.id, ct: (ch.num ? ch.num + ' ' : '') + parts(ch).t, st: (s.num ? s.num + ' ' : '') + s.title };
+      function add(html, kind){
+        var text = strip(html);
+        if(text.length < 2) return;
+        INDEX.push({ c: where.c, s: where.s, ct: where.ct, st: where.st, h: html, t: text.toLowerCase(), k: kind || '' });
+      }
+      s.blocks.forEach(function(b){
+        if(b.t === 'table'){
+          b.rows.forEach(function(r){
+            if(b.head.length === 2) add((r[0] || '') + ' <span class="ans">&rarr; ' + (r[1] || '') + '</span>', 'row');
+            else add(r.map(function(c, i){ return i ? '<span class="ans">' + c + '</span>' : c; }).join(' / '), 'row');
+          });
+        } else if(b.t === 'ul' || b.t === 'ol'){
+          b.items.forEach(function(i){ add(i); });
+        } else if(b.html){ add(b.html); }
+      });
+    });
+  });
+
+  function buildNav(){
+    var groups = [['第1部 サービス別', 0, 10], ['第2部 分野別', 10, 14], ['付録', 14, 16]];
+    var h = '<button class="navlink" data-go="home"><span class="n"></span><span>はじめに</span></button>';
+    groups.forEach(function(g){
+      h += '<div class="navgrp">' + g[0] + '</div>';
+      DATA.slice(g[1], g[2]).forEach(function(ch){
+        h += '<button class="navlink' + (read[ch.id] ? ' done' : '') + '" data-go="' + ch.id + '">' +
+             '<span class="n">' + (ch.num || '') + '</span><span>' + parts(ch).t + '</span><span class="dot"></span></button>';
+      });
+    });
+    nav.innerHTML = h;
+  }
+
+  function home(){
+    var axes = [
+      ['01', '運用負荷', '「オーバーヘッドを最小限に」＝マネージド／サーバーレスを選ぶ。'],
+      ['02', '可用性', '単一AZ・単一インスタンスの選択肢は原則として外す。'],
+      ['03', 'コスト', '要件を満たす候補に絞ってから、その中の最安を選ぶ。'],
+      ['04', 'セキュリティ', '認証情報を置かない・暗号化する・公開しない・最小権限。']
+    ];
+    var h = '<div class="hero"><div class="eyebrow">SAA-C03</div>' +
+      '<h1>サービスの違いで解く<br>AWS SAA 要点集</h1>' +
+      '<div class="lead">各節は<b>2〜3分</b>で読み切れる分量。<b>「問題文のキーワード → 答え」</b>を反射で出せる状態を目指します。' +
+      '検索窓にサービス名を入れると、全16章の判断表から該当行だけを抜き出せます。</div></div>';
+    h += '<div class="secthead">全体を貫く4つの判断軸</div><div class="axes">' +
+      axes.map(function(a){
+        return '<div class="axis"><div class="k">' + a[0] + '</div><div class="t">' + a[1] + '</div><div class="d">' + a[2] + '</div></div>';
+      }).join('') + '</div>';
+    function cards(from, to){
+      return '<div class="grid">' + DATA.slice(from, to).map(function(ch){
+        var pp = parts(ch);
+        return '<button class="card' + (read[ch.id] ? ' done' : '') + '" data-go="' + ch.id + '"><div class="n">' +
+          (ch.num || '') + '</div><div class="t">' + pp.t + '</div><div class="m">' + ch.sections.length + ' 節' +
+          (pp.r ? '　/　出題比率 ' + pp.r : '') + '</div></button>';
+      }).join('') + '</div>';
+    }
+    h += '<div class="secthead">第1部 サービス別対策</div>' + cards(0, 10);
+    h += '<div class="secthead">第2部 試験分野別対策（判断フロー）</div>' + cards(10, 14);
+    h += '<div class="secthead">付録（直前確認用）</div>' + cards(14, 16);
+    main.innerHTML = h;
+    mark('home');
+  }
+
+  function chapter(id){
+    var i = -1;
+    DATA.forEach(function(c, idx){ if(c.id === id) i = idx; });
+    if(i < 0) return home();
+    var ch = DATA[i];
+    var pp = parts(ch);
+    var h = '<div class="eyebrow">' + (ch.num || '') + (pp.r ? ' \u00b7 出題比率 ' + pp.r : '') + '</div><h1>' +
+      pp.t + '</h1>' + (ch.lead ? '<div class="lead">' + ch.lead + '</div>' : '');
+    ch.sections.forEach(function(s){
+      h += '<section class="sec" id="' + ch.id + '-' + s.id + '"><h2>' +
+        (s.num ? '<span class="n">' + s.num + '</span>' : '') + '<span>' + s.title + '</span></h2>' +
+        s.blocks.map(renderBlock).join('') + '</section>';
+    });
+    h += '<div class="footnav">' +
+      (i > 0 ? '<button class="fbtn" data-go="' + DATA[i - 1].id + '">&lsaquo; ' + parts(DATA[i - 1]).t + '</button>' : '') +
+      (i < DATA.length - 1 ? '<button class="fbtn" data-go="' + DATA[i + 1].id + '">' + parts(DATA[i + 1]).t + ' &rsaquo;</button>' : '') +
+      '<button class="fbtn mark' + (read[ch.id] ? ' on' : '') + '" id="markread">' +
+      (read[ch.id] ? '✓ 読了' : 'この章を読了にする') + '</button></div>';
+    main.innerHTML = h;
+    var mb = document.getElementById('markread');
+    if(mb) mb.addEventListener('click', function(){
+      read[ch.id] = !read[ch.id];
+      saveRead(); buildNav(); mark(ch.id);
+      mb.className = 'fbtn mark' + (read[ch.id] ? ' on' : '');
+      mb.textContent = read[ch.id] ? '✓ 読了' : 'この章を読了にする';
+    });
+    mark(ch.id);
+    try { localStorage.setItem('saa.last', ch.id); } catch(e){}
+  }
+
+  function results(query){
+    var terms = query.trim().split(/[\s　]+/).filter(Boolean);
+    var lower = terms.map(function(t){ return t.toLowerCase(); });
+    var hits = INDEX.filter(function(e){
+      return lower.every(function(x){ return e.t.indexOf(x) >= 0; });
+    });
+    hits.sort(function(a, b){ return (b.k === 'row' ? 1 : 0) - (a.k === 'row' ? 1 : 0); });
+    var h = '<div class="eyebrow">検索</div><h1>' + esc(query) + '</h1>' +
+      '<div class="rescount">' + hits.length + ' 件</div>';
+    if(!hits.length){
+      h += '<div class="empty">該当なし。別の表記（略称・英語名・日本語）でも試してみてください。</div>';
+    } else {
+      var order = [], byCh = {};
+      hits.slice(0, 160).forEach(function(e){
+        if(!byCh[e.ct]){ byCh[e.ct] = []; order.push(e.ct); }
+        byCh[e.ct].push(e);
+      });
+      order.forEach(function(ct){
+        h += '<div class="resgrp"><h3>' + ct + '</h3>' + byCh[ct].map(function(e){
+          return '<button class="hit" data-go="' + e.c + '" data-sec="' + e.s + '"><span class="where">' +
+            e.st + '</span>' + hl(e.h, terms) + '</button>';
+        }).join('') + '</div>';
+      });
+    }
+    main.innerHTML = h;
+    mark(null);
+  }
+
+  function mark(id){
+    Array.prototype.forEach.call(nav.querySelectorAll('.navlink'), function(b){
+      b.setAttribute('aria-current', b.getAttribute('data-go') === id ? 'true' : 'false');
+    });
+  }
+
+  function go(id, sec){
+    if(q.value && !sec) q.value = '';
+    if(id === 'home') home(); else chapter(id);
+    if(isNarrow()){ nav.hidden = true; menu.setAttribute('aria-expanded', 'false'); }
+    if(sec){
+      var el = document.getElementById(id + '-' + sec);
+      if(el){ el.scrollIntoView({ block: 'start' }); return; }
+    }
+    window.scrollTo(0, 0);
+  }
+
+  document.addEventListener('click', function(e){
+    var t = e.target.closest ? e.target.closest('[data-go]') : null;
+    if(t) go(t.getAttribute('data-go'), t.getAttribute('data-sec'));
+  });
+  var brand = document.getElementById('brand');
+  brand.addEventListener('click', function(){ go('home'); });
+  brand.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go('home'); }
+  });
+  menu.addEventListener('click', function(){
+    nav.hidden = !nav.hidden;
+    menu.setAttribute('aria-expanded', String(!nav.hidden));
+  });
+  var timer;
+  q.addEventListener('input', function(){
+    clearTimeout(timer);
+    var v = q.value;
+    timer = setTimeout(function(){
+      if(v.trim().length === 0){
+        var last = 'home';
+        try { last = localStorage.getItem('saa.last') || 'home'; } catch(e){}
+        go(last);
+      } else {
+        results(v);
+        window.scrollTo(0, 0);
+      }
+    }, 140);
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === '/' && document.activeElement !== q){ e.preventDefault(); q.focus(); }
+    if(e.key === 'Escape' && document.activeElement === q){ q.value = ''; q.blur(); go('home'); }
+  });
+  window.addEventListener('resize', function(){ if(!isNarrow()) nav.hidden = false; });
+
+  buildNav();
+  nav.hidden = isNarrow();
+  home();
+})();
+</script>
