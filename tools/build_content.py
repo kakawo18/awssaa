@@ -5,22 +5,47 @@ import json, os, re, html
 DOCS = os.path.join(os.path.dirname(__file__), "..", "docs")
 OUT = os.path.join(os.path.dirname(__file__), "..", "web", "content.js")
 
+# (ファイル名, 章ID, 章グループ)。グループは目次とホームの見出しになる。
+# 章IDは Web の読了状態（localStorage）のキーなので、既存の ID は変えない。
 FILES = [
-    ("01-compute.md", "compute"), ("02-storage.md", "storage"),
-    ("03-network.md", "network"), ("04-database.md", "database"),
-    ("05-security.md", "security"), ("06-integration.md", "integration"),
-    ("07-analytics.md", "analytics"), ("08-management.md", "management"),
-    ("09-container.md", "container"), ("10-others.md", "others"),
-    ("11-secure.md", "d1"), ("12-resilient.md", "d2"),
-    ("13-performance.md", "d3"), ("14-cost.md", "d4"),
-    ("90-comparison.md", "cmp"), ("91-keywords.md", "kw"),
+    ("00-foundations.md", "foundations", "第0章 設計の基礎"),
+    ("01-compute.md", "compute", "第1部 サービス別"), ("02-storage.md", "storage", "第1部 サービス別"),
+    ("03-network.md", "network", "第1部 サービス別"), ("04-database.md", "database", "第1部 サービス別"),
+    ("05-security.md", "security", "第1部 サービス別"), ("06-integration.md", "integration", "第1部 サービス別"),
+    ("07-analytics.md", "analytics", "第1部 サービス別"), ("08-management.md", "management", "第1部 サービス別"),
+    ("09-container.md", "container", "第1部 サービス別"), ("10-others.md", "others", "第1部 サービス別"),
+    ("11-secure.md", "d1", "第2部 分野別"), ("12-resilient.md", "d2", "第2部 分野別"),
+    ("13-performance.md", "d3", "第2部 分野別"), ("14-cost.md", "d4", "第2部 分野別"),
+    ("90-comparison.md", "cmp", "付録"), ("91-keywords.md", "kw", "付録"),
 ]
+CHAPTER_ID = {fname: cid for fname, cid, _ in FILES}
+CHAPTER_ID["README.md"] = "home"
+
+def link(label, url):
+    """Markdown リンクを安全な a 要素にする。
+
+    - https:// だけを外部リンクとして保持する。http:, javascript:, data: などは
+      無効化してラベルだけ残す
+    - ./03-network.md のような教材内リンクは章IDへの遷移（data-go）にする
+    - それ以外（#anchor だけ、未知のファイル）はラベルだけ残す
+    label は呼び出し側で既にエスケープ済み。url はここで属性用にエスケープする。
+    """
+    # inline() で quote=False のエスケープ済み（& が &amp;）なので、一度戻してから属性用に再エスケープする
+    url = html.unescape(url.strip())
+    if re.match(r"^https://[^\s]+$", url, re.I):
+        return '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>' % (
+            html.escape(url, quote=True), label)
+    m = re.match(r"^(?:\./)?([0-9A-Za-z_-]+\.md)(?:#.*)?$", url)
+    if m and m.group(1) in CHAPTER_ID:
+        cid = CHAPTER_ID[m.group(1)]
+        return '<a href="#%s" data-go="%s">%s</a>' % (cid, cid, label)
+    return label
 
 def inline(s):
     s = html.escape(s, quote=False)
     s = re.sub(r"`([^`]+)`", r"<code>\1</code>", s)
     s = re.sub(r"\*\*([^*]+)\*\*", r"<b>\1</b>", s)
-    s = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", s)
+    s = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", lambda m: link(m.group(1), m.group(2)), s)
     return s
 
 def split_row(line):
@@ -121,14 +146,19 @@ def parse(path):
     flush()
     return ch
 
-out = []
-for fname, cid in FILES:
-    ch = parse(os.path.join(DOCS, fname))
-    ch["id"] = cid
-    out.append(ch)
+def build():
+    out = []
+    for fname, cid, group in FILES:
+        ch = parse(os.path.join(DOCS, fname))
+        ch["id"] = cid
+        ch["group"] = group
+        out.append(ch)
+    return out
 
-with open(OUT, "w", encoding="utf-8") as f:
-    f.write("window.SAA_CONTENT = ")
-    json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
-    f.write(";\n")
-print("wrote", OUT, os.path.getsize(OUT), "bytes,", sum(len(c["sections"]) for c in out), "sections")
+if __name__ == "__main__":
+    out = build()
+    with open(OUT, "w", encoding="utf-8") as f:
+        f.write("window.SAA_CONTENT = ")
+        json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
+        f.write(";\n")
+    print("wrote", OUT, os.path.getsize(OUT), "bytes,", sum(len(c["sections"]) for c in out), "sections")

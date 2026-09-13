@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+"""build_content.py のリンク変換とエスケープの回帰テスト。
+
+実行: python3 tools/test_build_content.py
+"""
+import os
+import sys
+import unittest
+
+sys.path.insert(0, os.path.dirname(__file__))
+import build_content as bc  # noqa: E402
+
+
+class InlineLinkTest(unittest.TestCase):
+    def test_https_link_is_preserved(self):
+        out = bc.inline("[SQS](https://docs.aws.amazon.com/sqs/)")
+        self.assertEqual(
+            out,
+            '<a href="https://docs.aws.amazon.com/sqs/" target="_blank" '
+            'rel="noopener noreferrer">SQS</a>',
+        )
+
+    def test_query_and_quote_in_url_are_escaped(self):
+        out = bc.inline('[a](https://e.com/?a=1&b="2")')
+        self.assertIn('href="https://e.com/?a=1&amp;b=&quot;2&quot;"', out)
+        self.assertNotIn('b="2"', out)
+
+    def test_javascript_scheme_is_dropped(self):
+        self.assertEqual(bc.inline("[x](javascript:alert%281%29)"), "x")
+        self.assertNotIn("<a", bc.inline("[x](javascript:alert(1))"))
+        self.assertNotIn("<a", bc.inline("[x](JAVASCRIPT:void(0))"))
+
+    def test_data_and_http_schemes_are_dropped(self):
+        self.assertEqual(bc.inline("[x](data:text/html,hi)"), "x")
+        self.assertEqual(bc.inline("[x](http://example.com/)"), "x")
+
+    def test_internal_chapter_link_becomes_data_go(self):
+        out = bc.inline("[第3章](./03-network.md)")
+        self.assertEqual(out, '<a href="#network" data-go="network">第3章</a>')
+
+    def test_internal_link_with_anchor_and_readme(self):
+        self.assertEqual(
+            bc.inline("[DB](./04-database.md#41)"),
+            '<a href="#database" data-go="database">DB</a>',
+        )
+        self.assertEqual(
+            bc.inline("[目次](./README.md)"),
+            '<a href="#home" data-go="home">目次</a>',
+        )
+
+    def test_unknown_relative_file_is_dropped(self):
+        self.assertEqual(bc.inline("[x](./99-none.md)"), "x")
+        self.assertEqual(bc.inline("[x](#anchor-only)"), "x")
+
+    def test_label_html_is_escaped_and_bold_kept(self):
+        out = bc.inline("**<b>太字</b>** と [<i>x</i>](https://e.com/)")
+        self.assertIn("<b>&lt;b&gt;太字&lt;/b&gt;</b>", out)
+        self.assertIn(">&lt;i&gt;x&lt;/i&gt;</a>", out)
+
+
+class BuildTest(unittest.TestCase):
+    def test_all_chapters_have_group_and_unique_id(self):
+        out = bc.build()
+        ids = [c["id"] for c in out]
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertTrue(all(c.get("group") for c in out))
+        self.assertEqual(out[0]["id"], "foundations")
+        self.assertEqual(out[0]["num"], "第0章")
+
+
+if __name__ == "__main__":
+    unittest.main()
