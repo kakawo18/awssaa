@@ -59,7 +59,7 @@
 | 層 | 守る手段 |
 |---|---|
 | エッジ | Shield（DDoS）、**WAF**（SQLi/XSS/レート制限）、CloudFront（オリジン隠蔽・地理制限） |
-| ネットワーク境界 | パブリック/プライベートサブネット分離、**NACLでIP遮断**、SGで最小ポート、Network Firewall（ドメイン制御） |
+| ネットワーク境界 | パブリック/プライベートサブネット分離、**特定IPの遮断はL3/L4ならNACL・HTTPならWAF**、SGで最小ポート、Network Firewall（ドメイン制御） |
 | ホスト | パッチ（Patch Manager）、**Session Managerで踏み台とSSHキーを廃止**、Inspectorで脆弱性検査 |
 | アプリ | Cognito/Lambdaオーソライザー、API Gatewayのスロットリング |
 | データ | KMS暗号化、バケットポリシー、ブロックパブリックアクセス |
