@@ -61,7 +61,7 @@
 | 大量のストリーミングデータが届いた | Kinesis Data Streams → Lambda/Flink/Firehose |
 | SaaSで何かが起きた | パートナーイベントバス → EventBridge |
 
-**再試行と失敗の受け皿**：Lambda非同期は**2回リトライ＋DLQ/Destinations**、SQSは**maxReceiveCount超過でDLQ**、Step Functionsは**Retry/Catch**。「メッセージが失われないように」＝DLQを含む選択肢。
+**再試行と失敗の受け皿**：Lambda非同期は**2回リトライ＋DLQ/Destinations**、SQSは**maxReceiveCount超過でDLQ**、Step Functionsは**Retry/Catch**。「メッセージが失われないように」＝DLQを含む選択肢。ただしDLQは隔離であり、**監視して原因を直し、再処理する手順**まで含めて設計する。
 
 ---
 
@@ -84,7 +84,7 @@
 - **RPO＝どこまでのデータ損失を許容できるか**（バックアップ間隔）、**RTO＝どれだけ早く復旧するか**（構築時間）。問題文の「数分以内に復旧」「データ損失は許されない」を拾って戦略を決める。
 - リージョン切り替えは **Route 53フェイルオーバー**（DNS、TTL分の遅れ）か **Global Accelerator**（数十秒、静的IP）。
 
-**その他の耐障害性パターン**：ELBヘルスチェック＋ASGの自動入れ替え、複数AZへのインスタンス均等配置、EBSスナップショットとAMIの定期取得（DLM／AWS Backup）、指数バックオフによる再試行、冪等性の確保（SQS標準の重複対策）。
+**その他の耐障害性パターン**：ELBヘルスチェック＋ASGの自動入れ替え、複数AZへのインスタンス均等配置、EBSスナップショットとAMIの定期取得（DLM／AWS Backup）、指数バックオフによる再試行、冪等性の確保（SQSの再配信は標準でもFIFOでも起こる前提で、ワーカー側が同じ処理を2回実行しないようにする→第6章 6.1）。
 
 ---
 
