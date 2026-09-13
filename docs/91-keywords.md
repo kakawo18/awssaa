@@ -80,7 +80,7 @@
 | **Amazon DynamoDB 単一項目サイズ上限** | **400 KB** | 属性名と属性値のバイナリ合計サイズ | [DynamoDB 仕様](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html) |
 | **Amazon DynamoDB キャパシティ単位の定義** | 1 RCU = 4 KBの項目を強い整合性で1回/秒（結果整合性は0.5 RCU、トランザクションは2 RCU）<br>1 WCU = 1 KBの項目を1回/秒（トランザクションは2 WCU） | 読み書きデータ量は4 KB / 1 KB単位に切り上げて計算 | [DynamoDB キャパシティ](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/read-write-operations.html) |
 | **Amazon DynamoDB ポイントインタイムリカバリ（PITR）** | **過去35日間** | 有効化後、秒単位の任意の時点へテーブルを復元可能 | [DynamoDB PITR](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/PointInTimeRecovery_Howitworks.html) |
-| **Amazon RDS 自動バックアップ保持期間** | **0日 〜 35日間**（デフォルト: 7日間） | 0日に設定すると自動バックアップが無効化される（リードレプリカが存在する場合は無効化不可） | [RDS バックアップ](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html) |
+| **Amazon RDS 自動バックアップ保持期間** | **0日 〜 35日間**（デフォルト: 7日間） | 0日に設定すると自動バックアップが無効化される（リードレプリカが存在する場合は無効化不可） | [ModifyDBInstance API（0〜35日の制約の記載元）](https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html)・2026-09-13 ／ [RDS バックアップ概要](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html) |
 | **Amazon Aurora ストレージ上限** | **128 TiB または 256 TiB**（エンジンバージョン依存） | 10 GB単位で自動拡張。Aurora PostgreSQL 15.13+/16.9+/17.5+、Aurora MySQL 3.10+で256 TiB対応 | [Aurora クォータ](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_Limits.html) |
 | **Amazon Aurora リードレプリカ最大数** | **最大15台** | プライマリクラスタ配下に配置可能 | 同上 |
 | **Amazon Aurora ストレージの物理冗長性** | **3つのアベイラビリティゾーンにまたがる6つのコピー** | クォーラム構成（書き込みは6中4、読み取りは6中3の合意で成立） | [Aurora ストレージアーキテクチャ](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.StorageReliability.html) |
@@ -93,6 +93,7 @@
 | **AWS CloudTrail イベント履歴保持期間** | **直近90日間** | マネジメントコンソールのイベント履歴。90日を超える保管はS3への証跡作成が必要 | [CloudTrail イベント履歴](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events.html) |
 | **Amazon EC2 スポットインスタンス中断通知** | **終了の2分前** | CloudWatch Events/EventBridgeおよびインスタンスメタデータ経由で通知 | [スポット中断通知](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-instance-termination-notices.html) |
 | **Kinesis Data Firehose バッファリング間隔** | **0秒 〜 900秒（15分）** / デフォルト: 300秒 | バッファサイズ（1 MB〜128 MB）または指定間隔のいずれかを満たした時点で配信 | [Firehose 設定](https://docs.aws.amazon.com/firehose/latest/dev/create-configure-backup.html) |
+| **ACM エクスポート可能なパブリック証明書** | **有効期間 198日**／失効の45日前に自動更新 | 追加料金あり。エクスポート後の配置と更新後の再配置は利用者が管理する | [ACM エクスポート可能証明書](https://docs.aws.amazon.com/acm/latest/userguide/acm-exportable-certificates.html)・2026-09-13 |
 
 ---
 

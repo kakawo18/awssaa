@@ -123,6 +123,7 @@
 ### 公式ドキュメント・参考リンク
 - [AWS Fargate 料金体系](https://aws.amazon.com/fargate/pricing/)
 - [AWS Well-Architected フレームワーク：コスト最適化の柱](https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html)
+- [AWS Well-Architected 信頼性の柱：DR 戦略（RTO/RPO と4類型）](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/rel_planning_for_recovery_disaster_recovery.html)
 
 ---
 

@@ -88,6 +88,12 @@
 3. 同一の注文イベントを「決済」と「通知」の双方が受け取る場合と、複数の決済ワーカーで処理を分担する場合の構成の違いは？
    → 前者は**同報配信**であるため SNSトピック → 2つのSQSキュー によるファンアウト構成をとります。後者は**負荷分担**であるため 1つのSQSキュー を複数ワーカーがポーリングする構成をとります。
 
+**公式出典**
+- [可視性タイムアウト（受信・削除・再可視化）](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html)
+- [SQS メッセージのクォータ（サイズ・保持・タイムアウト・FIFOスループット）](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html)（確認 2026-09-13）
+- [デッドレターキュー](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html)
+- [FIFO キューの正確に1回の処理](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-exactly-once-processing.html)
+
 ---
 
 ## 6.2 Amazon SNS
