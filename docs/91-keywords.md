@@ -58,42 +58,44 @@
 
 本表に記載された仕様数値は、公式ドキュメントに準拠した基準値である。**「デフォルト値」「調整可能な上限」「固定のハードリミット」「設計上の推奨目安」**の区分を意識して活用すること。
 
+「仕様・基準値」末尾のタグが区分（既定／上限（調整可）／上限（固定）／目安／設定範囲／仕様）を示す。「根拠」列の日付は、実際にそのページを開いて値を確認した日。「未確認」は本文の記述に基づいており、実装時に再確認する。「従来は〜」と書いた値は、古い設問がその値を前提にしていることがあるため併記している。設問に条件が明示されていればそちらを優先する。
+
 | 設計項目 | 仕様・基準値 | 区分・条件 | 公式ドキュメント・根拠 |
 |---|---|---|---|
-| **AWS Lambda 最大実行時間** | **900秒（15分）** | ハードリミット（固定上限） | [Lambda クォータ](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html) |
-| **AWS Lambda メモリ割り当て** | **128 MB 〜 10,240 MB（10 GB）** | 1 MB刻みで設定可能。CPUパワーはメモリ量に正比例（1,769 MBで1 vCPU相当） | 同上 |
-| **AWS Lambda 同時実行数** | **1,000**（初期デフォルト値） | リージョン単位のソフトリミット（申請により引き上げ可能） | 同上 |
-| **AWS Lambda 一時ストレージ（`/tmp`）** | **512 MB 〜 10,240 MB（10 GB）** | 1 MB刻みで設定可能 | 同上 |
-| **AWS Lambda パッケージサイズ** | 直接zip: 50 MB / 解凍後: 250 MB / コンテナイメージ: 10 GB | ハードリミット（レイヤーを含む） | 同上 |
-| **Amazon SQS メッセージ保持期間** | **デフォルト: 4日間** / 設定範囲: 60秒 〜 14日間 | 標準キュー・FIFOキュー共通 | [SQS クォータ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html) |
-| **Amazon SQS メッセージ最大サイズ** | **1,048,576 バイト（1 MiB）** | 単一メッセージ本体の上限。拡張クライアントライブラリとS3を併用すれば最大2 GB | 同上 |
-| **Amazon SQS 可視性タイムアウト** | **デフォルト: 30秒** / 設定範囲: 0秒 〜 12時間 | ワーカー処理時間に応じて設定。API呼び出しにより処理中の延長も可能 | 同上 |
-| **Amazon SQS 配信遅延（遅延キュー）** | デフォルト: 0秒 / 最大: 15分 | キュー全体またはメッセージ単位で設定可能 | 同上 |
-| **Amazon SQS ロングポーリング待機時間** | **最大: 20秒** | `WaitTimeSeconds` を1〜20秒に設定。空の受信APIコールを削減してコスト抑制 | [SQS ポーリング](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html) |
-| **Amazon SQS FIFO スループット** | デフォルト: 300 TPS（バッチ10件で最大3,000メッセージ/秒） | **高スループットモード**を有効化することで数万TPSまで拡張可能 | [SQS クォータ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html) |
-| **Amazon SQS FIFO 重複排除期間** | **5分間** | 送信側のメッセージ重複排除ID（MessageDeduplicationId）に基づくウィンドウ | [FIFO 正確に1回の処理](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-exactly-once-processing.html) |
-| **Amazon S3 単一オブジェクト最大サイズ** | **48.8 TiB** | マルチパートアップロード利用時（最大10,000パート × 最大5 GiB/パート） | [S3 オブジェクトサイズ制限](https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html) |
-| **Amazon S3 単一PUTリクエスト上限** | **5 GiB** | 100 MBを超えるオブジェクトはマルチパートアップロードの利用が強く推奨される | 同上 |
-| **Amazon S3 プレフィックス別リクエスト性能** | **毎秒 3,500 PUT/POST/DELETE、毎秒 5,500 GET/HEAD** | プレフィックスあたりのベースライン性能。プレフィックスを分散することで線形にスケール | [S3 パフォーマンス最適化](https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html) |
-| **Amazon S3 最低保管期間（課金）** | Standard-IA: 30日 / One Zone-IA: 30日 / Glacier Instant: 90日 / Glacier Flexible: 90日 / Glacier Deep Archive: 180日 | 期間未満で削除・移行した場合でも最低日数分の料金が発生 | [S3 ストレージクラス](https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html) |
-| **Amazon S3 Glacier 取り出し所要時間** | Flexible: 迅速（1〜5分）、標準（3〜5時間）、大容量（5〜12時間） / Deep Archive: 標準（12時間以内）、大容量（48時間以内） | 設計時の目安所要時間 | [S3 アーカイブ復元](https://docs.aws.amazon.com/AmazonS3/latest/userguide/restoring-objects-retrieval-options.html) |
-| **Amazon DynamoDB 単一項目サイズ上限** | **400 KB** | 属性名と属性値のバイナリ合計サイズ | [DynamoDB 仕様](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html) |
-| **Amazon DynamoDB キャパシティ単位の定義** | 1 RCU = 4 KBの項目を強い整合性で1回/秒（結果整合性は0.5 RCU、トランザクションは2 RCU）<br>1 WCU = 1 KBの項目を1回/秒（トランザクションは2 WCU） | 読み書きデータ量は4 KB / 1 KB単位に切り上げて計算 | [DynamoDB キャパシティ](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/read-write-operations.html) |
-| **Amazon DynamoDB ポイントインタイムリカバリ（PITR）** | **過去35日間** | 有効化後、秒単位の任意の時点へテーブルを復元可能 | [DynamoDB PITR](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/PointInTimeRecovery_Howitworks.html) |
-| **Amazon RDS 自動バックアップ保持期間** | **0日 〜 35日間**（デフォルト: 7日間） | 0日に設定すると自動バックアップが無効化される（リードレプリカが存在する場合は無効化不可） | [ModifyDBInstance API（0〜35日の制約の記載元）](https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html)・2026-09-13 ／ [RDS バックアップ概要](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html) |
-| **Amazon Aurora ストレージ上限** | **128 TiB または 256 TiB**（エンジンバージョン依存） | 10 GB単位で自動拡張。Aurora PostgreSQL 15.13+/16.9+/17.5+、Aurora MySQL 3.10+で256 TiB対応 | [Aurora クォータ](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_Limits.html) |
-| **Amazon Aurora リードレプリカ最大数** | **最大15台** | プライマリクラスタ配下に配置可能 | 同上 |
-| **Amazon Aurora ストレージの物理冗長性** | **3つのアベイラビリティゾーンにまたがる6つのコピー** | クォーラム構成（書き込みは6中4、読み取りは6中3の合意で成立） | [Aurora ストレージアーキテクチャ](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.StorageReliability.html) |
-| **Amazon Kinesis Data Streams シャード性能** | 書き込み: 1 MB/秒 または 1,000 レコード/秒<br>読み取り: 2 MB/秒 | プロビジョンドモード時のシャード1つあたりの上限 | [Kinesis クォータ](https://docs.aws.amazon.com/streams/latest/dev/service-sizes-and-limits.html) |
-| **Amazon Kinesis Data Streams データ保持期間** | **デフォルト: 24時間** / 設定範囲: 24時間 〜 365日間（8,760時間） | 24時間を超える保持は追加料金が発生 | 同上 |
-| **Amazon VPC サブネット内の予約IPアドレス** | **各サブネットごとに先頭4個 ＋ 末尾1個の計5個** | ネットワークアドレス、VPCルーター、DNSサーバー、将来用、ブロードキャストアドレス | [VPC サイジング](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html) |
-| **ELB 登録解除の遅延（Deregistration Delay）** | **デフォルト: 300秒** / 設定範囲: 0秒 〜 3,600秒 | ターゲットの切り離し時に処理中の既存リクエスト完了を待機する接続ドレイン時間 | [ALB ターゲットグループ属性](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/edit-target-group-attributes.html) |
-| **AWS KMS キー削除待機期間** | **7日間 〜 30日間**（デフォルト: 30日間） | 誤削除防止のための強制待機期間。待機中は暗号化・復号操作不可、削除取り消し可能 | [KMS キー削除](https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.html) |
-| **AWS KMS 自動ローテーション周期** | **90日 〜 2,560日間**（デフォルト: 365日 / 年1回） | カスタマー管理キー（対称暗号化キー）で設定可能。AWSマネージドキーは年1回固定 | [KMS ローテーション](https://docs.aws.amazon.com/kms/latest/developerguide/rotating-keys-enable.html) |
-| **AWS CloudTrail イベント履歴保持期間** | **直近90日間** | マネジメントコンソールのイベント履歴。90日を超える保管はS3への証跡作成が必要 | [CloudTrail イベント履歴](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events.html) |
-| **Amazon EC2 スポットインスタンス中断通知** | **終了の2分前** | CloudWatch Events/EventBridgeおよびインスタンスメタデータ経由で通知 | [スポット中断通知](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-instance-termination-notices.html) |
-| **Kinesis Data Firehose バッファリング間隔** | **0秒 〜 900秒（15分）** / デフォルト: 300秒 | バッファサイズ（1 MB〜128 MB）または指定間隔のいずれかを満たした時点で配信 | [Firehose 設定](https://docs.aws.amazon.com/firehose/latest/dev/create-configure-backup.html) |
-| **ACM エクスポート可能なパブリック証明書** | **有効期間 198日**／失効の45日前に自動更新 | 追加料金あり。エクスポート後の配置と更新後の再配置は利用者が管理する | [ACM エクスポート可能証明書](https://docs.aws.amazon.com/acm/latest/userguide/acm-exportable-certificates.html)・2026-09-13 |
+| **AWS Lambda 最大実行時間** | **900秒（15分）**・**上限（固定）** | ハードリミット（固定上限）。Lambda Managed Instances の非同期／イベントソース呼び出しのみ最大90分（例外） | [Lambda クォータ](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html)・2026-09-13 |
+| **AWS Lambda メモリ割り当て** | **128 MB 〜 10,240 MB（10 GB）**・上限（固定） | 1 MB刻みで設定可能。CPUパワーはメモリ量に正比例（1,769 MBで1 vCPU相当） | 同上・2026-09-13 |
+| **AWS Lambda 同時実行数** | **1,000**（初期デフォルト値）・**既定（調整可）** | リージョン単位のソフトリミット（申請により引き上げ可能）。新規アカウントはこれより低く設定され、利用に応じて自動で引き上げられる | 同上・2026-09-13 |
+| **AWS Lambda 一時ストレージ（`/tmp`）** | **512 MB 〜 10,240 MB（10 GB）**・上限（固定） | 1 MB刻みで設定可能 | 同上・2026-09-13 |
+| **AWS Lambda パッケージサイズ** | 直接zip: 50 MB / 解凍後: 250 MB / コンテナイメージ: 10 GB・上限（固定） | ハードリミット（レイヤーを含む） | 同上・2026-09-13 |
+| **Amazon SQS メッセージ保持期間** | **デフォルト: 4日間** / 設定範囲: 60秒 〜 14日間・**既定／設定範囲** | 標準キュー・FIFOキュー共通 | [SQS クォータ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html)・2026-09-13 |
+| **Amazon SQS メッセージ最大サイズ** | **1,048,576 バイト（1 MiB）**・**上限（固定）** | 単一メッセージ本体の上限。拡張クライアントライブラリとS3を併用すれば最大2 GB。**従来は 256 KB**（古い設問はこの値を前提にしていることがある） | 同上・2026-09-13 |
+| **Amazon SQS 可視性タイムアウト** | **デフォルト: 30秒** / 設定範囲: 0秒 〜 12時間・**既定／設定範囲** | ワーカー処理時間に応じて設定。API呼び出しにより処理中の延長も可能 | 同上・2026-09-13 |
+| **Amazon SQS 配信遅延（遅延キュー）** | デフォルト: 0秒 / 最大: 15分・既定／上限（固定） | キュー全体またはメッセージ単位で設定可能 | 同上・2026-09-13 |
+| **Amazon SQS ロングポーリング待機時間** | **最大: 20秒**・上限（固定） | `WaitTimeSeconds` を1〜20秒に設定。空の受信APIコールを削減してコスト抑制 | [SQS ポーリング](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html)・2026-09-13 |
+| **Amazon SQS FIFO スループット** | デフォルト: 300 TPS（バッチ10件で最大3,000メッセージ/秒）・**既定モード**（APIアクション・パーティションごと） | **高スループットモード**を有効化することで数万TPSまで拡張可能。TPS（API 呼び出し数）とメッセージ/秒を混同しない | [SQS クォータ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html)・2026-09-13 |
+| **Amazon SQS FIFO 重複排除期間** | **5分間**・仕様 | 送信側のメッセージ重複排除ID（MessageDeduplicationId）に基づくウィンドウ | [FIFO 正確に1回の処理](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-exactly-once-processing.html)・未確認（本文の記述に基づく） |
+| **Amazon S3 単一オブジェクト最大サイズ** | **48.8 TiB**・**上限（固定）** | マルチパートアップロード利用時（最大10,000パート × 最大5 GiB/パート）。**従来は 5 TB**（古い設問はこの値を前提にしていることがある） | [S3 オブジェクトサイズ制限](https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html)・2026-09-13 |
+| **Amazon S3 単一PUTリクエスト上限** | **5 GiB**・上限（固定） | 100 MBを超えるオブジェクトはマルチパートアップロードの利用が強く推奨される | 同上・2026-09-13 |
+| **Amazon S3 プレフィックス別リクエスト性能** | **毎秒 3,500 PUT/POST/DELETE、毎秒 5,500 GET/HEAD**・**目安（「少なくとも」）** | プレフィックスあたりのベースライン性能。プレフィックスを分散することで線形にスケール。スケール中は一時的に 503 が返ることがある | [S3 パフォーマンス最適化](https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html)・2026-09-13 |
+| **Amazon S3 最低保管期間（課金）** | Standard-IA: 30日 / One Zone-IA: 30日 / Glacier Instant: 90日 / Glacier Flexible: 90日 / Glacier Deep Archive: 180日・課金条件 | 期間未満で削除・移行した場合でも最低日数分の料金が発生。IA 系は最小課金サイズ 128 KB | [S3 ストレージクラス](https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html)・2026-09-13 |
+| **Amazon S3 Glacier 取り出し所要時間** | Flexible: 迅速（1〜5分）、標準（3〜5時間）、大容量（5〜12時間） / Deep Archive: 標準（12時間以内）、大容量（48時間以内）・**目安（typically）** | 設計時の目安所要時間 | [S3 アーカイブ復元](https://docs.aws.amazon.com/AmazonS3/latest/userguide/restoring-objects-retrieval-options.html)・2026-09-13 |
+| **Amazon DynamoDB 単一項目サイズ上限** | **400 KB**・上限（固定） | 属性名と属性値のバイナリ合計サイズ | [DynamoDB 仕様](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html)・2026-09-13 |
+| **Amazon DynamoDB キャパシティ単位の定義** | 1 RCU = 4 KBの項目を強い整合性で1回/秒（結果整合性は0.5 RCU、トランザクションは2 RCU）<br>1 WCU = 1 KBの項目を1回/秒（トランザクションは2 WCU）・定義 | 読み書きデータ量は4 KB / 1 KB単位に切り上げて計算 | [DynamoDB キャパシティ](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/read-write-operations.html)・2026-09-13 |
+| **Amazon DynamoDB ポイントインタイムリカバリ（PITR）** | **過去35日間**・設定範囲（1〜35日） | 有効化後、秒単位の任意の時点へテーブルを復元可能 | [DynamoDB PITR](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/PointInTimeRecovery_Howitworks.html)・2026-09-13 |
+| **Amazon RDS 自動バックアップ保持期間** | **0日 〜 35日間**（デフォルト: 7日間）・設定範囲 | 0日に設定すると自動バックアップが無効化される（リードレプリカが存在する場合は無効化不可） | [ModifyDBInstance API（0〜35日の制約の記載元）](https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html)・2026-09-13 ／ [RDS バックアップ概要](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html) |
+| **Amazon Aurora ストレージ上限** | **128 TiB または 256 TiB**（エンジンバージョン依存）・**上限（固定・バージョン依存）** | 10 GB単位で自動拡張。Aurora PostgreSQL 15.13+/16.9+/17.5+、Aurora MySQL 3.10+で256 TiB対応 | [Aurora クォータ](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_Limits.html)・2026-09-13 |
+| **Amazon Aurora リードレプリカ最大数** | **最大15台**・上限（固定、引き上げ不可） | プライマリクラスタ配下に配置可能 | 同上・2026-09-13 |
+| **Amazon Aurora ストレージの物理冗長性** | **3つのアベイラビリティゾーンにまたがる6つのコピー**・仕様 | クォーラム構成（書き込みは6中4、読み取りは6中3の合意で成立） | [Aurora ストレージアーキテクチャ](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.StorageReliability.html)・未確認（本文の記述に基づく） |
+| **Amazon Kinesis Data Streams シャード性能** | 書き込み: 1 MB/秒 または 1,000 レコード/秒<br>読み取り: 2 MB/秒・上限（固定） | プロビジョンドモード時のシャード1つあたりの上限。1 レコードの最大は 10 MiB（バースト用途） | [Kinesis クォータ](https://docs.aws.amazon.com/streams/latest/dev/service-sizes-and-limits.html)・2026-09-13 |
+| **Amazon Kinesis Data Streams データ保持期間** | **デフォルト: 24時間** / 設定範囲: 24時間 〜 365日間（8,760時間）・既定／設定範囲 | 24時間を超える保持は追加料金が発生 | 同上・2026-09-13 |
+| **Amazon VPC サブネット内の予約IPアドレス** | **各サブネットごとに先頭4個 ＋ 末尾1個の計5個**・仕様 | ネットワークアドレス、VPCルーター、DNSサーバー、将来用、ブロードキャストアドレス | [VPC サイジング](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html)・2026-09-13 |
+| **ELB 登録解除の遅延（Deregistration Delay）** | **デフォルト: 300秒** / 設定範囲: 0秒 〜 3,600秒・**既定**／設定範囲 | ターゲットの切り離し時に処理中の既存リクエスト完了を待機する接続ドレイン時間 | [ALB ターゲットグループ属性](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/edit-target-group-attributes.html)・2026-09-13 |
+| **AWS KMS キー削除待機期間** | **7日間 〜 30日間**（デフォルト: 30日間）・設定範囲／既定 | 誤削除防止のための強制待機期間。待機中は暗号化・復号操作不可、削除取り消し可能 | [KMS キー削除](https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.html)・2026-09-13 |
+| **AWS KMS 自動ローテーション周期** | **90日 〜 2,560日間**（デフォルト: 365日 / 年1回）・設定範囲／既定 | カスタマー管理キー（対称暗号化キー）で設定可能。AWSマネージドキーは年1回固定 | [KMS ローテーション](https://docs.aws.amazon.com/kms/latest/developerguide/rotating-keys-enable.html)・2026-09-13 |
+| **AWS CloudTrail イベント履歴保持期間** | **直近90日間**・仕様 | マネジメントコンソールのイベント履歴。90日を超える保管はS3への証跡作成が必要 | [CloudTrail イベント履歴](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events.html)・2026-09-13 |
+| **Amazon EC2 スポットインスタンス中断通知** | **終了の2分前**・仕様 | CloudWatch Events/EventBridgeおよびインスタンスメタデータ経由で通知。休止（hibernate）の場合は2分の猶予なし。通知はベストエフォート | [スポット中断通知](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-instance-termination-notices.html)・2026-09-13 |
+| **Kinesis Data Firehose バッファリング間隔** | **0秒 〜 900秒（15分）** / デフォルト: 300秒・設定範囲／既定 | バッファサイズ（1 MB〜128 MB）または指定間隔のいずれかを満たした時点で配信。0 秒は対応宛先のみで、動的パーティショニングと S3 バックアップ先では不可。60 秒未満は S3 の PUT 料金が増える | [Firehose 設定](https://docs.aws.amazon.com/firehose/latest/dev/create-configure-backup.html)・2026-09-13 |
+| **ACM エクスポート可能なパブリック証明書** | **有効期間 198日**／失効の45日前に自動更新・仕様 | 追加料金あり。エクスポート後の配置と更新後の再配置は利用者が管理する | [ACM エクスポート可能証明書](https://docs.aws.amazon.com/acm/latest/userguide/acm-exportable-certificates.html)・2026-09-13 |
 
 ---
 
