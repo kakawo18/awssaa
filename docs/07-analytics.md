@@ -11,7 +11,7 @@
 | 要件 | サービス |
 |---|---|
 | **順序保証・複数のコンシューマー・再処理（保持1〜365日）**、カスタム処理、リアルタイム（〜200ms） | **Kinesis Data Streams** |
-| **S3 / Redshift / OpenSearch / Splunk へ「ただ配送」したい**。管理ゼロ、コード不要 | **Data Firehose**（ニアリアルタイム、**最短60秒のバッファ**） |
+| **S3 / Redshift / OpenSearch / Splunk へ「ただ配送」したい**。管理ゼロ、コード不要 | **Data Firehose**（ニアリアルタイム。バッファ間隔は**0〜900秒、既定300秒**。0秒設定は対応宛先のみで、動的パーティショニングやS3バックアップ先では使えない。**0秒＝遅延ゼロではない**「数秒以内に配送」） |
 | ストリームに対する**SQLやApache Flink**でのリアルタイム集計（移動平均、異常検知） | **Managed Service for Apache Flink**（旧 Kinesis Data Analytics） |
 | 映像ストリームの取り込みと分析 | Kinesis Video Streams |
 
