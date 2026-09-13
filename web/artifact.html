@@ -88,6 +88,9 @@ h1{font-family:var(--head);font-weight:700;font-size:clamp(24px,5.4vw,32px);line
 .lead{margin:14px 0 0;padding:14px 16px;background:var(--surface);border:1px solid var(--rule);
   border-left:3px solid var(--accent);border-radius:0 10px 10px 0;color:var(--ink-2);font-size:14px;box-shadow:var(--shadow)}
 .lead b{color:var(--ink)}
+main a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+main a[target="_blank"]::after{content:"\2197";font-family:var(--mono);font-size:.8em;margin-left:2px;text-decoration:none;display:inline-block}
+.hit .ans a,.hit a{color:inherit;text-decoration:none}
 section.sec{margin-top:40px;scroll-margin-top:84px}
 h2{font-family:var(--head);font-weight:700;font-size:19px;line-height:1.4;margin:0;
   display:flex;gap:10px;align-items:baseline;text-wrap:balance;
@@ -218,6 +221,19 @@ tbody tr td:last-child:not(:first-child) b{color:var(--ans)}
     return m ? { t: m[1], r: m[2] } : { t: ch.title, r: '' };
   }
   function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return c === '&' ? '&amp;' : c === '<' ? '&lt;' : '&gt;'; }); }
+  // 検索結果は <button> で囲むので、その中に <a> を入れない（入れ子の操作要素になる）。
+  // 生成HTMLは build_content.py が作った限られたタグだけなので、a タグを外してラベルだけ残す。
+  function noLinks(h){ return String(h).replace(/<\/?a\b[^>]*>/g, ''); }
+  // 章グループは content.js の ch.group から作る（第0章の追加などで固定スライスがずれないように）
+  function groups(){
+    var order = [], by = {};
+    DATA.forEach(function(ch){
+      var g = ch.group || 'その他';
+      if(!by[g]){ by[g] = []; order.push(g); }
+      by[g].push(ch);
+    });
+    return order.map(function(g){ return { name: g, chapters: by[g] }; });
+  }
   function strip(h){ var d = document.createElement('div'); d.innerHTML = h; return d.textContent || ''; }
   function escRe(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
   function hl(html, terms){
@@ -278,11 +294,10 @@ tbody tr td:last-child:not(:first-child) b{color:var(--ans)}
   });
 
   function buildNav(){
-    var groups = [['第1部 サービス別', 0, 10], ['第2部 分野別', 10, 14], ['付録', 14, 16]];
     var h = '<button class="navlink" data-go="home"><span class="n"></span><span>はじめに</span></button>';
-    groups.forEach(function(g){
-      h += '<div class="navgrp">' + g[0] + '</div>';
-      DATA.slice(g[1], g[2]).forEach(function(ch){
+    groups().forEach(function(g){
+      h += '<div class="navgrp">' + g.name + '</div>';
+      g.chapters.forEach(function(ch){
         h += '<button class="navlink' + (read[ch.id] ? ' done' : '') + '" data-go="' + ch.id + '">' +
              '<span class="n">' + (ch.num || '') + '</span><span>' + parts(ch).t + '</span><span class="dot"></span></button>';
       });
@@ -291,31 +306,33 @@ tbody tr td:last-child:not(:first-child) b{color:var(--ans)}
   }
 
   function home(){
+    // docs/README.md「全体を貫く4つの判断軸」と同じ文言に保つ
     var axes = [
-      ['01', '運用負荷', '「オーバーヘッドを最小限に」＝マネージド／サーバーレスを選ぶ。'],
-      ['02', '可用性', '単一AZ・単一インスタンスの選択肢は原則として外す。'],
-      ['03', 'コスト', '要件を満たす候補に絞ってから、その中の最安を選ぶ。'],
-      ['04', 'セキュリティ', '認証情報を置かない・暗号化する・公開しない・最小権限。']
+      ['01', '運用負荷', '「オーバーヘッドを最小限に」はマネージド／サーバーレスを示すが、実行時間・OS制御・常時稼働の要件で外れることがある。'],
+      ['02', '可用性', '設問に可用性要件があるなら、単一AZ・単一インスタンスは満たさない。要件がなければ最安の構成が正解になり得る。'],
+      ['03', 'コスト', '要件（可用性・RTO・性能）を満たす候補に絞ってから、その中の最安を選ぶ。'],
+      ['04', 'セキュリティ', '認証情報を置かない・暗号化する・公開しない・最小権限。到達できることと操作が許可されることは別。']
     ];
+    var chapterCount = DATA.filter(function(ch){ return /^第\d+章$/.test(ch.num || ''); }).length;
     var h = '<div class="hero"><div class="eyebrow">SAA-C03</div>' +
       '<h1>サービスの違いで解く<br>AWS SAA 要点集</h1>' +
-      '<div class="lead">各節は<b>2〜3分</b>で読み切れる分量。<b>「問題文のキーワード → 答え」</b>を反射で出せる状態を目指します。' +
-      '検索窓にサービス名を入れると、全16章の判断表から該当行だけを抜き出せます。</div></div>';
+      '<div class="lead">各節は<b>2〜3分</b>で読み切れる分量。<b>候補を挙げる → 別候補を外す理由を言う → 条件が変わっても対応する</b>、を目指します。' +
+      'まず<b>第0章</b>で判断軸と用語を固めてから各章へ。検索窓にサービス名を入れると、全' + chapterCount + '章と付録の判断表から該当行だけを抜き出せます。</div></div>';
     h += '<div class="secthead">全体を貫く4つの判断軸</div><div class="axes">' +
       axes.map(function(a){
         return '<div class="axis"><div class="k">' + a[0] + '</div><div class="t">' + a[1] + '</div><div class="d">' + a[2] + '</div></div>';
       }).join('') + '</div>';
-    function cards(from, to){
-      return '<div class="grid">' + DATA.slice(from, to).map(function(ch){
+    function cards(list){
+      return '<div class="grid">' + list.map(function(ch){
         var pp = parts(ch);
         return '<button class="card' + (read[ch.id] ? ' done' : '') + '" data-go="' + ch.id + '"><div class="n">' +
           (ch.num || '') + '</div><div class="t">' + pp.t + '</div><div class="m">' + ch.sections.length + ' 節' +
           (pp.r ? '　/　出題比率 ' + pp.r : '') + '</div></button>';
       }).join('') + '</div>';
     }
-    h += '<div class="secthead">第1部 サービス別対策</div>' + cards(0, 10);
-    h += '<div class="secthead">第2部 試験分野別対策（判断フロー）</div>' + cards(10, 14);
-    h += '<div class="secthead">付録（直前確認用）</div>' + cards(14, 16);
+    groups().forEach(function(g){
+      h += '<div class="secthead">' + g.name + '</div>' + cards(g.chapters);
+    });
     main.innerHTML = h;
     mark('home');
   }
@@ -370,7 +387,7 @@ tbody tr td:last-child:not(:first-child) b{color:var(--ans)}
       order.forEach(function(ct){
         h += '<div class="resgrp"><h3>' + ct + '</h3>' + byCh[ct].map(function(e){
           return '<button class="hit" data-go="' + e.c + '" data-sec="' + e.s + '"><span class="where">' +
-            e.st + '</span>' + hl(e.h, terms) + '</button>';
+            e.st + '</span>' + hl(noLinks(e.h), terms) + '</button>';
         }).join('') + '</div>';
       });
     }
@@ -397,7 +414,9 @@ tbody tr td:last-child:not(:first-child) b{color:var(--ans)}
 
   document.addEventListener('click', function(e){
     var t = e.target.closest ? e.target.closest('[data-go]') : null;
-    if(t) go(t.getAttribute('data-go'), t.getAttribute('data-sec'));
+    if(!t) return;
+    if(t.tagName === 'A') e.preventDefault();  // 教材内リンク: hash 遷移ではなく章表示に任せる
+    go(t.getAttribute('data-go'), t.getAttribute('data-sec'));
   });
   var brand = document.getElementById('brand');
   brand.addEventListener('click', function(){ go('home'); });
