@@ -130,6 +130,13 @@ h3{font-family:var(--head);font-size:1em;font-weight:700;color:var(--ink-strong)
 .sec ul>li::before{content:"";position:absolute;left:0;top:.85em;width:9px;height:3px;
   background:var(--accent);border-radius:2px}
 
+/* ---- figures ---- */
+.fig{margin:22px 0 0;padding:15px;background:var(--surface);border:1px solid var(--rule);
+  border-radius:8px;box-shadow:var(--shadow);max-width:560px}
+.fig svg{display:block;width:100%;height:auto;color:var(--ink)}
+.fig figcaption{margin-top:12px;padding-top:11px;border-top:1px solid var(--rule);
+  font-size:.84em;line-height:1.8;color:var(--ink)}
+
 /* ---- decision list (2-column tables) ---- */
 .dl{margin:18px 0 0;border:1px solid var(--rule);border-radius:8px;background:var(--surface);
   overflow:hidden;box-shadow:var(--shadow)}
@@ -349,6 +356,8 @@ tbody tr:nth-child(even) td{background:var(--tint)}
     if(b.t === 'lede') return '<div class="lede"><span class="tag">' + b.label + '</span><div>' + b.html + '</div></div>';
     if(b.t === 'note') return '<div class="note">' + b.html + '</div>';
     if(b.t === 'h3')   return '<h3>' + b.html + '</h3>';
+    if(b.t === 'figure') return '<figure class="fig">' + b.svg +
+      (b.caption ? '<figcaption>' + b.caption + '</figcaption>' : '') + '</figure>';
     if(b.t === 'p'){
       if(/^<b>[^<]*<\/b>$/.test(b.html)) return '<p class="label">' + esc(strip(b.html)) + '</p>';
       return '<p>' + b.html + '</p>';
@@ -390,7 +399,8 @@ tbody tr:nth-child(even) td{background:var(--tint)}
           });
         } else if(b.t === 'ul' || b.t === 'ol'){
           b.items.forEach(function(i){ add(i); });
-        } else if(b.html){ add(b.html); }
+        } else if(b.t === 'figure'){ if(b.caption) add(b.caption); }
+        else if(b.html){ add(b.html); }
       });
     });
   });

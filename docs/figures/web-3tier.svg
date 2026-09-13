@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 336" role="img" aria-label="Webアプリの定番構成。Route 53からCloudFront、ALBを経て、Auto Scaling group内の2つのアベイラビリティゾーンのEC2へ分散し、書き込みはマルチAZ構成のRDSプライマリへ向かう。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arw-3t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+  </defs>
+
+  <rect x="110" y="2" width="160" height="28" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="190" y="21" text-anchor="middle">Route 53</text>
+
+  <rect x="110" y="50" width="160" height="28" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="190" y="69" text-anchor="middle">CloudFront</text>
+  <rect x="8" y="50" width="88" height="28" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="52" y="69" text-anchor="middle" font-size="11">S3（静的）</text>
+  <line x1="110" y1="64" x2="100" y2="64" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-3t)"/>
+
+  <rect x="110" y="98" width="160" height="28" rx="6" fill="#3F78D8" fill-opacity="0.12" stroke="#3F78D8" stroke-width="1.6"/>
+  <text x="190" y="117" text-anchor="middle">ALB</text>
+
+  <line x1="190" y1="30" x2="190" y2="46" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-3t)"/>
+  <line x1="190" y1="78" x2="190" y2="94" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-3t)"/>
+
+  <text x="95" y="148" text-anchor="middle" font-size="10" fill-opacity="0.7">アベイラビリティゾーン A</text>
+  <text x="285" y="148" text-anchor="middle" font-size="10" fill-opacity="0.7">アベイラビリティゾーン B</text>
+
+  <rect x="14" y="156" width="352" height="72" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="5 4"/>
+  <text x="22" y="170" font-size="10" fill-opacity="0.7">Auto Scaling group</text>
+  <rect x="20" y="178" width="150" height="42" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="95" y="204" text-anchor="middle">EC2</text>
+  <rect x="210" y="178" width="150" height="42" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="285" y="204" text-anchor="middle">EC2</text>
+
+  <text x="190" y="137" text-anchor="middle" font-size="10.5" fill-opacity="0.85">両AZへ分散</text>
+  <polyline points="190,126 190,142 95,142 95,174" fill="none" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-3t)"/>
+  <polyline points="190,142 285,142 285,174" fill="none" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-3t)"/>
+
+  <rect x="20" y="258" width="150" height="46" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="95" y="278" text-anchor="middle" font-size="11.5">RDS プライマリ</text>
+  <text x="95" y="294" text-anchor="middle" font-size="10" fill-opacity="0.7">読み書き</text>
+  <rect x="210" y="258" width="150" height="46" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="5 4"/>
+  <text x="285" y="278" text-anchor="middle" font-size="11.5">RDS スタンバイ</text>
+  <text x="285" y="294" text-anchor="middle" font-size="10" fill-opacity="0.7">読めない</text>
+
+  <polyline points="190,228 190,244 95,244 95,254" fill="none" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-3t)"/>
+  <line x1="174" y1="281" x2="206" y2="281" stroke="#3F78D8" stroke-width="1.8" marker-start="url(#arw-3t)" marker-end="url(#arw-3t)"/>
+  <text x="190" y="324" text-anchor="middle" font-size="10.5" fill-opacity="0.85">同期レプリケーション／障害時は自動フェイルオーバー</text>
+</svg>

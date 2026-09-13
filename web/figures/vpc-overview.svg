@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 392" role="img" aria-label="VPCの全体像。インターネットからの受信はインターネットゲートウェイ経由でパブリックサブネットのALBへ、プライベートサブネットのEC2からの送信はNAT Gateway経由でのみ外に出る。DBはさらに別のプライベートサブネットに置く。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor">
+  <defs>
+    <marker id="arw-vpc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+  </defs>
+
+  <rect x="36" y="2" width="140" height="26" rx="13" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.45"/>
+  <text x="106" y="20" text-anchor="middle">インターネット</text>
+
+  <rect x="10" y="44" width="360" height="338" rx="10" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="360" y="61" text-anchor="end" font-size="10.5" fill-opacity="0.7">VPC 10.0.0.0/16</text>
+
+  <rect x="61" y="60" width="90" height="24" rx="5" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.6"/>
+  <text x="106" y="77" text-anchor="middle" font-size="11.5">IGW</text>
+
+  <rect x="24" y="96" width="332" height="88" rx="7" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="120" y="113" font-size="10.5" fill-opacity="0.7">パブリックサブネット</text>
+  <rect x="36" y="122" width="140" height="48" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="106" y="143" text-anchor="middle" font-size="12.5">ALB</text>
+  <text x="106" y="159" text-anchor="middle" font-size="10" fill-opacity="0.7">インターネット向け</text>
+  <rect x="200" y="122" width="144" height="48" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="272" y="143" text-anchor="middle" font-size="12.5">NAT Gateway</text>
+  <text x="272" y="159" text-anchor="middle" font-size="10" fill-opacity="0.7">AZごとに配置</text>
+
+  <rect x="24" y="200" width="332" height="88" rx="7" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="120" y="217" font-size="10.5" fill-opacity="0.7">プライベートサブネット（アプリ層）</text>
+  <rect x="36" y="226" width="140" height="48" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="106" y="247" text-anchor="middle" font-size="12.5">EC2 / ECS</text>
+  <text x="106" y="263" text-anchor="middle" font-size="10" fill-opacity="0.7">パブリックIPなし</text>
+  <text x="272" y="254" text-anchor="middle" font-size="10.5" fill-opacity="0.72">インターネットからは</text>
+  <text x="272" y="269" text-anchor="middle" font-size="10.5" fill-opacity="0.72">直接到達できない</text>
+
+  <rect x="24" y="304" width="332" height="62" rx="7" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="120" y="321" font-size="10.5" fill-opacity="0.7">プライベートサブネット（DB層）</text>
+  <rect x="36" y="328" width="308" height="30" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="190" y="348" text-anchor="middle" font-size="12">RDS（マルチAZ）</text>
+
+  <line x1="106" y1="28" x2="106" y2="56" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-vpc)"/>
+  <line x1="106" y1="84" x2="106" y2="118" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-vpc)"/>
+  <text x="113" y="93" font-size="10.5" fill-opacity="0.85">受信</text>
+  <line x1="106" y1="170" x2="106" y2="222" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-vpc)"/>
+  <text x="113" y="197" font-size="10.5" fill-opacity="0.85">転送</text>
+  <line x1="106" y1="274" x2="106" y2="324" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-vpc)"/>
+  <text x="113" y="301" font-size="10.5" fill-opacity="0.85">接続</text>
+
+  <polyline points="176,240 272,240 272,174" fill="none" stroke="#3F78D8" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#arw-vpc)"/>
+  <polyline points="272,122 272,92 140,92 140,88" fill="none" stroke="#3F78D8" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#arw-vpc)"/>
+  <text x="344" y="112" text-anchor="end" font-size="10.5" fill-opacity="0.85">送信のみ</text>
+</svg>

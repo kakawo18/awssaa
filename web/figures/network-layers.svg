@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 302" role="img" aria-label="通信が通過する5つの層。所属範囲、経路、フィルタ、出口、名前解決の順に確認し、1つでも遮断されていれば通信は成立しない。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor">
+  <defs>
+    <marker id="arw-nl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+  </defs>
+
+  <text x="10" y="18" font-size="10.5" fill-opacity="0.7">確認する順序</text>
+  <text x="216" y="18" font-size="10.5" fill-opacity="0.7">ここで止まると</text>
+
+  <rect x="10" y="30" width="196" height="40" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.5"/>
+  <circle cx="30" cy="50" r="9" fill="#3F78D8" fill-opacity="0.18" stroke="#3F78D8" stroke-width="1.4"/>
+  <text x="30" y="54" text-anchor="middle" font-size="11">1</text>
+  <text x="46" y="47" font-size="11.5">所属範囲</text>
+  <text x="46" y="62" font-size="10" fill-opacity="0.7">CIDR・サブネット</text>
+  <text x="216" y="55" font-size="10.5" fill-opacity="0.8">別ネットワーク扱いになる</text>
+
+  <rect x="10" y="84" width="196" height="40" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.5"/>
+  <circle cx="30" cy="104" r="9" fill="#3F78D8" fill-opacity="0.18" stroke="#3F78D8" stroke-width="1.4"/>
+  <text x="30" y="108" text-anchor="middle" font-size="11">2</text>
+  <text x="46" y="101" font-size="11.5">経路</text>
+  <text x="46" y="116" font-size="10" fill-opacity="0.7">ルートテーブル</text>
+  <text x="216" y="109" font-size="10.5" fill-opacity="0.8">宛先へ出られない</text>
+
+  <rect x="10" y="138" width="196" height="40" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.5"/>
+  <circle cx="30" cy="158" r="9" fill="#3F78D8" fill-opacity="0.18" stroke="#3F78D8" stroke-width="1.4"/>
+  <text x="30" y="162" text-anchor="middle" font-size="11">3</text>
+  <text x="46" y="155" font-size="11.5">パケットフィルタ</text>
+  <text x="46" y="170" font-size="10" fill-opacity="0.7">SG・ネットワークACL</text>
+  <text x="216" y="163" font-size="10.5" fill-opacity="0.8">パケットが遮断される</text>
+
+  <rect x="10" y="192" width="196" height="40" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.5"/>
+  <circle cx="30" cy="212" r="9" fill="#3F78D8" fill-opacity="0.18" stroke="#3F78D8" stroke-width="1.4"/>
+  <text x="30" y="216" text-anchor="middle" font-size="11">4</text>
+  <text x="46" y="209" font-size="11.5">外部への出口</text>
+  <text x="46" y="224" font-size="10" fill-opacity="0.7">IGW・NAT・エンドポイント</text>
+  <text x="216" y="217" font-size="10.5" fill-opacity="0.8">VPCの外に出られない</text>
+
+  <rect x="10" y="246" width="196" height="40" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.5"/>
+  <circle cx="30" cy="266" r="9" fill="#3F78D8" fill-opacity="0.18" stroke="#3F78D8" stroke-width="1.4"/>
+  <text x="30" y="270" text-anchor="middle" font-size="11">5</text>
+  <text x="46" y="263" font-size="11.5">名前解決</text>
+  <text x="46" y="278" font-size="10" fill-opacity="0.7">DNS・Route 53</text>
+  <text x="216" y="271" font-size="10.5" fill-opacity="0.8">宛先IPを引けない</text>
+
+  <line x1="108" y1="70" x2="108" y2="80" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-nl)"/>
+  <line x1="108" y1="124" x2="108" y2="134" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-nl)"/>
+  <line x1="108" y1="178" x2="108" y2="188" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-nl)"/>
+  <line x1="108" y1="232" x2="108" y2="242" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-nl)"/>
+</svg>

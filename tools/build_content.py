@@ -4,6 +4,11 @@ import json, os, re, html
 
 DOCS = os.path.join(os.path.dirname(__file__), "..", "docs")
 OUT = os.path.join(os.path.dirname(__file__), "..", "web", "content.js")
+# 図は web/figures/<id>.svg が原本（currentColor で描き、ページのテーマ色を継承する）。
+# GitHub の Markdown ビューア用には、白い下地と固定色を与えた複製を docs/figures/ に書き出す。
+FIG_SRC = os.path.join(os.path.dirname(__file__), "..", "web", "figures")
+FIG_OUT = os.path.join(DOCS, "figures")
+FIG_RE = re.compile(r"^!\[([^\]]*)\]\(\./figures/([A-Za-z0-9_-]+)\.svg\)$")
 
 # (ファイル名, 章ID, 章グループ)。グループは目次とホームの見出しになる。
 # 章IDは Web の読了状態（localStorage）のキーなので、既存の ID は変えない。
@@ -47,6 +52,31 @@ def inline(s):
     s = re.sub(r"\*\*([^*]+)\*\*", r"<b>\1</b>", s)
     s = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", lambda m: link(m.group(1), m.group(2)), s)
     return s
+
+def figure_svg(fig_id):
+    """図の原本を読む。呼び出し側で content.js にそのまま埋め込む。"""
+    with open(os.path.join(FIG_SRC, fig_id + ".svg"), encoding="utf-8") as f:
+        return f.read().strip()
+
+def write_standalone_figure(fig_id, svg):
+    """GitHub 表示用に、白い下地と固定の文字色を与えた SVG を docs/figures/ へ書き出す。
+
+    currentColor のままだと GitHub のダークテーマで黒い線が沈むため、
+    ルート要素に color を与え、どのテーマでも読める白い下地を最初に敷く。
+    """
+    os.makedirs(FIG_OUT, exist_ok=True)
+    m = re.match(r"^<svg[^>]*>", svg)
+    if not m:
+        raise ValueError("figure %s: <svg> 要素が見つからない" % fig_id)
+    head = m.group(0)
+    if " color=" not in head:
+        head = head[:-1] + ' color="#1B212E">'
+    body = head + '\n  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>' + svg[m.end():]
+    path = os.path.join(FIG_OUT, fig_id + ".svg")
+    old = open(path, encoding="utf-8").read() if os.path.exists(path) else None
+    if old != body:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(body)
 
 def split_row(line):
     return [c.strip() for c in line.strip().strip("|").split("|")]
@@ -110,6 +140,22 @@ def parse(path):
             if cur is not None:
                 cur["blocks"].append({"t": "h3", "html": inline(s[4:].strip())})
             i += 1
+            continue
+        m = FIG_RE.match(s)
+        if m and cur is not None:
+            flush()
+            alt, fig_id = m.group(1), m.group(2)
+            svg = figure_svg(fig_id)
+            write_standalone_figure(fig_id, svg)
+            i += 1
+            caption = ""
+            j = i
+            while j < n and lines[j].strip() == "":
+                j += 1
+            if j < n and lines[j].strip().startswith("**図：**"):
+                caption = inline(lines[j].strip()[len("**図：**"):].strip())
+                i = j + 1
+            cur["blocks"].append({"t": "figure", "id": fig_id, "alt": alt, "svg": svg, "caption": caption})
             continue
         if s.startswith("|"):
             flush()
