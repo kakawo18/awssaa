@@ -8,6 +8,7 @@ AWS Certified Solutions Architect – Associate (SAA-C03) の試験ポイント�
 👉 **[目次はこちら（docs/README.md）](./docs/README.md)**
 
 ## 構成
+- `docs/00-foundations.md` … 第0章 設計の基礎と問題の読み方（最初に読む）
 - `docs/01-compute.md` 〜 `docs/10-others.md` … 第1部 サービス別対策
 - `docs/11-secure.md` 〜 `docs/14-cost.md` … 第2部 試験分野別対策（判断フロー中心）
 - `docs/90-comparison.md` … 横断比較表（直前確認用）
