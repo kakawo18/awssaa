@@ -68,5 +68,48 @@ class BuildTest(unittest.TestCase):
         self.assertEqual(out[0]["num"], "第0章")
 
 
+
+class FigureTest(unittest.TestCase):
+    """図の参照行が figure ブロックになり、GitHub 表示用の複製が書き出されること。"""
+
+    def _parse(self, md):
+        import tempfile
+        with tempfile.NamedTemporaryFile("w", suffix=".md", encoding="utf-8", delete=False) as f:
+            f.write(md)
+            path = f.name
+        try:
+            return bc.parse(path)
+        finally:
+            os.unlink(path)
+
+    def test_figure_line_becomes_figure_block(self):
+        ch = self._parse(
+            "# 第3章 テスト\n\n## 3.1 節\n\n"
+            "![図：VPCの基本構成](./figures/vpc-overview.svg)\n\n"
+            "**図：** 受信は**IGW**経由。\n\n本文が続く。\n"
+        )
+        blocks = ch["sections"][0]["blocks"]
+        fig = blocks[0]
+        self.assertEqual(fig["t"], "figure")
+        self.assertEqual(fig["id"], "vpc-overview")
+        self.assertEqual(fig["alt"], "図：VPCの基本構成")
+        self.assertIn("<svg", fig["svg"])
+        self.assertEqual(fig["caption"], "受信は<b>IGW</b>経由。")
+        # キャプション行は本文として二重に出力されない
+        self.assertEqual([b["t"] for b in blocks], ["figure", "p"])
+        self.assertEqual(blocks[1]["html"], "本文が続く。")
+
+    def test_standalone_copy_has_plate_and_fixed_color(self):
+        self._parse(
+            "# 第3章 テスト\n\n## 3.1 節\n\n"
+            "![図](./figures/vpc-overview.svg)\n"
+        )
+        out = os.path.join(bc.FIG_OUT, "vpc-overview.svg")
+        self.assertTrue(os.path.exists(out))
+        svg = open(out, encoding="utf-8").read()
+        self.assertIn('color="#1B212E"', svg)
+        self.assertIn('fill="#FFFFFF"', svg)
+        self.assertNotIn("<style", svg)
+
 if __name__ == "__main__":
     unittest.main()
