@@ -1,93 +1,103 @@
 # 付録A 横断比較表（復習用）
 
-> この表は**候補を素早く思い出すためのもの**です。手掛かりに合うサービスを挙げたら、最後の列の条件を確認してください。同じキーワードでも、接続元・データの鮮度・障害範囲・互換性によって答えは変わります。初読の入口にはせず、第0章→各章の仕組み→条件違いの例を読んだあとの復習表として使う。
+> **本表の活用法**：類似・競合するAWSサービスの選定において、素早く候補を絞り込み、最終的な判断を下すための整理表である。キーワードの表層的な一致だけで安易に判断せず、第3列に記載された「接続元」「データの整合性・鮮度」「耐障害性の範囲」「プロトコル互換性」などの詳細制約を必ず検証すること。本編各章で基礎概念と動作メカニズムを理解した後の総点検・直前復習ツールとして活用する。
 
 ---
 
 ## ストレージ
 
-| 比較 | 候補の分かれ目 | 最後に確認する条件 |
+| 比較対象 | 主要な判断軸・使い分け | 設計時に検証すべき条件・制約 |
 |---|---|---|
-| S3 / EBS / EFS | オブジェクト（HTTPで取得・容量無制限）＝S3／**単一EC2**のブロック＝EBS／**複数EC2で共有**＝EFS | 「複数から同時に」は共有ファイルかS3か（アプリがファイルシステムを要求するか）。EBSはAZ内・1台（io2 のマルチアタッチは例外） |
-| EBS / インスタンスストア | 永続・AZ内でデタッチ可＝EBS／**停止で消える**超高速な一時領域＝インスタンスストア | 「消えてよいデータか」。バッファ・キャッシュ・スクラッチ以外にインスタンスストアを使わない |
-| EFS / FSx for Windows | **Linux/NFS**＝EFS／**Windows/SMB/AD**＝FSx for Windows | プロトコル（NFS か SMB）と AD 統合の要否 |
-| FSx for Lustre / EFS | **HPC・数百GB/s・S3連携**＝Lustre／汎用共有＝EFS | スループット要件が桁違いか。S3 のデータを一時的に高速処理するか |
-| S3 Standard-IA / One Zone-IA | 可用性が必要＝Standard-IA／**再作成可能・最安**＝One Zone-IA | AZ 障害で消えてよいか（再作成できるか、レプリカか） |
-| Glacier Instant / Flexible / Deep Archive | **ミリ秒**＝Instant／**分〜時間**＝Flexible／**12〜48時間・最安・長期**＝Deep Archive | 取り出しまでの許容時間と、最低保存期間（90日／90日／180日）（→付録B） |
-| ライフサイクル / Intelligent-Tiering | パターンが**既知**＝ライフサイクル／**不明・変動**＝Intelligent-Tiering | アクセス頻度を予測できるか。128KB未満の小さなオブジェクトは Intelligent-Tiering の対象外 |
-| Storage Gateway / DataSync | **使い続ける（ハイブリッド運用）**＝Gateway／**移す（移行・定期同期）**＝DataSync | オンプレから継続的に読み書きするか、一方向に転送するか |
-| S3 Transfer Acceleration / CloudFront | **アップロード高速化**＝Transfer Acceleration／**配信高速化**＝CloudFront | 向き（アップロードか配信か） |
-
-## コンピューティング
-
-| 比較 | 候補の分かれ目 | 最後に確認する条件 |
-|---|---|---|
-| EC2 / Lambda | 15分超・OS制御・常時稼働＝EC2／イベント駆動・運用ゼロ＝Lambda | 実行時間、OS/ミドルウェアの制御要否、常時高負荷か（常時ならLambdaは割高） |
-| ECS / EKS | Kubernetes のエコシステム・マニフェスト・既存クラスタとの互換が要件＝EKS／それ以外の新規コンテナ運用＝ECS | 「Kubernetes」の語があるかではなく、**Kubernetes 互換が要件か**。運用負荷最小なら ECS on Fargate が候補 |
-| Fargate / EC2起動タイプ | サーバー管理なし＝Fargate／**GPU・特殊要件・RI活用**＝EC2 | GPU・特定インスタンス・デーモン常駐が要るか。常時稼働で RI/SP を使い切れるか |
-| Lambda / Batch | 15分以内＝Lambda／**長時間の計算ジョブ**＝Batch | 実行時間と、ジョブキューやスポットの活用要否 |
-| Batch / Step Functions | ジョブの**実行と並列化**＝Batch／**手順と分岐の制御**＝Step Functions | 「計算資源の管理」か「ワークフローの制御」か |
-| Beanstalk / CloudFormation | アプリを載せるだけ＝Beanstalk／**インフラを厳密に定義**＝CloudFormation | インフラの細かい制御が要るか、アプリだけ乗せたいか |
-| スポット / RI / Savings Plans | 中断可＝スポット／固定構成で最安＝RI／**柔軟に1〜3年**＝Savings Plans | 中断されて再実行できるか。1〜3年のコミットができるか。インスタンスタイプを変える可能性があるか |
-| Dedicated Host / Dedicated Instance | **ソケット/コア単位のBYOL**＝Host／専有だけ＝Instance | ライセンスがソケット/コア数に紐づくか |
-
-## ネットワーク
-
-| 比較 | 候補の分かれ目 | 最後に確認する条件 |
-|---|---|---|
-| ALB / NLB | L7ルーティング・WAF＝ALB／**TCP/UDP・静的IP・超低遅延**＝NLB | プロトコル（HTTPか TCP/UDPか）、固定IPの要否、WAF の要否 |
-| SG / NACL | ステートフル・許可のみ＝SG／**ステートレス・拒否できる**＝NACL | 拒否したい対象が L3/L4 でサブネット単位か。HTTP なら WAF、国単位なら CloudFront 地理的制限が候補（→第3章 3.2） |
-| ゲートウェイ / インターフェースエンドポイント | **VPC内から S3・DynamoDB・追加料金なし**＝ゲートウェイ／その他のサービス、**またはオンプレ・ピアリング越しから**＝インターフェース（ENI・有料） | **接続元は VPC 内かオンプレか**。S3 でも接続元が VPC の外ならインターフェース型（→第3章 3.3） |
-| ピアリング / Transit Gateway | 2〜数個・単純＝ピアリング／**多数・推移的・ハブ集約**＝TGW | VPC の数と、推移的ルーティングの要否。CIDR が重複していないか |
-| Direct Connect / Site-to-Site VPN | **一貫した帯域・低遅延（数週間かかる）**＝DX／**すぐ・安い・暗号化済み**＝VPN | 開通までの猶予、帯域の一貫性要件、暗号化要件（DX は既定で暗号化されない） |
-| CloudFront / Global Accelerator | **キャッシュ・HTTP**＝CloudFront／**静的IP・TCP/UDP・高速フェイルオーバー**＝GA | キャッシュが効く内容か、プロトコル、固定IPの要否 |
-| Route 53 フェイルオーバー / Global Accelerator | DNSでよい＝Route 53／**TTLを待てない**＝GA | 切替の許容時間（TTL 分の遅れを許せるか） |
-| CloudFront Functions / Lambda@Edge | 超軽量・ビューア側のみ＝Functions／**オリジンアクセス・重い処理**＝Lambda@Edge | 処理時間、外部アクセスの要否、実行タイミング（ビューア側かオリジン側か） |
-
-## データベース
-
-| 比較 | 候補の分かれ目 | 最後に確認する条件 |
-|---|---|---|
-| マルチAZ / リードレプリカ | **可用性**＝マルチAZ／**読み取り性能**＝リードレプリカ | 「マルチAZ」が**DBインスタンス配置**（スタンバイは読めない）か**DBクラスター配置**（読める）か。レプリカはアプリの接続先を変えるか（→第4章 4.1） |
-| RDS / Aurora | Oracle/SQL Server/BYOL＝RDS／**性能・自動拡張・15レプリカ**＝Aurora | エンジンが MySQL/PostgreSQL 互換でよいか |
-| Aurora Serverless / プロビジョンド | 断続的・予測不能＝Serverless v2／安定稼働＝プロビジョンド | 停止中の課金条件（最小 ACU、自動一時停止の対応バージョン）を確認 |
-| RDS / DynamoDB | 結合・トランザクション・SQL＝RDS／**キー検索・一桁ミリ秒**＝DynamoDB | アクセスパターンが固定か（キー設計できるか）。結合やアドホッククエリが要るか |
-| DynamoDB / DAX / ElastiCache | 一桁ミリ秒＝DynamoDB／**DynamoDB専用のマイクロ秒キャッシュ**＝DAX／汎用キャッシュ＝ElastiCache | 鮮度（TTL の間は古い）と整合性（DAX は結果整合性の読み取りのみ） |
-| Redis / Memcached | **永続化・レプリケーション・高度なデータ型**＝Redis／単純・マルチスレッド＝Memcached | 消えて困るデータか、Pub/Sub やソート済みセットが要るか |
-| ElastiCache / MemoryDB | キャッシュ＝ElastiCache／**プライマリDBとして耐久性が必要**＝MemoryDB | データの唯一のコピーになるか |
-| QLDB / Managed Blockchain | 単一所有者の**改変不能な履歴**＝QLDB／**複数組織で分散検証**＝Blockchain | 信頼できる中央管理者がいるか |
-
-## アプリケーション統合・分析
-
-| 比較 | 候補の分かれ目 | 最後に確認する条件 |
-|---|---|---|
-| SQS / SNS | 1つの処理系がためて分担して処理＝SQS／**複数の処理系へ同報**＝SNS | **同報か分担か**。両方なら SNS→SQS のファンアウト（→第6章 6.1） |
-| SNS / EventBridge | 単純な同報・低レイテンシ＝SNS／**内容でルーティング・AWSイベント・定期実行**＝EventBridge | 配信先を JSON の内容で分岐するか。AWS サービスのイベントを拾うか |
-| SQS / Kinesis | **処理したワーカーが削除する仕事のキュー**＝SQS／**保持期間内に複数が何度も読み直せる・順序**＝Kinesis | 複数のコンシューマーが同じデータを読むか。再処理が要るか |
-| Kinesis Data Streams / Firehose | カスタム処理・再処理・順序＝Streams／**S3等へ配送するだけ**＝Firehose | 後から読み直す必要があるか（Firehose は保持しない） |
-| SQS / Amazon MQ | 新規開発＝SQS／**既存のJMS/AMQPアプリ**＝MQ | プロトコル互換が要件か |
-| Athena / Redshift | S3にアドホックSQL＝Athena／**継続的な大規模BI**＝Redshift | クエリの頻度と規模。常時稼働の DWH が要るか |
-| Athena / OpenSearch | SQLでの分析＝Athena／**全文検索・リアルタイム可視化**＝OpenSearch | 全文検索・ログ可視化か、SQL 集計か |
-| Glue / EMR | サーバーレスETL＝Glue／**Hadoop/Sparkを制御**＝EMR | クラスタの細かい制御や既存 Hadoop 資産が要るか |
-| Kinesis / MSK | 新規・マネージド＝Kinesis／**既存Kafka**＝MSK | Kafka 互換が要件か |
-
-## セキュリティ・管理
-
-| 比較 | 候補の分かれ目 | 最後に確認する条件 |
-|---|---|---|
-| CloudTrail / CloudWatch / Config | **誰がAPIを呼んだか**＝CloudTrail／**メトリクスとログ**＝CloudWatch／**設定の履歴と準拠**＝Config | 問いが「誰が」「性能」「設定」のどれか |
-| GuardDuty / Inspector / Macie | **不審な振る舞い**／**脆弱性（CVE）**／**S3の機密データ** | 対象が「挙動」「ソフトウェア」「データ内容」のどれか |
-| Security Hub / Detective | 結果の**集約**／原因の**調査** | 集約して見たいか、原因を掘りたいか |
-| KMS / CloudHSM | マネージド・統合＝KMS／**専有HSM・FIPS 140-2 L3**＝CloudHSM | 規制で専有 HSM が要求されるか。AWS 統合サービスとの連携が要るか |
-| Secrets Manager / Parameter Store | **自動ローテーション**が要る＝Secrets Manager／無料で十分＝Parameter Store | ローテーション要件と、周辺料金（Parameter Store の高度なパラメータは有料） |
-| IAM Identity Center / Cognito | **AWSを操作する社員**＝Identity Center／**アプリの利用者**＝Cognito | 認証する主体が AWS の操作者か、アプリのエンドユーザーか |
-| Managed Microsoft AD / AD Connector | AWS側にADを置く＝Managed／**オンプレADへ転送するだけ**＝AD Connector | AD を AWS 側で持つか、オンプレの AD をそのまま使うか |
-| WAF / Shield / Network Firewall | L7のWeb攻撃＝WAF／**DDoS**＝Shield／**VPCのL3-L7フィルタ**＝Network Firewall | 守る層（HTTP か、ネットワーク全体か）と攻撃の種類 |
-| Organizations / Control Tower | 請求と**SCP**＝Organizations／**ベストプラクティス構成を自動化**＝Control Tower | 統制だけか、ランディングゾーンの自動構築まで要るか |
-| Trusted Advisor / Compute Optimizer | 5観点の**広く浅い点検**／**適正サイズの機械学習推奨** | サイズ推奨が欲しいか、全般的な点検か |
-| Cost Explorer / Budgets / CUR | 分析＝Explorer／**事前アラート**＝Budgets／**最詳細データ**＝CUR | 「事前に」通知したいか、詳細データを自分で分析するか |
-| Systems Manager / CloudFormation | 起動後の**運用・構成管理**＝SSM／**プロビジョニング**＝CloudFormation | 作る話か、作った後に運用する話か |
+| **S3 / EBS / EFS** | オブジェクト形式（HTTP経由・容量無制限）＝**S3**／単一インスタンス専用ブロック＝**EBS**／複数インスタンス同時共有ファイル＝**EFS** | 「複数から同時に読み書きする」要件において、標準POSIXファイルシステムが必要か（EFS）、API経由のオブジェクトアクセスでよいか（S3）。※EBSは同一AZ・単一インスタンスが原則（io2のMulti-Attachを除く）。 |
+| **EBS / インスタンスストア** | 永続的・AZ内で付け替え可能＝**EBS**／ホスト停止時に消滅する超高速NVMe一時領域＝**インスタンスストア** | 「データ消失が許容されるワークロードか」。キャッシュ、バッファ、スクラッチ領域以外の永続データにインスタンスストア単体を使用してはならない。 |
+| **EFS / FSx for Windows** | Linuxネイティブ（NFSプロトコル）＝**EFS**／Windows・Active Directory統合（SMBプロトコル）＝**FSx for Windows** | クライアントOSの種類、プロトコル（NFSかSMBか）、およびActive Directory認証の要否。 |
+| **FSx for Lustre / EFS** | HPC・機械学習・数百GB/s以上の高スループット・S3連携＝**FSx for Lustre**／汎用共有ファイル＝**EFS** | スループット要件の桁数、およびAmazon S3データレイクとの透過的な高速連携が必要か。 |
+| **S3 Standard-IA / One Zone-IA** | 複数AZの耐障害性が必要＝**Standard-IA**／再生成可能で単一AZで最安＝**One Zone-IA** | AZ障害によるデータ消失が許容されるか（再作成可能なサムネイル、他リージョンの複製等）。 |
+| **Glacier Instant / Flexible / Deep Archive** | ミリ秒単位の即時取り出し＝**Instant**／数分〜数時間＝**Flexible**／12〜48時間の最安長期保管＝**Deep Archive** | 取り出しまでに許容される時間、および最低保管期間（Instant: 90日 / Flexible: 90日 / Deep Archive: 180日）。 |
+| **ライフサイクル / Intelligent-Tiering** | アクセス頻度の低下パターンが既知＝**ライフサイクル**／アクセス頻度が予測不能・不規則＝**Intelligent-Tiering** | アクセス頻度の予測可能性。※128KB未満の極小オブジェクトはIntelligent-Tieringの自動階層化対象外。 |
+| **Storage Gateway / DataSync** | オンプレミスからAWSストレージを**日常的に継続利用**＝**Storage Gateway**／オンプレミス↔AWS間の**移行・定期同期**＝**DataSync** | オンプレミス業務アプリからハイブリッドで読み書きし続けるか、一方向にバッチ同期するか。 |
+| **S3 Transfer Acceleration / CloudFront** | S3バケットへの**アップロード高速化**＝**Transfer Acceleration** | グローバルエンドユーザーへの**コンテンツ配信・キャッシュ**＝**CloudFront** | トラフィックの方向（インバウンドアップロードか、アウトバウンド配信か）。 |
 
 ---
 
-[目次に戻る](./README.md) ／ [キーワード逆引き](./91-keywords.md)
+## コンピューティング
+
+| 比較対象 | 主要な判断軸・使い分け | 設計時に検証すべき条件・制約 |
+|---|---|---|
+| **EC2 / Lambda** | 15分超の処理・OS完全制御・常時高負荷＝**EC2**／イベント駆動・インフラ管理不要＝**Lambda** | 連続実行時間（Lambdaは最大15分）、OS/ミドルウェアの制御要否、トラフィックの定常性（常時高負荷ではEC2のRI/SPが割安）。 |
+| **ECS / EKS** | AWSネイティブで管理負荷を最小化＝**ECS**／Kubernetesエコシステム・既存マニフェスト流用＝**EKS** | 単にコンテナを動かしたいだけか、Kubernetes（kubectl, Helm, CRD）の互換性が必須要件か。 |
+| **Fargate / EC2起動タイプ** | サーバー管理不要のサーバーレス運用＝**Fargate**／GPU利用・特殊カーネル・高密度集約＝**EC2** | GPU利用、特定インスタンスファミリの指定、デーモンセット等のホスト制御が必要か。 |
+| **Lambda / AWS Batch** | 実行時間15分以内の軽量処理＝**Lambda** | 15分を超える長時間の並列計算バッチ・ジョブキュー＝**AWS Batch** | 処理時間、およびスポットインスタンスによるコスト最適化の要否。 |
+| **AWS Batch / Step Functions** | 大規模計算ジョブのスケジューリング・実行＝**AWS Batch**／処理手順・条件分岐・エラー処理のフロー制御＝**Step Functions** | 「計算リソースとジョブの実行基盤」か、「複数サービスのワークフロー制御」か。 |
+| **Elastic Beanstalk / CloudFormation** | アプリケーションコード中心の自動展開＝**Beanstalk**／インフラ全体の厳密なIaC定義＝**CloudFormation** | インフラの高度なカスタマイズが必要か、Webアプリ環境の迅速な構築を最優先とするか。 |
+| **スポット / RI / Savings Plans** | 中断耐性のあるワークロード＝**スポット**／特定インスタンスの最安コミット＝**RI**／柔軟な1〜3年コミット＝**Savings Plans** | 中断発生時に再実行可能なアーキテクチャか。将来的なインスタンスタイプ変更の可能性があるか。 |
+| **Dedicated Host / Dedicated Instance** | ソケット数・物理コア単位のBYOLライセンス管理＝**Dedicated Host**／他テナントとのハードウェア分離のみ＝**Dedicated Instance** | ソフトウェアライセンスが物理ソケット・物理コア数にバインドされているか。 |
+
+---
+
+## ネットワーク
+
+| 比較対象 | 主要な判断軸・使い分け | 設計時に検証すべき条件・制約 |
+|---|---|---|
+| **ALB / NLB** | HTTP/HTTPS、L7パスルーティング、WAF連携＝**ALB**／TCP/UDP、固定IP、超低遅延、高スループット＝**NLB** | プロトコル種別、固定グローバルIPの要否、およびWAFによるWebアプリケーション保護の要否。 |
+| **セキュリティグループ / ネットワークACL** | ステートフル・インスタンス単位・許可のみ＝**SG**／ステートレス・サブネット単位・明示的拒否＝**NACL** | 特定IPアドレスの遮断（Deny）が必要か（L3/L4遮断はNACL、HTTPリクエスト遮断はWAF、国単位はCloudFront）。 |
+| **ゲートウェイ型 / インターフェース型エンドポイント** | VPC内からのS3/DynamoDBアクセス（追加料金なし）＝**ゲートウェイ型**／その他のサービス、またはオンプレミス/ピアリング経由＝**インターフェース型** | **接続元が同一VPC内か、オンプレミス/別VPCか**。S3であってもオンプレミスやDirect Connect経由でアクセスする場合はインターフェース型が必須。 |
+| **VPCピアリング / Transit Gateway** | 少数のVPC間を1対1で直接接続＝**ピアリング**／多数のVPC・オンプレミスをハブ＆スポークで集約＝**Transit Gateway** | VPCの接続数、および推移的ルーティング（Transitive Routing）の要否。CIDRブロックの重複がないか。 |
+| **Direct Connect / Site-to-Site VPN** | 安定した広帯域・極めて低いジッター（納期数週間）＝**Direct Connect**／即時導入・低コスト・標準IPsec暗号化＝**VPN** | 開通までのリードタイム、回線帯域の安定性要件、および暗号化要件（DXは標準では平文通信）。 |
+| **CloudFront / Global Accelerator** | HTTP/HTTPSコンテンツのキャッシュとエッジ配信＝**CloudFront**／非HTTP（TCP/UDP）、静的Anycast IP、高速フェイルオーバー＝**Global Accelerator** | キャッシュが有効なコンテンツか、プロトコル種別、および固定IPアドレスがクライアント要件か。 |
+| **Route 53 フェイルオーバー / Global Accelerator** | DNSレベルの切り替え（TTLの遅延許容）＝**Route 53**／IPレベルの即時切り替え（数秒〜数十秒）＝**Global Accelerator** | 障害発生時のフェイルオーバー許容時間（DNSキャッシュTTLの影響を排除したいか）。 |
+| **CloudFront Functions / Lambda@Edge** | 超軽量・サブミリ秒・ビューア側イベントのみ＝**CloudFront Functions**／オリジン側イベント・外部ネットワークアクセス・重い処理＝**Lambda@Edge** | 処理時間、外部API呼び出しの要否、およびリクエストボディの参照要否。 |
+
+---
+
+## データベース
+
+| 比較対象 | 主要な判断軸・使い分け | 設計時に検証すべき条件・制約 |
+|---|---|---|
+| **RDSマルチAZ / リードレプリカ** | 高可用性・障害時の自動フェイルオーバー＝**マルチAZ**／読み取り負荷分散・参照性能向上＝**リードレプリカ** | 「スタンバイインスタンスは参照クエリを処理できない（マルチAZ DBインスタンス）」点に留意。読み取り分散にはアプリ側の接続先変更が必要。 |
+| **Amazon RDS / Amazon Aurora** | 商用DBエンジン（Oracle/SQL Server）やBYOL＝**RDS**／高スループット・最大15台の高速自動拡張レプリカ＝**Aurora** | データベースエンジンがMySQL/PostgreSQL互換で要件を満たせるか。 |
+| **Aurora Serverless v2 / プロビジョンド** | トラフィックが不規則・急激なスパイク＝**Serverless v2**／定常的・予測可能な高負荷＝**プロビジョンド** | アイドル時の最小ACU課金、および長期リザーブドインスタンスによる割引メリットとの比較。 |
+| **Amazon RDS / Amazon DynamoDB** | 複雑な結合・ACIDトランザクション・SQLクエリ＝**RDS**／キーバリュ型・一桁ミリ秒・水平無限スケール＝**DynamoDB** | データアクセスパターンが事前に固定・設計可能か。アドホックな集計や複雑なJOINが必要か。 |
+| **DynamoDB / DAX / ElastiCache** | 一桁ミリ秒のNoSQL＝**DynamoDB**／DynamoDB専用のマイクロ秒インメモリキャッシュ＝**DAX**／RDBMS等の汎用キャッシュ＝**ElastiCache** | データの整合性要件（DAXは結果整合性の読み取りのみをキャッシュ）。 |
+| **Redis / Memcached** | データの永続化・レプリケーション・複雑なデータ構造＝**Redis**／シンプルなKVS・マルチスレッド処理＝**Memcached** | ノード障害時のデータ永続化やPub/Sub機能が必要か。 |
+| **ElastiCache / Amazon MemoryDB** | 一時的なキャッシュ層＝**ElastiCache**／プライマリデータベースとしての高耐久性と超低遅延を両立＝**MemoryDB** | データが消失してもバックエンドから再生成可能か、唯一の正本データストアとなるか。 |
+| **Amazon QLDB / Managed Blockchain** | 中央集権的な管理者による改ざん不能な台帳履歴＝**QLDB**／複数企業・組織間で信頼を分散するコンソーシアム＝**Managed Blockchain** | 信頼できる中央管理主体が存在するか、分散合意形成が必要か。 |
+
+---
+
+## アプリケーション統合・分析
+
+| 比較対象 | 主要な判断軸・使い分け | 設計時に検証すべき条件・制約 |
+|---|---|---|
+| **Amazon SQS / Amazon SNS** | メッセージのキューイング・分散ワーカーでの分担処理＝**SQS**／複数購読者への一斉配信（Pub/Sub同報）＝**SNS** | 「1対1の分担（キュー）」か「1対Nの同報（トピック）」か。双方を組み合わせる場合はSNS→SQSのファンアウト構成。 |
+| **Amazon SNS / Amazon EventBridge** | シンプルなPub/Sub同報・極低遅延＝**SNS**／ペイロード内容に基づくルーティング・AWSイベント連携・スキーマレジストリ＝**EventBridge** | メッセージのJSON属性による高度なフィルタリングや、SaaS/AWSサービス連携が必要か。 |
+| **Amazon SQS / Amazon Kinesis Data Streams** | 処理完了後にメッセージを削除するタスクキュー＝**SQS**／同一ストリームを複数コンシューマーが繰り返し読み直す時系列データ＝**Kinesis** | 順序保証の要件、および保持期間内における複数コンシューマーによる並列・再処理の要否。 |
+| **Kinesis Data Streams / Kinesis Data Firehose** | リアルタイムカスタム処理・データ保持・順序維持＝**Data Streams**／S3・Redshift・OpenSearch等へのサーバーレス自動ロード＝**Firehose** | データをストリーム内に一時保持して複数回読み出す必要があるか、単なるS3等への配信か。 |
+| **Amazon SQS / Amazon MQ** | クラウドネイティブな新規開発＝**SQS**／既存のメッセージングプロトコル（JMS, AMQP, MQTT等）の移行＝**Amazon MQ** | オープン標準プロトコルとの後方互換性が必須要件か。 |
+| **Amazon Athena / Amazon Redshift** | S3上のデータに対するサーバーレス・アドホックSQL分析＝**Athena**／常時高頻度で実行されるペタバイト級エンタープライズDWH・BI＝**Redshift** | クエリの実行頻度、応答速度要件、および常時稼働DWHのコスト対効果。 |
+| **Amazon Athena / Amazon OpenSearch Service** | SQLによるリレーショナル・集計分析＝**Athena**／全文フリーワード検索・ログ分析・リアルタイム可視化（Kibana）＝**OpenSearch** | 分析対象のデータ形式、および全文検索やログ監視ダッシュボードが主目的か。 |
+| **AWS Glue / Amazon EMR** | サーバーレスETL・データカタログ・ジョブ管理＝**Glue**／Hadoop/Sparkクラスタのきめ細かな制御・大規模並列分散処理＝**EMR** | 基盤インフラの制御要否、および既存のHadoop/Sparkエコシステム資産の活用要否。 |
+| **Amazon Kinesis / Amazon MSK** | 完全マネージド・AWSネイティブなストリーミング＝**Kinesis**／Apache Kafkaとの完全な互換性・既存資産移行＝**Amazon MSK** | Kafkaエコシステム（Kafka Connect, Schema Registry等）の利用が必須か。 |
+
+---
+
+## セキュリティ・運用管理
+
+| 比較対象 | 主要な判断軸・使い分け | 設計時に検証すべき条件・制約 |
+|---|---|---|
+| **CloudTrail / CloudWatch / AWS Config** | API操作履歴（誰が・いつ・何を）＝**CloudTrail**／リソースの性能メトリクスとログ＝**CloudWatch**／リソース設定の履歴とルール準拠性＝**AWS Config** | 監視・監査の対象が「ユーザー操作」「システム状態」「構成の整合性」のどれか。 |
+| **GuardDuty / Inspector / Macie** | アカウントや通信の脅威・振る舞い検知＝**GuardDuty**／EC2・ECR・LambdaのOS/パッケージ脆弱性検査＝**Inspector**／S3内の個人情報・機密データ検出＝**Macie** | 検知対象が「不審なアクティビティ」「ソフトウェア脆弱性」「機密データの漏洩リスク」のどれか。 |
+| **AWS Security Hub / Amazon Detective** | セキュリティ検出結果の**一元集約とコンプライアンス評価**＝**Security Hub**／インシデントの根本原因・影響範囲の**深掘りグラフ調査**＝**Detective** | 「現状の課題集約」か、「発生した侵害原因の追跡分析」か。 |
+| **AWS KMS / AWS CloudHSM** | マルチテナント・マネージド暗号化・AWSネイティブ統合＝**KMS**／シングルテナント・FIPS 140-2 レベル3専用ハードウェア＝**CloudHSM** | 法規制や企業規程で専用ハードウェアによる鍵管理が義務付けられているか。 |
+| **Secrets Manager / Parameter Store** | パスワードの**自動ローテーション**・シークレット管理＝**Secrets Manager**／軽量な設定値管理・無料標準パラメータ＝**Parameter Store** | 認証情報の自動更新機能が必要か、またはシンプルな環境変数・構成管理で十分か。 |
+| **IAM Identity Center / Amazon Cognito** | 社内従業員のAWSコンソール/CLIログイン・SSO＝**IAM Identity Center** | Web/モバイルアプリケーションのエンドユーザー認証＝**Cognito** | 認証対象が「社内管理者・開発者」か、「一般消費者・アプリ顧客」か。 |
+| **Managed Microsoft AD / AD Connector** | クラウド上にフルマネージドActive Directoryを構築＝**Managed AD**／オンプレミスの既存ADへ認証要求を中継プロキシ＝**AD Connector** | AWS側で独立したドメインコントローラーを保持するか、オンプレミスADを正本として直結するか。 |
+| **AWS WAF / AWS Shield / Network Firewall** | L7 Webレイヤーの攻撃遮断（SQLi, XSS）＝**WAF**／L3/L4 DDoS攻撃防御＝**Shield**／VPC全体のL3-L7ステートフルパケット検査＝**Network Firewall** | 保護対象のレイヤー（HTTPトラフィックか、VPCネットワーク全体か）と脅威の種類。 |
+| **AWS Organizations / AWS Control Tower** | マルチアカウントの一括請求とSCP＝**Organizations**／ランディングゾーン構築とガードレール自動適用＝**Control Tower** | 組織ポリシーの個別適用か、マルチアカウント基盤のベストプラクティス自動構築か。 |
+| **AWS Trusted Advisor / Compute Optimizer** | コスト・性能・耐障害性・セキュリティの**総合点検**＝**Trusted Advisor**／機械学習による**インスタンス適正サイズの具体的推奨**＝**Compute Optimizer** | アカウント全体のベストプラクティス監査か、リソースのサイジング最適化か。 |
+| **AWS Systems Manager / CloudFormation** | 稼働中サーバー群の**運用管理・パッチ適用・コマンド実行**＝**SSM**／インフラリソース全体の**プロビジョニング自動化（IaC）**＝**CloudFormation** | 「リソース作成後の定常運用」か、「インフラの初期構築・再現」か。 |
+
+---
+
+[目次に戻る](./README.md) ／ [付録B キーワード逆引き](./91-keywords.md)
+

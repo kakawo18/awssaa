@@ -1,110 +1,117 @@
-# 付録B 問題文キーワード → 候補と確認条件（逆引き）
+# 付録B 設問キーワード逆引きと主要数値基準
 
-> SAAの設問は**言い回しがパターン化**している。この表は、言い回しから**候補を思い出す**ためのもの。候補を挙げたら、**最後の列の条件を確認してから決める**。同じキーワードでも、接続元・データの鮮度・障害範囲・互換性によって答えは変わる。
+> **本付録の活用法**：AWS SAA試験の設問で頻出する「典型的な要件表現」から、検討すべきアーキテクチャの候補を迅速に想起し、前提条件を検証するための逆引きリファレンスである。表層的なキーワードだけで短絡的に選択せず、第3列に記載された技術的制約（接続元、データ鮮度、障害スコープ、互換性等）を満たしているかを必ず確認すること。
 
 ---
 
-## 要件を表すフレーズ
+## 設問キーワード逆引き一覧
 
-| 問題文の言い回し | 候補 | 最後に確認する条件 |
+| 設問における典型的な要件・キーワード | 検討すべきアーキテクチャ・候補サービス | 選定時に必ず検証すべき条件・制約 |
 |---|---|---|
-| **運用オーバーヘッドを最小限に** | マネージド／サーバーレス（Lambda、Fargate、Aurora Serverless、DynamoDB、Glue、Athena） | 実行時間（Lambda 15分）、OS 制御の要否、互換性、常時稼働か。自前 EC2 構築はこれらの制約がある場合にだけ残る |
-| **最小限のコード変更で** / 既存のまま | 互換サービス（Amazon MQ、DocumentDB、Keyspaces、MSK、EKS、Babelfish、FSx、Transfer Family） | どのプロトコル・エンジンとの互換が要件か |
-| **最もコスト効率が高い** | 要件を満たす構成群の中の最安（スポット、ライフサイクル、Intelligent-Tiering、Savings Plans、サーバーレス、gp3、Graviton） | 稼働時間、転送量、既存契約、停止可能性、中断許容。**要件（可用性・RTO）を下回る案は不正解** |
-| **高可用性** | マルチAZ、ASG（min 2以上）、ELB、リージョン内冗長 | 設問が要求する障害範囲（インスタンス／AZ／リージョン）。誤削除には効かない |
-| **災害対策（DR）／リージョン障害** | クロスリージョン（S3 CRR、Auroraグローバル、DynamoDBグローバルテーブル、Route 53フェイルオーバー） | RTO と RPO の数値。切替は自動か手動か |
-| **RTO/RPOがほぼゼロ** | マルチサイト アクティブ/アクティブ | 複製方式が同期に近いか。コストは最高 |
-| **数分以内に復旧、コストは抑えたい** | ウォームスタンバイ／パイロットライト | RTO を満たす起動手順があるか。RPO は複製方式で別に確認 |
-| **スケーラブル／トラフィックが予測できない** | Auto Scaling、サーバーレス、DynamoDBオンデマンド | スパイクの立ち上がり速度（EC2 起動が間に合うか） |
-| **疎結合にしたい／依存を減らす** | SQS、SNS、EventBridge | 同報か分担か。順序・再処理の要否 |
-| **リアルタイム／ストリーミング** | Kinesis Data Streams、Firehose、Flink | 複数コンシューマーが読み直すか（Streams）、配送だけか（Firehose） |
-| **一桁ミリ秒** | DynamoDB | アクセスパターンがキー検索で固定か |
-| **マイクロ秒** | ElastiCache、DAX | 鮮度と整合性（TTL の間は古い。DAX は結果整合性のみ） |
-| **サブミリ秒・数百GB/s（HPC）** | FSx for Lustre | S3 連携の要否、Linux か |
-| **監査／誰が何をしたか** | CloudTrail | 90日超の保持が要るなら証跡（S3）か Lake |
-| **コンプライアンス／改変不可／保持期間** | オブジェクトロック（コンプライアンスモード）、Vault Lock、Artifact | ルートでも削除不可でよいか（コンプライアンスモード） |
-| **個人情報が含まれていないか** | Macie（S3）、Comprehend（テキスト） | 対象が S3 か、アプリ内のテキストか |
-| **インターネットを経由させたくない** | VPCエンドポイント／PrivateLink／Direct Connect | **接続元は VPC 内かオンプレか**。S3 でもオンプレからはインターフェース型 |
-| **パブリックIPを持たせずに更新・接続したい** | NAT Gateway（アウトバウンド）、**Session Manager**（接続）、VPCエンドポイント | 向き（インスタンスから外へ出るのか、人が入るのか）。Session Manager は外向き通信の経路にならない |
-| **固定IPが必要（ファイアウォール登録）** | NLB、Global Accelerator、Elastic IP | プロトコル（HTTP なら GA→ALB か NLB→ALB） |
-| **キーをコードに書かない** | IAMロール、Secrets Manager、Parameter Store | ローテーションが要るか（Secrets Manager） |
-| **キーを自社で完全管理したい** | CloudHSM、SSE-C、インポートしたキーマテリアル | 規制が「AWS に鍵を触らせない」まで要求するか |
-| **一時的にファイルを共有したい** | S3 事前署名URL | 有効期限と、発行者の権限 |
-| **特定のIPアドレスからの攻撃を遮断** | NACL（L3/L4・サブネット単位）、WAF の IP セット（HTTP）、CloudFront 地理的制限（国単位） | 層（L3/L4 か HTTP か）と単位（IP か国か）。SG は拒否を書けない |
-| **SQLインジェクション／XSS／ボット** | WAF | 付ける先は ALB／CloudFront／API Gateway（NLB 不可） |
-| **大規模DDoSと請求の急増** | Shield Advanced | 費用保護と 24 時間対応が要件か |
-| **開発者に決められた構成だけ使わせたい** | Service Catalog（＋SCP、アクセス許可境界） | 「使えるサービスの制限」（SCP）か「承認済み構成の提供」（Catalog）か |
-| **複数アカウントを統制したい** | Organizations＋SCP、Control Tower、Firewall Manager | 統制だけか、ランディングゾーン構築まで要るか |
-| **手作業のパッチ適用をやめたい** | Systems Manager Patch Manager | 対象が EC2（利用者責任）か、マネージドサービス（AWS 責任）か |
-| **踏み台サーバーをなくしたい** | Session Manager | SSH ポートを閉じられるか。IAM で操作権限を管理できるか |
-| **設定が勝手に変えられていないか** | AWS Config（＋自動修復） | 「変更の検知」か「誰が変えたか」（CloudTrail）か |
-| **メモリ使用率を監視したい** | CloudWatchエージェント（カスタムメトリクス） | 標準メトリクスにない（ハイパーバイザー視点）ことを理解しているか |
-| **ログから特定の文字列を検知して通知** | CloudWatch Logs メトリクスフィルタ＋アラーム | 通知先（SNS）と閾値 |
-| **オンプレのデータを一度に大量移行** | Snowball（回線が細い）／DataSync（オンライン） | 回線帯域と期限で、物理移送が速いか |
-| **DBを止めずに移行** | DMS（＋SCT） | 異種エンジン間か（SCT が要る） |
-| **既存のSFTPを維持** | Transfer Family | プロトコル（SFTP/FTPS/FTP）と認証方法 |
-| **セッション情報の保存場所** | ElastiCache（Redis）／DynamoDB | 消えてよいか（Memcached 不可）、複数 AZ で共有するか |
-| **静的コンテンツの配信** | S3＋CloudFront（OAC） | バケットを非公開にできているか |
-| **画像アップロード後の非同期処理** | S3イベント → SQS/SNS → Lambda | 処理系が1つ（SQS）か複数（SNS ファンアウト）か |
-| **急なスパイクでDBが落ちる** | 前段にSQS（バッファ）／ElastiCache／DynamoDB | キューで吸収できる一時的なスパイクか、持続的な流入超過か（後者は処理能力の増強） |
-| **同じ処理が2回実行された** | SQSの可視性タイムアウト延長／ワーカーの冪等性 | 再配信は FIFO でも起こる。FIFO の重複排除は送信側の重複だけ |
-| **メッセージが失われる** | DLQ、保持期間の延長 | DLQ は隔離。監視と再処理の手順まであるか |
-| **アプリは正常なのにヘルスチェックを通過してしまう** | ASGのヘルスチェックタイプを**ELB**にする | EC2 ステータスチェックだけではアプリ障害を検知できない |
-| **東京だけでなく世界中で速く** | CloudFront、Global Accelerator、レイテンシールーティング、マルチリージョン | キャッシュが効く内容か。プロトコル。データの所在規制 |
+| **「運用オーバーヘッド（管理工数）を最小限に」** | フルマネージドサービス／サーバーレス（AWS Lambda、AWS Fargate、Aurora Serverless、DynamoDB、AWS Glue、Amazon Athena） | 処理時間の上限（Lambdaは15分以内）、OSカーネル制御の要否、既存アプリとの互換性、および定常的な高負荷特性の有無（常時稼働ではEC2の方が割安になる場合がある）。 |
+| **「最小限のコード変更で」「既存システムをそのまま移行」** | 各種マネージド互換サービス（Amazon MQ、Amazon DocumentDB、Amazon Keyspaces、Amazon MSK、Amazon EKS、Babelfish for Aurora PostgreSQL、Amazon FSx、AWS Transfer Family） | 既存システムが依存しているプロトコル（JMS, AMQP等）やデータベースエンジンとの完全な互換性が満たされているか。 |
+| **「最もコスト効率が高い構成」** | 要件を満たす選択肢群の中で最も安価な構成（スポットインスタンス、S3ライフサイクル、S3 Intelligent-Tiering、Savings Plans、サーバーレス、EBS gp3、AWS Graviton） | 稼働時間、データ転送量、停止可能性、中断許容度。**設問の可用性・耐障害性要件（マルチAZ等）やRTO/RPOを満たせない安価な選択肢は誤答となる**。 |
+| **「高可用性を実現する」** | マルチAZ配置、Auto Scalingグループ（`Min=2` 以上）、Elastic Load Balancing、リージョン内冗長化 | 設問が求める障害耐性の範囲（単一インスタンス、AZ障害、リージョン障害）。※マルチAZは論理的な誤削除やデータ破損には効果がない。 |
+| **「ディザスタリカバリ（DR）」「リージョン規模の障害に備える」** | クロスリージョン展開（S3 クロスリージョンレプリケーション、Auroraグローバルデータベース、DynamoDBグローバルテーブル、Route 53 DNSフェイルオーバー） | 目標復旧時間（RTO）と目標復旧時点（RPO）の数値基準、およびフェイルオーバー処理が自動か手動か。 |
+| **「RTOおよびRPOをほぼゼロに抑える」** | マルチサイト（アクティブ/アクティブ）構成 | データレプリケーション方式が同期またはニアリアルタイム同期か。インフラ運用コストは最高水準となる。 |
+| **「数分〜数十分以内に復旧させ、コストは最小限に抑える」** | ウォームスタンバイ構成 または パイロットライト構成 | RTOを満たすためのプロビジョニング手順が自動化されているか。RPOはDBレプリケーション遅延によって決定される。 |
+| **「スケーラブル」「急激で予測不能なトラフィック変動」** | EC2 Auto Scaling、サーバーレス（API Gateway ＋ Lambda）、DynamoDBオンデマンドモード | スパイク発生時の立ち上がり速度（EC2インスタンスの初期化時間が数分かかる点に留意し、ウォームプール等の要否を検証）。 |
+| **「疎結合アーキテクチャ」「コンポーネント間の依存を排除」** | Amazon SQS、Amazon SNS、Amazon EventBridge | 単一ワーカーによる分担処理（SQS）か、複数購読者への一斉配信（SNS同報）か。処理順序（FIFO）や再試行制御の要否。 |
+| **「リアルタイム処理」「ストリーミングデータの取り込み」** | Amazon Kinesis Data Streams、Kinesis Data Firehose、Managed Service for Apache Flink | 複数のコンシューマーが同一データを反復処理するか（Streams）、S3/Redshift等へ自動ロードするだけか（Firehose）。 |
+| **「一桁ミリ秒の応答レイテンシ」** | Amazon DynamoDB（オンデマンド/プロビジョンド） | アクセスパターンがプライマリキー検索として事前に固定・設計可能か。 |
+| **「マイクロ秒の極めて低い応答レイテンシ」** | Amazon ElastiCache（Redis/Memcached）、Amazon DynamoDB Accelerator (DAX) | データの鮮度要件（キャッシュ有効期限中の遅延許容）および整合性要件（DAXは結果整合性の読み取りのみをキャッシュ）。 |
+| **「サブミリ秒・数百GB/s規模のスループット（HPC・機械学習）」** | Amazon FSx for Lustre | Amazon S3バケットとの透過的な連携要件、およびクライアントがLinux OSか。 |
+| **「API呼び出しの監査」「誰がいつ何を実行したかを追跡」** | AWS CloudTrail（管理イベント、データイベント） | 90日を超える長期保管が必要な場合は、S3バケットへの証跡（Trail）出力またはCloudTrail Lakeが必須。 |
+| **「コンプライアンス準拠」「データの改変・削除防止（WORM要件）」** | Amazon S3 オブジェクトロック（コンプライアンスモード）、AWS Backup Vault Lock | ルートユーザーであってもロック期間中の削除を不可とする厳格な法的規制か（コンプライアンスモード）。 |
+| **「個人情報（PII）や機密データが含まれていないかを検出」** | Amazon Macie（S3バケットのスキャン）、Amazon Comprehend（テキストからのPII抽出） | 検査対象がS3上のオブジェクトストレージか、アプリケーション内部で処理される自然言語テキストか。 |
+| **「通信をパブリックインターネットに一切出さない」** | VPCエンドポイント（Gateway / Interface）、AWS PrivateLink、AWS Direct Connect | **接続元クライアントの物理的な位置が同一VPC内か、オンプレミスか**。S3であってもオンプレミスからの閉域アクセスにはインターフェース型エンドポイントが必須。 |
+| **「EC2にパブリックIPを持たせずに管理・アクセスしたい」** | NAT Gateway（アウトバウンド通信用）、**AWS Systems Manager Session Manager**（安全なインバウンドシェル接続）、VPCエンドポイント | 通信の方向性（サーバーから外部APIへ出る通信か、運用者がサーバーへ入る操作か）。※Session Managerは踏み台サーバーやSSHポート開放を完全排除する。 |
+| **「固定パブリックIPアドレスが必要（外部FW登録等）」** | Network Load Balancer (NLB)、AWS Global Accelerator、Elastic IPアドレス | プロトコル要件（HTTP/HTTPSを終端したい場合は、Global Accelerator ＋ ALB または NLB ＋ ALBの組み合わせ）。 |
+| **「ソースコード内に認証情報を埋め込まない」** | IAMロール（EC2/Lambda用）、AWS Secrets Manager、AWS Systems Manager Parameter Store | パスワードやアクセストークンの自動ローテーション機能が必要か（Secrets Manager）。 |
+| **「暗号鍵を自社の専有ハードウェアで完全に制御したい」** | AWS CloudHSM、SSE-C（顧客提供鍵）、KMSへのインポートキー | 規制要件が「AWSオペレーターによる鍵への物理的アクセスの完全排除（FIPS 140-2 レベル3）」を義務付けているか。 |
+| **「外部パートナーやユーザーへ特定ファイルを一時的に安全共有」** | Amazon S3 事前署名URL（Presigned URL） | URLの有効期限設定、および発行主体であるIAMロールの適切なアクセス権限付与。 |
+| **「特定IPアドレスやCIDRブロックからの攻撃を遮断」** | ネットワークACL（サブネット単位・L3/L4の拒否ルール）、AWS WAF（HTTP/HTTPSのIPセット拒否）、CloudFront 地理的制限（国単位遮断） | 遮断すべきネットワーク階層（L3/L4パケットか、L7 HTTPリクエストか）。※セキュリティグループは拒否（Deny）ルールを定義できない。 |
+| **「SQLインジェクション、クロスサイトスクリプティング（XSS）防御」** | AWS WAF（マネージドルール、レート制限） | WAFの関連付け先がApplication Load Balancer、Amazon CloudFront、Amazon API Gatewayのいずれかであること（NLBには適用不可）。 |
+| **「大規模DDoS攻撃からの防御と請求保護」** | AWS Shield Advanced | 専門チーム（SRT）による24時間年中無休の対応や、DDoS攻撃起因のコスト急増に対する経済的保護が求められているか。 |
+| **「開発者が起動できるインフラ構成を承認済みのものだけに制限」** | AWS Service Catalog（＋SCP、IAMアクセス許可境界） | ガバナンスの焦点が「利用可能なサービスそのものの制限（SCP）」か、「承認されたテンプレートのセルフサービス提供（Service Catalog）」か。 |
+| **「複数アカウントのガバナンスとガードレールの一元管理」** | AWS Organizations ＋ SCP、AWS Control Tower、AWS Firewall Manager | 単なる請求・ポリシー統合か、ランディングゾーン全体のベストプラクティス自動構築（Control Tower）か。 |
+| **「EC2インスタンスへの手動パッチ適用を自動化したい」** | AWS Systems Manager Patch Manager | パッチ適用の対象がEC2ゲストOS（利用者責任）か、マネージドサービス（AWS責任）か。 |
+| **「踏み台サーバー（Bastion Host）とSSHキー管理を廃止したい」** | AWS Systems Manager Session Manager | インバウンド22番ポートを安全に閉じ、IAMとCloudTrailによってシェル操作ログを集中管理する。 |
+| **「リソースの設定が勝手に変更されていないかを継続的に監査」** | AWS Config（マネージドルール ＋ SSM Automation自動修復） | 評価の目的が「リソース構成の時系列変更履歴とコンプライアンス準拠（Config）」か、「API操作者の特定（CloudTrail）」か。 |
+| **「EC2インスタンスのメモリ使用率やディスク空き容量を監視」** | CloudWatchエージェント（Unified Agent）の導入によるカスタムメトリクス収集 | メモリやディスク内部情報はゲストOS内部のリソースであり、ハイパーバイザー側の標準メトリクスでは取得できないことの理解。 |
+| **「ログファイル内の特定文字列（ERROR等）を検知して通知」** | CloudWatch Logs メトリクスフィルタ ＋ CloudWatch アラーム ＋ Amazon SNS | 検出パターンの定義、数値メトリクスへの変換、およびSNSトピック経由の管理者通知。 |
+| **「オンプレミスから大容量データをネットワーク帯域を圧迫せず移行」** | AWS Snowball Edge（物理アプライアンス輸送）／AWS DataSync（専用線・オンライン高速同期） | ネットワーク帯域幅と移行期限の比較（数週間〜数か月かかる場合はSnowball等のオフライン物理移送が最速かつ安価）。 |
+| **「データベースを本番稼働させたままAWSへ移行」** | AWS Database Migration Service (DMS) ＋ AWS SCT | 同種エンジン間移行か、異種エンジン間移行か（異種の場合は事前にAWS SCTによるスキーマ変換が必須）。 |
+| **「取引先の既存SFTPワークフローを変更せずにS3へ格納」** | AWS Transfer Family（SFTP/FTPS/FTPエンドポイント） | 外部パートナーのクライアントソフトやプロトコルを変更せず、バックエンドをS3/EFSに統合する。 |
+| **「Webセッション情報の外部集中管理」** | Amazon ElastiCache（Redis）／Amazon DynamoDB | ノード障害時にもセッションを消失させないためのマルチAZ・永続化要件（Memcachedは永続化非対応のため不適）。 |
+| **「静的Webコンテンツの安全かつ低遅延なグローバル配信」** | Amazon S3 ＋ Amazon CloudFront（オリジンアクセスコントロール: OAC） | S3バケットのパブリックアクセスを完全に遮断し、CloudFrontからの署名リクエストのみをバケットポリシーで許可する構成。 |
+| **「画像アップロードを契機とした非同期バックグラウンド処理」** | S3イベント通知 → Amazon SQS / SNS → AWS Lambda / ECS | 後続処理を実行するシステムが単一（SQSバッファ）か、複数システムへの同時通知（SNSファンアウト）か。 |
+| **「アクセススパイクによるバックエンドデータベースの過負荷・停止防止」** | 前段へのAmazon SQS配置によるバッファリング、Amazon ElastiCacheによる読み取りオフロード | スパイクが一時的なトラフィック集中か（SQSで吸収可能）、持続的な容量不足か（DBスケーリングが必要）。 |
+| **「メッセージの重複処理によるデータ不整合の防止」** | SQS可視性タイムアウトの適正化 ＋ ワーカー処理の**冪等性（Idempotency）の担保** | SQS標準キューだけでなくFIFOキューであってもネットワーク再送等により重複配信は発生し得るため、アプリケーション側で冪等性を確保する。 |
+| **「処理に失敗したメッセージの消失防止」** | **デッドレターキュー（DLQ）**の構成 ＋ CloudWatchアラームによる滞留監視 | 失敗メッセージを隔離するだけでなく、原因調査後に再処理（Redrive）を行う運用フローを整備する。 |
+| **「Webアプリがエラーを返しているのにEC2が正常と判定される」** | Auto Scalingグループのヘルスチェックタイプを**「ELB」**に変更する | EC2標準のステータスチェック（ハイパーバイザー/ハードウェア健全性）だけでは、OS内部のWebサーバープロセスの死活を検知できないため。 |
+| **「世界中の分散拠点からのアクセスレイテンシを均一に短縮」** | Amazon CloudFront、AWS Global Accelerator、Route 53 レイテンシーベースルーティング | 対象コンテンツがエッジでキャッシュ可能か（CloudFront）、非HTTP・動的パケットか（Global Accelerator）。 |
 
 ---
 
-## 数字で覚えるもの（主要な数値と公式出典）
+## 主要な数値クォータと仕様基準一覧
 
-> この表は確認日時点の現行仕様です。**既定値・上限（調整可／固定）・設計上の目安**を区別しています。実際の設問では明示された条件を優先してください。「従来」と書いた値は、古い設問がその値を前提にしていることがあるため併記しています。章本文の数値はこの表を正とし、食い違いがあればここを直してから本文を直す。
+本表に記載された仕様数値は、公式ドキュメントに準拠した基準値である。**「デフォルト値」「調整可能な上限」「固定のハードリミット」「設計上の推奨目安」**の区分を意識して活用すること。
 
-| 項目 | 値・種類 | 条件 | 根拠・確認日 |
+| 設計項目 | 仕様・基準値 | 区分・条件 | 公式ドキュメント・根拠 |
 |---|---|---|---|
-| Lambda 最大実行時間 | 900秒（15分）・**上限（固定）** | 通常の関数。Lambda Managed Instances の非同期／イベントソース呼び出しは最大90分（例外扱い、SAA の主題ではない） | [Lambda クォータ](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html)・2026-09-13 |
-| Lambda メモリ | 128 MB〜10,240 MB・**上限（固定）** | 1 MB 刻み。**CPU はメモリに比例**（1,769 MB で 1 vCPU 相当） | 同上・2026-09-13 |
-| Lambda 同時実行数 | 1,000・**既定（調整可）** | リージョン単位。**新規アカウントはこれより低い**ことがあり、利用に応じて自動で引き上げ | 同上・2026-09-13 |
-| Lambda `/tmp` | 512 MB〜10,240 MB・上限（固定） | 1 MB 刻み | 同上・2026-09-13 |
-| Lambda デプロイパッケージ | zip 50 MB（直接）／解凍後 250 MB／コンテナイメージ 10 GB・上限（固定） | レイヤー含む | 同上・2026-09-13 |
-| SQS メッセージ保持 | 既定4日・**既定**／60秒〜14日・上限（固定） | 標準・FIFO 共通 | [SQS メッセージクォータ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html)・2026-09-13 |
-| SQS メッセージ最大サイズ | 1,048,576 bytes（1 MiB）・上限（固定） | 送信するメッセージ本体。拡張クライアントで S3 参照にすればペイロード最大 2 GB。**従来は 256 KB** | 同上・2026-09-13 |
-| SQS 可視性タイムアウト | 既定30秒・**既定**／0秒〜12時間・上限（固定） | 処理時間より長く設定するか、処理中に延長する | 同上・2026-09-13 |
-| SQS 配信遅延（遅延キュー） | 既定0秒／最大15分・上限（固定） | 可視性タイムアウトとは別の時計 | 同上・2026-09-13 |
-| SQS ロングポーリング | 最大20秒・上限（固定） | `WaitTimeSeconds` を 0 より大きくすると有効。既定は 0（ショートポーリング） | [ショート／ロングポーリング](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html)・2026-09-13 |
-| SQS FIFO スループット | 300 TPS・**既定モード**（APIアクションごと・パーティションごと）／バッチ10件で3,000メッセージ/秒 | **高スループットモード**では us-east-1 等で最大 70,000 TPS、その他リージョンは既定 2,400 TPS 等。**TPS（API 呼び出し）とメッセージ/秒を混同しない** | [SQS メッセージクォータ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html)・2026-09-13 |
-| SQS FIFO 重複排除の窓 | 5分・固定 | 送信側の重複排除。受信側の再配信は防がない | [FIFO 正確に1回の処理](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-exactly-once-processing.html)・未確認（本文の記述に基づく） |
-| S3 オブジェクト最大サイズ | 48.8 TiB・上限（固定） | マルチパートアップロード（最大10,000パート×最大5 GiB）。**従来は 5 TB** | [S3 マルチパートの上限](https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html)・2026-09-13 |
-| S3 マルチパート | パート 5 MiB〜5 GiB、最大10,000パート・上限（固定） | 最後のパートに下限なし。100 MB 超で推奨。単一 PUT は 5 GiB まで | 同上・2026-09-13 |
-| S3 リクエスト性能 | プレフィックスあたり 3,500 PUT/COPY/POST/DELETE・5,500 GET/HEAD 毎秒・**目安（少なくとも）** | プレフィックスを増やせば並列に伸びる。スケール中は 503 が出ることがある | [S3 性能の最適化](https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html)・2026-09-13 |
-| S3 最低保存期間（課金） | Standard-IA 30日／One Zone-IA 30日／Glacier Instant 90日／Glacier Flexible 90日／Deep Archive 180日・課金条件 | 早期削除は残り期間分が課金される。IA 系は最小課金サイズ 128 KB | [S3 ストレージクラス](https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html)・2026-09-13 |
-| S3 Glacier 取り出し時間 | Flexible：迅速 1〜5分／標準 3〜5時間／大容量 5〜12時間。Deep Archive：標準 12時間以内／大容量 48時間以内・**目安（typically）** | Batch Operations 経由の標準は Flexible で「分〜5時間」、Deep Archive で 9〜12時間。250 MB 超の迅速取り出しはスループット制限あり | [アーカイブ取り出しオプション](https://docs.aws.amazon.com/AmazonS3/latest/userguide/restoring-objects-retrieval-options.html)・2026-09-13 |
-| DynamoDB 項目サイズ | 400 KB・上限（固定） | 属性名と値を含む | [DynamoDB データ型と命名規則](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html)・2026-09-13 |
-| DynamoDB 読み書き単位 | 1 RCU＝4 KB を強い整合性で1回/秒（結果整合性なら 0.5 RCU、トランザクションなら 2 RCU）／1 WCU＝1 KB を1回/秒（トランザクションなら 2 WCU）・定義 | サイズは 4 KB／1 KB 単位に切り上げ | [DynamoDB 読み書き操作](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/read-write-operations.html)・2026-09-13 |
-| DynamoDB PITR | 1〜35日・設定範囲 | 既定は無効。有効化後は継続バックアップ | [DynamoDB PITR](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/PointInTimeRecovery_Howitworks.html)・2026-09-13 |
-| RDS 自動バックアップ保持 | 0〜35日・設定範囲 | 0 で無効。リードレプリカの元になっている場合は 0 にできない。Aurora はクラスター側で管理 | [ModifyDBInstance API](https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html)・2026-09-13 |
-| Aurora ストレージ上限 | 128 TiB または 256 TiB・上限（固定、**バージョン依存**） | 256 TiB は Aurora PostgreSQL 17.5／16.9／15.13 以降、Aurora MySQL 3.10 以降。それ以外は 128 TiB。10 GB 単位で自動拡張 | [Aurora クォータ](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_Limits.html)・2026-09-13 |
-| Aurora リードレプリカ | 最大15台・上限（固定） | プライマリあたり。Aurora では引き上げ不可 | 同上・2026-09-13 |
-| Aurora ストレージのコピー数 | 3 AZ × 2 ＝ 6 コピー・仕様 | 書き込みは 6 中 4、読み取りは 3 で成立 | 未確認（本文の記述に基づく。実装時に公式で再確認） |
-| Kinesis Data Streams シャード | 書き込み 1 MB/秒または 1,000 レコード/秒、読み取り 2 MB/秒・上限（固定、プロビジョンドモード） | オンデマンドモードはシャードを意識しない。1 レコードの最大は 10 MiB（バースト用途） | [Kinesis クォータ](https://docs.aws.amazon.com/streams/latest/dev/service-sizes-and-limits.html)・2026-09-13 |
-| Kinesis Data Streams 保持期間 | 24時間〜365日（8,760時間）・設定範囲 | 既定 24 時間。延長は追加料金 | 同上・2026-09-13 |
-| VPC サブネットの予約 IP | 各サブネット 5個（先頭4つ＋末尾1つ）・仕様 | /28〜/16。/28 で使えるのは 11 個 | [サブネット CIDR](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html)・2026-09-13 |
-| ELB 登録解除の遅延 | 300秒・**既定** | ALB のターゲットグループ属性。進行中のリクエストがなければ即完了 | [ALB ターゲットグループ属性](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/edit-target-group-attributes.html)・2026-09-13 |
-| KMS キー削除の待機期間 | 7〜30日・設定範囲／既定 30日 | 待機中は暗号操作不可。取り消し可 | [KMS キーの削除](https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.html)・2026-09-13 |
-| KMS 自動ローテーション周期 | 90〜2,560日・設定範囲／既定 365日 | カスタマー管理キー（AWS 生成の対称暗号化キー）のみ。AWS 管理キーは年1回固定 | [KMS 自動ローテーション](https://docs.aws.amazon.com/kms/latest/developerguide/rotating-keys-enable.html)・2026-09-13 |
-| CloudTrail イベント履歴 | 90日・仕様 | 管理イベントのみ。長期保持は証跡（S3）か CloudTrail Lake | [CloudTrail イベント履歴](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events.html)・2026-09-13 |
-| EC2 スポット中断の通知 | 2分前・仕様 | 休止（hibernate）の場合は 2 分の猶予なし。通知はベストエフォート | [スポット中断通知](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-instance-termination-notices.html)・2026-09-13 |
-| Firehose バッファ間隔 | 0〜900秒／既定 300秒（S3 等）・設定範囲 | 0 秒は対応宛先のみ。動的パーティショニング・S3 バックアップ先では不可。60 秒未満は S3 の PUT 料金が増える | [Firehose バッファリングヒント](https://docs.aws.amazon.com/firehose/latest/dev/create-configure-backup.html)・2026-09-13 |
-| ACM エクスポート可能証明書 | 有効期間 198日、失効 45日前に自動更新・仕様 | 追加料金あり。更新後の配置は利用者が管理 | [ACM エクスポート可能証明書](https://docs.aws.amazon.com/acm/latest/userguide/acm-exportable-certificates.html)・2026-09-13 |
-
-**未確認の項目**：SQS FIFO 重複排除の窓（5分）と Aurora の 6 コピー構成は、この改訂で公式ページを開いて再確認していない。本文の従来記述に基づくため、実装時に再確認する。
+| **AWS Lambda 最大実行時間** | **900秒（15分）** | ハードリミット（固定上限） | [Lambda クォータ](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html) |
+| **AWS Lambda メモリ割り当て** | **128 MB 〜 10,240 MB（10 GB）** | 1 MB刻みで設定可能。CPUパワーはメモリ量に正比例（1,769 MBで1 vCPU相当） | 同上 |
+| **AWS Lambda 同時実行数** | **1,000**（初期デフォルト値） | リージョン単位のソフトリミット（申請により引き上げ可能） | 同上 |
+| **AWS Lambda 一時ストレージ（`/tmp`）** | **512 MB 〜 10,240 MB（10 GB）** | 1 MB刻みで設定可能 | 同上 |
+| **AWS Lambda パッケージサイズ** | 直接zip: 50 MB / 解凍後: 250 MB / コンテナイメージ: 10 GB | ハードリミット（レイヤーを含む） | 同上 |
+| **Amazon SQS メッセージ保持期間** | **デフォルト: 4日間** / 設定範囲: 60秒 〜 14日間 | 標準キュー・FIFOキュー共通 | [SQS クォータ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html) |
+| **Amazon SQS メッセージ最大サイズ** | **1,048,576 バイト（1 MiB）** | 単一メッセージ本体の上限。拡張クライアントライブラリとS3を併用すれば最大2 GB | 同上 |
+| **Amazon SQS 可視性タイムアウト** | **デフォルト: 30秒** / 設定範囲: 0秒 〜 12時間 | ワーカー処理時間に応じて設定。API呼び出しにより処理中の延長も可能 | 同上 |
+| **Amazon SQS 配信遅延（遅延キュー）** | デフォルト: 0秒 / 最大: 15分 | キュー全体またはメッセージ単位で設定可能 | 同上 |
+| **Amazon SQS ロングポーリング待機時間** | **最大: 20秒** | `WaitTimeSeconds` を1〜20秒に設定。空の受信APIコールを削減してコスト抑制 | [SQS ポーリング](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html) |
+| **Amazon SQS FIFO スループット** | デフォルト: 300 TPS（バッチ10件で最大3,000メッセージ/秒） | **高スループットモード**を有効化することで数万TPSまで拡張可能 | [SQS クォータ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html) |
+| **Amazon SQS FIFO 重複排除期間** | **5分間** | 送信側のメッセージ重複排除ID（MessageDeduplicationId）に基づくウィンドウ | [FIFO 正確に1回の処理](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-exactly-once-processing.html) |
+| **Amazon S3 単一オブジェクト最大サイズ** | **48.8 TiB** | マルチパートアップロード利用時（最大10,000パート × 最大5 GiB/パート） | [S3 オブジェクトサイズ制限](https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html) |
+| **Amazon S3 単一PUTリクエスト上限** | **5 GiB** | 100 MBを超えるオブジェクトはマルチパートアップロードの利用が強く推奨される | 同上 |
+| **Amazon S3 プレフィックス別リクエスト性能** | **毎秒 3,500 PUT/POST/DELETE、毎秒 5,500 GET/HEAD** | プレフィックスあたりのベースライン性能。プレフィックスを分散することで線形にスケール | [S3 パフォーマンス最適化](https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html) |
+| **Amazon S3 最低保管期間（課金）** | Standard-IA: 30日 / One Zone-IA: 30日 / Glacier Instant: 90日 / Glacier Flexible: 90日 / Glacier Deep Archive: 180日 | 期間未満で削除・移行した場合でも最低日数分の料金が発生 | [S3 ストレージクラス](https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html) |
+| **Amazon S3 Glacier 取り出し所要時間** | Flexible: 迅速（1〜5分）、標準（3〜5時間）、大容量（5〜12時間） / Deep Archive: 標準（12時間以内）、大容量（48時間以内） | 設計時の目安所要時間 | [S3 アーカイブ復元](https://docs.aws.amazon.com/AmazonS3/latest/userguide/restoring-objects-retrieval-options.html) |
+| **Amazon DynamoDB 単一項目サイズ上限** | **400 KB** | 属性名と属性値のバイナリ合計サイズ | [DynamoDB 仕様](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html) |
+| **Amazon DynamoDB キャパシティ単位の定義** | 1 RCU = 4 KBの項目を強い整合性で1回/秒（結果整合性は0.5 RCU、トランザクションは2 RCU）<br>1 WCU = 1 KBの項目を1回/秒（トランザクションは2 WCU） | 読み書きデータ量は4 KB / 1 KB単位に切り上げて計算 | [DynamoDB キャパシティ](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/read-write-operations.html) |
+| **Amazon DynamoDB ポイントインタイムリカバリ（PITR）** | **過去35日間** | 有効化後、秒単位の任意の時点へテーブルを復元可能 | [DynamoDB PITR](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/PointInTimeRecovery_Howitworks.html) |
+| **Amazon RDS 自動バックアップ保持期間** | **0日 〜 35日間**（デフォルト: 7日間） | 0日に設定すると自動バックアップが無効化される（リードレプリカが存在する場合は無効化不可） | [RDS バックアップ](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html) |
+| **Amazon Aurora ストレージ上限** | **128 TiB または 256 TiB**（エンジンバージョン依存） | 10 GB単位で自動拡張。Aurora PostgreSQL 15.13+/16.9+/17.5+、Aurora MySQL 3.10+で256 TiB対応 | [Aurora クォータ](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_Limits.html) |
+| **Amazon Aurora リードレプリカ最大数** | **最大15台** | プライマリクラスタ配下に配置可能 | 同上 |
+| **Amazon Aurora ストレージの物理冗長性** | **3つのアベイラビリティゾーンにまたがる6つのコピー** | クォーラム構成（書き込みは6中4、読み取りは6中3の合意で成立） | [Aurora ストレージアーキテクチャ](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.StorageReliability.html) |
+| **Amazon Kinesis Data Streams シャード性能** | 書き込み: 1 MB/秒 または 1,000 レコード/秒<br>読み取り: 2 MB/秒 | プロビジョンドモード時のシャード1つあたりの上限 | [Kinesis クォータ](https://docs.aws.amazon.com/streams/latest/dev/service-sizes-and-limits.html) |
+| **Amazon Kinesis Data Streams データ保持期間** | **デフォルト: 24時間** / 設定範囲: 24時間 〜 365日間（8,760時間） | 24時間を超える保持は追加料金が発生 | 同上 |
+| **Amazon VPC サブネット内の予約IPアドレス** | **各サブネットごとに先頭4個 ＋ 末尾1個の計5個** | ネットワークアドレス、VPCルーター、DNSサーバー、将来用、ブロードキャストアドレス | [VPC サイジング](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html) |
+| **ELB 登録解除の遅延（Deregistration Delay）** | **デフォルト: 300秒** / 設定範囲: 0秒 〜 3,600秒 | ターゲットの切り離し時に処理中の既存リクエスト完了を待機する接続ドレイン時間 | [ALB ターゲットグループ属性](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/edit-target-group-attributes.html) |
+| **AWS KMS キー削除待機期間** | **7日間 〜 30日間**（デフォルト: 30日間） | 誤削除防止のための強制待機期間。待機中は暗号化・復号操作不可、削除取り消し可能 | [KMS キー削除](https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.html) |
+| **AWS KMS 自動ローテーション周期** | **90日 〜 2,560日間**（デフォルト: 365日 / 年1回） | カスタマー管理キー（対称暗号化キー）で設定可能。AWSマネージドキーは年1回固定 | [KMS ローテーション](https://docs.aws.amazon.com/kms/latest/developerguide/rotating-keys-enable.html) |
+| **AWS CloudTrail イベント履歴保持期間** | **直近90日間** | マネジメントコンソールのイベント履歴。90日を超える保管はS3への証跡作成が必要 | [CloudTrail イベント履歴](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events.html) |
+| **Amazon EC2 スポットインスタンス中断通知** | **終了の2分前** | CloudWatch Events/EventBridgeおよびインスタンスメタデータ経由で通知 | [スポット中断通知](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-instance-termination-notices.html) |
+| **Kinesis Data Firehose バッファリング間隔** | **0秒 〜 900秒（15分）** / デフォルト: 300秒 | バッファサイズ（1 MB〜128 MB）または指定間隔のいずれかを満たした時点で配信 | [Firehose 設定](https://docs.aws.amazon.com/firehose/latest/dev/create-configure-backup.html) |
 
 ---
 
-## 試験当日の解き方（第0章 0.5 と同じ手順）
+## 本番試験における解答プロセス（推奨手順）
 
-1. **絶対に満たす条件を拾う**：可用性／RTO・RPO／保持期間／規制／互換性／実行時間の上限。「最も○○」の前に、まず落とせない条件を確定する。
-2. **その条件を満たせない選択肢を外し、理由を言う**：「可用性要件があるのに単一AZだから」「15分を超えるからLambdaは不可」「NLBにWAFは付かないから」「マルチAZ DBインスタンス配置のスタンバイは読めないから」。単語の有無だけで外さない。
-3. **残りから設問の優先事項で選ぶ**：「最もコスト効率」なら要件を満たす中で最安、「最も運用負荷が低い」ならマネージド度が高い方、「最も高性能」なら原因に効く対策。
+設問を解く際は、以下の3ステップに従って思考を展開することで、ミスを最小限に抑え正解率を高めることができる。
+
+1. **前提となる絶対条件・制約の抽出**：
+   - 設問文から「可用性要件（単一AZ耐性かリージョン耐性か）」「目標復旧指標（RTO/RPOの数値）」「データ保持・コンプライアンス要件」「既存資産とのプロトコル互換性」「実行時間制限」などの**外せない絶対条件**を特定する。
+   - 「最もコスト効率の高い」「運用負荷を最小限に」といった比較形容詞に惑わされる前に、まず満たすべき必要条件を確定させる。
+2. **要件を満たせない不適格な選択肢の論理的除外（消去法）**：
+   - 「高可用性が求められているのに単一AZ構成になっている」「処理時間が30分かかるのにLambdaを選んでいる」「NLBに直接AWS WAFをアタッチしようとしている」「RDSマルチAZのスタンバイに読み取りクエリを向けようとしている」など、明確な技術的矛盾を理由に誤答を排除する。
+3. **最優先の評価軸に基づく最終選定**：
+   - 条件を満たす有効な選択肢が複数残った段階で、設問が求める優先評価軸に従って比較する。
+     - **「最もコスト効率が良い」**：条件を満たす構成の中で、インフラ利用料金が最も安価なものを選択。
+     - **「運用負荷（管理工数）を最小限に」**：サーバーレスやフルマネージドサービスを最優先で選択。
+     - **「パフォーマンスを最大化」**：性能低下の根本原因にダイレクトに効くキャッシュや並列化構成を選択。
 
 ---
 
-[目次に戻る](./README.md) ／ [横断比較表](./90-comparison.md)
+[目次に戻る](./README.md) ／ [付録A 横断比較表](./90-comparison.md)
+
