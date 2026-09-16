@@ -40,7 +40,7 @@ def link(label, url):
     if re.match(r"^https://[^\s]+$", url, re.I):
         return '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>' % (
             html.escape(url, quote=True), label)
-    m = re.match(r"^(?:\./)?([0-9A-Za-z_-]+\.md)(?:#.*)?$", url)
+    m = re.match(r"^(?:\./|\.\./docs/)?([0-9A-Za-z_-]+\.md)(?:#.*)?$", url)
     if m and m.group(1) in CHAPTER_ID:
         cid = CHAPTER_ID[m.group(1)]
         return '<a href="#%s" data-go="%s">%s</a>' % (cid, cid, label)

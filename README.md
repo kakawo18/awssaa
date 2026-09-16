@@ -28,7 +28,11 @@ AWS Certified Solutions Architect – Associate (SAA-C03) の試験ポイント�
 ```
 python3 tools/check_exams.py        # 選択肢・正解記号・外す理由・参照リンクの検証
 python3 tools/test_check_exams.py   # 検証ツール自体の回帰テスト
+python3 tools/build_exams.py        # exams/*.md → web/exams.js（Web版の問題モード用）
 ```
+
+Web版では選択肢をタップすると正誤と解説が表示され、解答状況は端末に保存されます
+（`docs/` の参照リンクはその章へ遷移します）。
 
 ## Web版（スマホ用）
 `web/artifact.html` + `web/content.js` は、docs のMarkdownを1枚のWebページにまとめたものです。
@@ -38,12 +42,15 @@ python3 tools/test_check_exams.py   # 検証ツール自体の回帰テスト
 ### 元データと生成物の関係
 - **原本は `docs/*.md`**。教材の内容はここだけを編集する。
 - `web/content.js` は `tools/build_content.py` が docs から生成する**生成物**。手で編集しない（次の再生成で消える）。
+- `web/exams.js` も同様に `tools/build_exams.py` が `exams/*.md` から生成する**生成物**。
 - `web/artifact.html` は表示側。章の一覧・グループ分けは `content.js` の `group` から作るので、章を増減するときは `tools/build_content.py` の `FILES` を直す。
 
 ### 再生成手順
 ```
 python3 tools/build_content.py        # docs/*.md → web/content.js
+python3 tools/build_exams.py          # exams/*.md → web/exams.js
 python3 tools/test_build_content.py   # リンク変換・エスケープの回帰テスト
+python3 tools/test_check_exams.py     # 問題集の形式チェックの回帰テスト
 ```
 Markdown のリンクは、`https://` の外部リンクだけをクリック可能な形で保持し、
 `./03-network.md` のような教材内リンクは章への遷移に変換します。それ以外のスキームは無効化してラベルだけ残します。

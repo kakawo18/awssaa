@@ -13,6 +13,7 @@
   --rule:#C4CCD9; --rule-2:#7D8798;
   --accent:#14488F; --accent-weak:#D2E0F5;
   --mark-bg:#FFDE7A; --mark-ink:#241900; --mark-line:#9A6B00;
+  --ok:#0A5C4B; --ok-weak:#E7F3EF; --ng:#932C19; --ng-weak:#FBEBE6;
   --shadow:0 1px 1px rgba(4,7,13,.05);
   --head:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
   --body:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","Noto Sans JP",system-ui,sans-serif;
@@ -24,6 +25,7 @@
   --rule:#363E4C; --rule-2:#626D7D;
   --accent:#A9C6FF; --accent-weak:#1B2740;
   --mark-bg:#F7D774; --mark-ink:#1A1400; --mark-line:#8A6A12;
+  --ok:#4FC3A8; --ok-weak:#13302A; --ng:#F0907A; --ng-weak:#33211C;
   --shadow:0 1px 1px rgba(0,0,0,.3);
 }}
 :root[data-theme="dark"]{
@@ -32,6 +34,7 @@
   --rule:#363E4C; --rule-2:#626D7D;
   --accent:#A9C6FF; --accent-weak:#1B2740;
   --mark-bg:#F7D774; --mark-ink:#1A1400; --mark-line:#8A6A12;
+  --ok:#4FC3A8; --ok-weak:#13302A; --ng:#F0907A; --ng-weak:#33211C;
   --shadow:0 1px 1px rgba(0,0,0,.3);
 }
 *{box-sizing:border-box}
@@ -136,6 +139,40 @@ h3{font-family:var(--head);font-size:1em;font-weight:700;color:var(--ink-strong)
 .fig svg{display:block;width:100%;height:auto;color:var(--ink)}
 .fig figcaption{margin-top:12px;padding-top:11px;border-top:1px solid var(--rule);
   font-size:.84em;line-height:1.8;color:var(--ink)}
+
+/* ---- 問題集（正誤は色だけでなく ✓ / ✕ と語でも示す） ---- */
+.quizbar{margin:18px 0 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  background:var(--surface-2);border-radius:8px;padding:11px 15px;font-size:.86em}
+.quizbar b{font-family:var(--mono);font-size:1.08em;color:var(--ink-strong)}
+.quizbar .fbtn{margin-left:auto;padding:7px 12px;font-size:.92em}
+section.q{margin-top:44px;scroll-margin-top:120px}
+.q h2 .lv{margin-left:auto;font-family:var(--mono);font-size:.62em;color:var(--ink-mute);letter-spacing:.12em;flex:none}
+.qbody{margin-top:15px;max-width:740px}
+.qbody p{margin:11px 0 0}
+.opts{margin-top:17px;display:grid;gap:9px;max-width:740px}
+.opt{display:flex;gap:11px;align-items:flex-start;text-align:left;width:100%;
+  background:var(--surface);border:1px solid var(--rule-2);border-radius:8px;padding:13px 15px;
+  font-size:.92em;line-height:1.75;color:var(--ink)}
+.opt:hover:not([aria-disabled="true"]){border-color:var(--accent);background:var(--tint)}
+.opt .ol{flex:none;font-family:var(--mono);font-weight:700;color:var(--accent);min-width:1.3em}
+.opt .mk{margin-left:auto;padding-left:10px;font-weight:700;white-space:nowrap;font-size:.92em}
+.opt.correct{border-color:var(--ok);border-width:2px;background:var(--ok-weak);padding:12px 14px}
+.opt.correct .ol,.opt.correct .mk{color:var(--ok)}
+.opt.wrong{border-color:var(--ng);border-width:2px;background:var(--ng-weak);padding:12px 14px}
+.opt.wrong .ol,.opt.wrong .mk{color:var(--ng)}
+.opt[aria-disabled="true"]{cursor:default}
+.expl{margin-top:16px;max-width:740px;border:1px solid var(--rule);border-left:4px solid var(--accent);
+  border-radius:0 8px 8px 0;background:var(--surface);padding:14px 16px;font-size:.9em;line-height:1.8}
+.verdict{font-family:var(--head);font-weight:700;font-size:1.05em;margin-bottom:10px}
+.verdict.ok{color:var(--ok)}
+.verdict.ng{color:var(--ng)}
+.expl .lbl{font-weight:700;color:var(--ink-strong);margin-top:14px}
+.expl .lbl:first-of-type{margin-top:0}
+.expl ul{margin:8px 0 0;padding-left:0;list-style:none}
+.expl li{position:relative;padding-left:1.2em;margin-top:8px}
+.expl li::before{content:"";position:absolute;left:0;top:.85em;width:9px;height:3px;
+  background:var(--rule-2);border-radius:2px}
+.expl .refs{margin-top:14px;padding-top:11px;border-top:1px solid var(--rule);color:var(--ink-mute)}
 
 /* ---- decision list (2-column tables) ---- */
 .dl{margin:18px 0 0;border:1px solid var(--rule);border-radius:8px;background:var(--surface);
@@ -251,6 +288,7 @@ tbody tr:nth-child(even) td{background:var(--tint)}
 </div>
 
 <script src="content.js"></script>
+<script src="exams.js"></script>
 <script>
 (function(){
   "use strict";
@@ -319,6 +357,22 @@ tbody tr:nth-child(even) td{background:var(--tint)}
     applySize();
   });
   applySize();
+
+  /* ---- 問題集 ---- */
+  var EXAMS = window.SAA_EXAMS || [];
+  var examById = {};
+  EXAMS.forEach(function(s){ examById[s.id] = s; });
+  var answers = {};
+  try { answers = JSON.parse(localStorage.getItem('saa.exam') || '{}') || {}; } catch(e){ answers = {}; }
+  function saveAnswers(){ try { localStorage.setItem('saa.exam', JSON.stringify(answers)); } catch(e){} }
+  function examScore(set){
+    var st = answers[set.id] || {}, done = 0, ok = 0;
+    set.questions.forEach(function(q){
+      var a = st[q.n];
+      if(a){ done++; if(a === q.answer) ok++; }
+    });
+    return { done: done, ok: ok, total: set.questions.length };
+  }
 
   var read = {};
   try { read = JSON.parse(localStorage.getItem('saa.read') || '{}') || {}; } catch(e) { read = {}; }
@@ -405,6 +459,70 @@ tbody tr:nth-child(even) td{background:var(--tint)}
     });
   });
 
+  function renderQuestion(set, q, chosen){
+    var answered = !!chosen;
+    var h = '<section class="q" id="' + set.id + '-q' + q.n + '"><h2><span class="n">Q' + q.n +
+      '</span><span>' + q.topic + '</span><span class="lv">' + Array(q.level + 1).join('\u2605') + '</span></h2>' +
+      '<div class="qbody">' + q.body.map(function(b){ return '<p>' + b + '</p>'; }).join('') + '</div>' +
+      '<div class="opts" role="group" aria-label="Q' + q.n + ' の選択肢">';
+    q.options.forEach(function(o){
+      var cls = 'opt', mk = '';
+      if(answered){
+        if(o.l === q.answer){ cls += ' correct'; mk = '\u2713 正解'; }
+        else if(o.l === chosen){ cls += ' wrong'; mk = '\u2715 選択'; }
+      }
+      h += '<button class="' + cls + '" data-pick="' + set.id + ':' + q.n + ':' + o.l + '"' +
+        (answered ? ' aria-disabled="true"' : '') + '><b class="ol">' + o.l + '</b><span>' + o.html + '</span>' +
+        (mk ? '<span class="mk">' + mk + '</span>' : '') + '</button>';
+    });
+    h += '</div>';
+    if(answered){
+      var right = chosen === q.answer;
+      h += '<div class="expl"><div class="verdict ' + (right ? 'ok' : 'ng') + '">' +
+        (right ? '\u2713 正解（' + q.answer + '）' : '\u2715 不正解 — 正解は ' + q.answer) + '</div>' +
+        '<div class="lbl">決め手</div><div>' + q.key + '</div>' +
+        '<div class="lbl">他の選択肢を外す理由</div><ul>' +
+        q.reasons.map(function(r){ return '<li><b>' + r.l + '</b>：' + r.html + '</li>'; }).join('') +
+        '</ul><div class="refs">参照：' + q.refs + '</div></div>';
+    }
+    return h + '</section>';
+  }
+
+  function quiz(id){
+    var set = examById[id];
+    if(!set) return home();
+    var st = answers[id] || {};
+    var sc = examScore(set);
+    var h = '<div class="eyebrow">' + set.num + '</div><h1>' + set.title + '</h1>' +
+      '<div class="lead">全' + sc.total + '問。選択肢をタップすると正誤と解説が表示されます。' +
+      '解説は<b>外した選択肢の理由</b>を中心に読んでください。</div>' +
+      '<div class="quizbar"><div>回答 <b>' + sc.done + '</b> / ' + sc.total +
+      '　正解 <b>' + sc.ok + '</b></div>' +
+      '<button class="fbtn" data-quizreset="' + set.id + '">やり直す</button></div>';
+    set.questions.forEach(function(q){ h += renderQuestion(set, q, st[q.n]); });
+    var i = EXAMS.indexOf(set);
+    h += '<div class="footnav">' +
+      (i > 0 ? '<button class="fbtn" data-go="' + EXAMS[i - 1].id + '">&lsaquo; ' + EXAMS[i - 1].num + '</button>' : '') +
+      (i < EXAMS.length - 1 ? '<button class="fbtn" data-go="' + EXAMS[i + 1].id + '">' + EXAMS[i + 1].num + ' &rsaquo;</button>' : '') +
+      '</div>';
+    main.innerHTML = h;
+    mark(set.id);
+    try { localStorage.setItem('saa.last', set.id); } catch(e){}
+  }
+
+  EXAMS.forEach(function(set){
+    set.questions.forEach(function(q){
+      var where = { c: set.id, s: 'q' + q.n, ct: set.num + ' ' + set.title, st: 'Q' + q.n + ' ' + q.topic };
+      function addQ(html){
+        var text = strip(html);
+        if(text.length < 2) return;
+        INDEX.push({ c: where.c, s: where.s, ct: where.ct, st: where.st, h: html, t: text.toLowerCase(), k: '' });
+      }
+      q.body.forEach(addQ);
+      addQ('<span class="ans">正解 ' + q.answer + '</span>：' + q.key);
+    });
+  });
+
   function buildNav(){
     var h = '<button class="navlink" data-go="home"><span class="n"></span><span>はじめに</span></button>';
     groups().forEach(function(g){
@@ -414,6 +532,15 @@ tbody tr:nth-child(even) td{background:var(--tint)}
              '<span class="n">' + (ch.num || '') + '</span><span>' + parts(ch).t + '</span><span class="dot"></span></button>';
       });
     });
+    if(EXAMS.length){
+      h += '<div class="navgrp">問題集</div>';
+      EXAMS.forEach(function(set){
+        var sc = examScore(set);
+        h += '<button class="navlink' + (sc.done === sc.total ? ' done' : '') + '" data-go="' + set.id + '">' +
+             '<span class="n">' + set.num.replace('問題', '') + '</span><span>' + set.title +
+             '</span><span class="dot"></span></button>';
+      });
+    }
     nav.innerHTML = h;
   }
 
@@ -445,6 +572,15 @@ tbody tr:nth-child(even) td{background:var(--tint)}
     groups().forEach(function(g){
       h += '<div class="secthead">' + g.name + '</div>' + cards(g.chapters);
     });
+    if(EXAMS.length){
+      h += '<div class="secthead">問題集（判断を試す）</div><div class="grid">' +
+        EXAMS.map(function(set){
+          var sc = examScore(set);
+          return '<button class="card' + (sc.done === sc.total ? ' done' : '') + '" data-go="' + set.id +
+            '"><div class="n">' + set.num + '</div><div class="t">' + set.title + '</div><div class="m">' +
+            sc.total + ' 問' + (sc.done ? '　/　回答 ' + sc.done + '・正解 ' + sc.ok : '') + '</div></button>';
+        }).join('') + '</div>';
+    }
     main.innerHTML = h;
     mark('home');
   }
@@ -515,7 +651,7 @@ tbody tr:nth-child(even) td{background:var(--tint)}
 
   function go(id, sec){
     if(q.value && !sec) q.value = '';
-    if(id === 'home') home(); else chapter(id);
+    if(id === 'home') home(); else if(examById[id]) quiz(id); else chapter(id);
     if(isNarrow()){ nav.hidden = true; menu.setAttribute('aria-expanded', 'false'); }
     if(sec){
       var el = document.getElementById(id + '-' + sec);
@@ -525,7 +661,33 @@ tbody tr:nth-child(even) td{background:var(--tint)}
   }
 
   document.addEventListener('click', function(e){
-    var t = e.target.closest ? e.target.closest('[data-go]') : null;
+    if(!e.target.closest) return;
+    var pick = e.target.closest('[data-pick]');
+    if(pick){
+      if(pick.getAttribute('aria-disabled') === 'true') return;
+      var bits = pick.getAttribute('data-pick').split(':');
+      var setId = bits[0], qn = bits[1], letter = bits[2];
+      if(!answers[setId]) answers[setId] = {};
+      if(answers[setId][qn]) return;
+      answers[setId][qn] = letter;
+      saveAnswers();
+      var y = window.scrollY;
+      quiz(setId);
+      buildNav();
+      window.scrollTo(0, y);
+      return;
+    }
+    var reset = e.target.closest('[data-quizreset]');
+    if(reset){
+      var rid = reset.getAttribute('data-quizreset');
+      answers[rid] = {};
+      saveAnswers();
+      quiz(rid);
+      buildNav();
+      window.scrollTo(0, 0);
+      return;
+    }
+    var t = e.target.closest('[data-go]');
     if(!t) return;
     if(t.tagName === 'A') e.preventDefault();  // 教材内リンク: hash 遷移ではなく章表示に任せる
     go(t.getAttribute('data-go'), t.getAttribute('data-sec'));
