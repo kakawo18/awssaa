@@ -161,6 +161,11 @@ section.q{margin-top:44px;scroll-margin-top:120px}
 .opt.wrong{border-color:var(--ng);border-width:2px;background:var(--ng-weak);padding:12px 14px}
 .opt.wrong .ol,.opt.wrong .mk{color:var(--ng)}
 .opt[aria-disabled="true"]{cursor:default}
+.opt.picked{border-color:var(--accent);border-width:2px;background:var(--accent-weak);padding:12px 14px}
+.opt.picked .mk{color:var(--accent)}
+.submitrow{margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;max-width:740px}
+.submitrow .hint{font-size:.82em;color:var(--ink-mute)}
+.submitrow .fbtn[disabled]{opacity:.5;cursor:default;border-color:var(--rule)}
 .expl{margin-top:16px;max-width:740px;border:1px solid var(--rule);border-left:4px solid var(--accent);
   border-radius:0 8px 8px 0;background:var(--surface);padding:14px 16px;font-size:.9em;line-height:1.8}
 .verdict{font-family:var(--head);font-weight:700;font-size:1.05em;margin-bottom:10px}
@@ -369,7 +374,10 @@ tbody tr:nth-child(even) td{background:var(--tint)}
     var st = answers[set.id] || {}, done = 0, ok = 0;
     set.questions.forEach(function(q){
       var a = st[q.n];
-      if(a){ done++; if(a === q.answer) ok++; }
+      if(!a) return;
+      done++;
+      var picked = a.split(',');
+      if(picked.length === q.answer.length && q.answer.every(function(x){ return picked.indexOf(x) >= 0; })) ok++;
     });
     return { done: done, ok: ok, total: set.questions.length };
   }
@@ -459,27 +467,46 @@ tbody tr:nth-child(even) td{background:var(--tint)}
     });
   });
 
+  var pending = {};   // 複数選択で「解答する」を押す前の選択（保存はしない）
+
   function renderQuestion(set, q, chosen){
+    var key = set.id + ':' + q.n;
+    var multi = q.answer.length > 1;
+    var picked = chosen ? chosen.split(',') : (pending[key] || []);
     var answered = !!chosen;
     var h = '<section class="q" id="' + set.id + '-q' + q.n + '"><h2><span class="n">Q' + q.n +
       '</span><span>' + q.topic + '</span><span class="lv">' + Array(q.level + 1).join('\u2605') + '</span></h2>' +
       '<div class="qbody">' + q.body.map(function(b){ return '<p>' + b + '</p>'; }).join('') + '</div>' +
       '<div class="opts" role="group" aria-label="Q' + q.n + ' の選択肢">';
     q.options.forEach(function(o){
-      var cls = 'opt', mk = '';
+      var isAnswer = q.answer.indexOf(o.l) >= 0;
+      var isPicked = picked.indexOf(o.l) >= 0;
+      var cls = 'opt', mk = '', attr = '';
       if(answered){
-        if(o.l === q.answer){ cls += ' correct'; mk = '\u2713 正解'; }
-        else if(o.l === chosen){ cls += ' wrong'; mk = '\u2715 選択'; }
+        attr = ' aria-disabled="true"';
+        if(isAnswer){ cls += ' correct'; mk = isPicked ? '\u2713 正解' : '\u2713 正解（未選択）'; }
+        else if(isPicked){ cls += ' wrong'; mk = '\u2715 選択'; }
+      } else if(multi){
+        if(isPicked){ cls += ' picked'; mk = '\u2611 選択中'; }
+        attr = ' aria-pressed="' + (isPicked ? 'true' : 'false') + '"';
       }
-      h += '<button class="' + cls + '" data-pick="' + set.id + ':' + q.n + ':' + o.l + '"' +
-        (answered ? ' aria-disabled="true"' : '') + '><b class="ol">' + o.l + '</b><span>' + o.html + '</span>' +
+      h += '<button class="' + cls + '" data-' + (answered ? 'pick' : (multi ? 'toggle' : 'pick')) +
+        '="' + key + ':' + o.l + '"' + attr + '><b class="ol">' + o.l + '</b><span>' + o.html + '</span>' +
         (mk ? '<span class="mk">' + mk + '</span>' : '') + '</button>';
     });
     h += '</div>';
+    if(!answered && multi){
+      var need = q.answer.length;
+      h += '<div class="submitrow"><button class="fbtn" data-submit="' + key + '"' +
+        (picked.length === need ? '' : ' disabled') + '>解答する</button>' +
+        '<span class="hint">' + need + 'つ選んでください（選択中 ' + picked.length + '）</span></div>';
+    }
     if(answered){
-      var right = chosen === q.answer;
+      var right = picked.length === q.answer.length &&
+        q.answer.every(function(a){ return picked.indexOf(a) >= 0; });
+      var ansText = q.answer.join('・');
       h += '<div class="expl"><div class="verdict ' + (right ? 'ok' : 'ng') + '">' +
-        (right ? '\u2713 正解（' + q.answer + '）' : '\u2715 不正解 — 正解は ' + q.answer) + '</div>' +
+        (right ? '\u2713 正解（' + ansText + '）' : '\u2715 不正解 — 正解は ' + ansText) + '</div>' +
         '<div class="lbl">決め手</div><div>' + q.key + '</div>' +
         '<div class="lbl">他の選択肢を外す理由</div><ul>' +
         q.reasons.map(function(r){ return '<li><b>' + r.l + '</b>：' + r.html + '</li>'; }).join('') +
@@ -662,6 +689,36 @@ tbody tr:nth-child(even) td{background:var(--tint)}
 
   document.addEventListener('click', function(e){
     if(!e.target.closest) return;
+    function repaint(setId){
+      var y = window.scrollY;
+      quiz(setId);
+      buildNav();
+      window.scrollTo(0, y);
+    }
+    var toggle = e.target.closest('[data-toggle]');
+    if(toggle){
+      var tb = toggle.getAttribute('data-toggle').split(':');
+      var tkey = tb[0] + ':' + tb[1], tl = tb[2];
+      var cur = pending[tkey] || (pending[tkey] = []);
+      var at = cur.indexOf(tl);
+      if(at >= 0) cur.splice(at, 1); else cur.push(tl);
+      repaint(tb[0]);
+      return;
+    }
+    var submit = e.target.closest('[data-submit]');
+    if(submit){
+      if(submit.disabled) return;
+      var sb = submit.getAttribute('data-submit').split(':');
+      var skey = sb[0] + ':' + sb[1];
+      var chosenList = (pending[skey] || []).slice().sort();
+      if(!chosenList.length) return;
+      if(!answers[sb[0]]) answers[sb[0]] = {};
+      answers[sb[0]][sb[1]] = chosenList.join(',');
+      delete pending[skey];
+      saveAnswers();
+      repaint(sb[0]);
+      return;
+    }
     var pick = e.target.closest('[data-pick]');
     if(pick){
       if(pick.getAttribute('aria-disabled') === 'true') return;
@@ -671,10 +728,7 @@ tbody tr:nth-child(even) td{background:var(--tint)}
       if(answers[setId][qn]) return;
       answers[setId][qn] = letter;
       saveAnswers();
-      var y = window.scrollY;
-      quiz(setId);
-      buildNav();
-      window.scrollTo(0, y);
+      repaint(setId);
       return;
     }
     var reset = e.target.closest('[data-quizreset]');

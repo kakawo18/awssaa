@@ -14,11 +14,12 @@ ROOT = os.path.join(os.path.dirname(__file__), "..")
 EXAMS = os.path.join(ROOT, "exams")
 
 Q_RE = re.compile(r"^### Q(\d+)\s*｜\s*(.+?)\s*｜\s*(★{1,3})\s*$")
-OPT_RE = re.compile(r"^- \*\*([A-D])\.\*\*\s+(\S.*)$")
-ANSWER_RE = re.compile(r"^\*\*正解：([A-D])\*\*\s*$")
-REASON_RE = re.compile(r"^- \*\*([A-D])\*\*：\s*(\S.*)$")
+OPT_RE = re.compile(r"^- \*\*([A-F])\.\*\*\s+(\S.*)$")
+# 単一選択は「**正解：B**」、複数選択は「**正解：A・D**」
+ANSWER_RE = re.compile(r"^\*\*正解：([A-F](?:・[A-F])*)\*\*\s*$")
+REASON_RE = re.compile(r"^- \*\*([A-F])\*\*：\s*(\S.*)$")
 LINK_RE = re.compile(r"\]\((\.\./[^)#\s]+)")
-LETTERS = ["A", "B", "C", "D"]
+LETTERS = ["A", "B", "C", "D", "E", "F"]
 
 
 def check_file(path):
@@ -49,17 +50,26 @@ def check_file(path):
 
         opts = [(i, OPT_RE.match(ln)) for i, ln in enumerate(block) if OPT_RE.match(ln)]
         got = [mm.group(1) for _, mm in opts]
-        if got != LETTERS:
-            err(start, "選択肢がA〜Dの4つ揃っていない（検出: %s）" % (got or "なし"))
+        if len(got) < 4 or got != LETTERS[:len(got)]:
+            err(start, "選択肢がAから連続していない、または4つ未満（検出: %s）" % ("".join(got) or "なし"))
 
         if block.count("<details>") != 1 or block.count("</details>") != 1:
             err(start, "<details> と </details> が1組になっていない")
 
-        answers = [mm.group(1) for ln in block for mm in [ANSWER_RE.match(ln.strip())] if mm]
-        if len(answers) != 1:
-            err(start, "「**正解：X**」の行が1つでない（検出: %d）" % len(answers))
+        answer_lines = [mm.group(1) for ln in block for mm in [ANSWER_RE.match(ln.strip())] if mm]
+        if len(answer_lines) != 1:
+            err(start, "「**正解：X**」の行が1つでない（検出: %d）" % len(answer_lines))
             continue
-        answer = answers[0]
+        answer = answer_lines[0].split("・")
+        if len(set(answer)) != len(answer):
+            err(start, "正解の記号が重複している（%s）" % "・".join(answer))
+        if any(a not in got for a in answer):
+            err(start, "正解に存在しない選択肢が含まれる（正解: %s／選択肢: %s）"
+                % ("・".join(answer), "".join(got)))
+        if len(answer) > 1 and len(got) < 5:
+            err(start, "複数選択は選択肢を5つ以上にする（検出: %d）" % len(got))
+        if len(answer) > 1 and ("つ選択" not in "".join(block[:12])):
+            err(start, "複数選択の設問文に「2つ選択してください」等の指示がない")
 
         if not any(ln.startswith("**決め手**") for ln in block):
             err(start, "「**決め手**」の記述がない")
@@ -81,7 +91,7 @@ def check_file(path):
                     continue
                 elif reasons:
                     break
-            expected = [c for c in LETTERS if c != answer]
+            expected = [c for c in got if c not in answer]
             if reasons != expected:
                 err(start + r_at, "外す理由が正解以外の3つと一致しない（期待: %s／検出: %s）"
                     % ("".join(expected), "".join(reasons) or "なし"))

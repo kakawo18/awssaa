@@ -43,7 +43,7 @@ def parse_set(path):
             raise ValueError("%s: Q%d の見出しが不正" % (path, n + 1))
 
         body, options, reasons = [], [], []
-        answer, key, refs = "", "", ""
+        answer, key, refs = [], "", ""
         in_details = False
         in_reasons = False
         for ln in block[1:]:
@@ -65,7 +65,7 @@ def parse_set(path):
 
             m = ce.ANSWER_RE.match(s)
             if m:
-                answer = m.group(1)
+                answer = m.group(1).split("・")
                 continue
             m = KEY_RE.match(s)
             if m:
@@ -92,6 +92,7 @@ def parse_set(path):
             "body": body,
             "options": options,
             "answer": answer,
+            "multi": len(answer) > 1,
             "key": key,
             "reasons": reasons,
             "refs": refs,
