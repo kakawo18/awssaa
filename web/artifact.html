@@ -539,16 +539,20 @@ tbody tr:nth-child(even) td{background:var(--tint)}
     try { localStorage.setItem('saa.last', set.id); } catch(e){}
   }
 
+  // 問題は1件にまとめて索引する。表示は設問の書き出し、照合は選択肢や決め手まで含める
+  // （「Storage Gateway」のようにサービス名が選択肢にしか出てこない問題を拾うため）
   EXAMS.forEach(function(set){
     set.questions.forEach(function(q){
-      var where = { c: set.id, s: 'q' + q.n, ct: set.num + ' ' + set.title, st: 'Q' + q.n + ' ' + q.topic };
-      function addQ(html){
-        var text = strip(html);
-        if(text.length < 2) return;
-        INDEX.push({ c: where.c, s: where.s, ct: where.ct, st: where.st, h: html, t: text.toLowerCase(), k: '' });
-      }
-      q.body.forEach(addQ);
-      addQ('<span class="ans">正解 ' + q.answer + '</span>：' + q.key);
+      var shown = q.body[0] || q.topic;
+      var haystack = [q.topic].concat(q.body)
+        .concat(q.options.map(function(o){ return o.html; }))
+        .concat([q.key, q.req])
+        .map(strip).join(' ');
+      INDEX.push({
+        c: set.id, s: 'q' + q.n, ct: set.num + ' ' + set.title,
+        st: 'Q' + q.n + ' ' + q.topic + '（' + (q.multi ? '複数選択' : '単一選択') + '）',
+        h: shown, t: haystack.toLowerCase(), k: ''
+      });
     });
   });
 
