@@ -19,6 +19,8 @@ OUT = os.path.join(os.path.dirname(__file__), "..", "web", "exams.js")
 
 TITLE_RE = re.compile(r"^#\s*(問題セット\d+)\s*｜\s*(.+?)\s*$")
 KEY_RE = re.compile(r"^\*\*決め手\*\*[：:]\s*(.*)$")
+# 複合問題だけが持つ任意の欄（要件を分解して見せる）
+REQ_RE = re.compile(r"^\*\*要件の分解\*\*[：:]\s*(.*)$")
 REF_RE = re.compile(r"^\*\*参照\*\*[：:]\s*(.*)$")
 
 
@@ -43,7 +45,7 @@ def parse_set(path):
             raise ValueError("%s: Q%d の見出しが不正" % (path, n + 1))
 
         body, options, reasons = [], [], []
-        answer, key, refs = [], "", ""
+        answer, key, refs, req = [], "", "", ""
         in_details = False
         in_reasons = False
         for ln in block[1:]:
@@ -71,6 +73,10 @@ def parse_set(path):
             if m:
                 key = bc.inline(m.group(1))
                 continue
+            m = REQ_RE.match(s)
+            if m:
+                req = bc.inline(m.group(1))
+                continue
             m = REF_RE.match(s)
             if m:
                 refs = bc.inline(m.group(1))
@@ -93,6 +99,7 @@ def parse_set(path):
             "options": options,
             "answer": answer,
             "multi": len(answer) > 1,
+            "req": req,
             "key": key,
             "reasons": reasons,
             "refs": refs,
