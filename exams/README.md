@@ -87,6 +87,9 @@ Directory Service、Parameter Store、CloudWatchエージェント、ECSの2つ�
 - 複合問題（セット06）では、解説に「**要件の分解**」を必ず入れ、どの要件がどの分野に対応するかを明示します。
 - 誤答も「ありそうな構成」にして、消去法の練習になるようにします。
 - 難易度は★（知識の確認）／★★（本番相当）／★★★（要件の読み取りが必要）の3段階。
+- **正解記号は A〜D に均等に散らす**（現在 A 29%／B 27%／C 22%／D 22%）。記号を見ただけで当てられる問題集にしないため、
+  `tools/check_exams.py` が分布を毎回表示し、1文字が40%を超えると指摘します。偏った場合は
+  `python3 tools/rebalance_answers.py` で選択肢の並びを入れ替えて是正できます（設問文と解説はそのまま）。
 
 **出典**：[SAA-C03 試験ガイド（AWS公式）](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
 

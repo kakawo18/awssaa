@@ -369,8 +369,10 @@ tbody tr:nth-child(even) td{background:var(--tint)}
   var examById = {};
   EXAMS.forEach(function(s){ examById[s.id] = s; });
   var answers = {};
-  try { answers = JSON.parse(localStorage.getItem('saa.exam') || '{}') || {}; } catch(e){ answers = {}; }
-  function saveAnswers(){ try { localStorage.setItem('saa.exam', JSON.stringify(answers)); } catch(e){} }
+  // 記号の並べ替え（正解の偏り是正）を行ったため、旧キーの解答は引き継がない
+  var ANSWER_KEY = 'saa.exam.v2';
+  try { answers = JSON.parse(localStorage.getItem(ANSWER_KEY) || '{}') || {}; } catch(e){ answers = {}; }
+  function saveAnswers(){ try { localStorage.setItem(ANSWER_KEY, JSON.stringify(answers)); } catch(e){} }
   function examScore(set){
     var st = answers[set.id] || {}, done = 0, ok = 0;
     set.questions.forEach(function(q){

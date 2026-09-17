@@ -29,6 +29,7 @@ AWS Certified Solutions Architect – Associate (SAA-C03) の試験ポイント�
 python3 tools/check_exams.py        # 選択肢・正解記号・外す理由・参照リンクの検証
 python3 tools/test_check_exams.py   # 検証ツール自体の回帰テスト
 python3 tools/build_exams.py        # exams/*.md → web/exams.js（Web版の問題モード用）
+python3 tools/rebalance_answers.py  # 正解記号の偏りを是正（選択肢の並べ替え）
 ```
 
 Web版では選択肢をタップすると正誤と解説が表示され、解答状況は端末に保存されます
