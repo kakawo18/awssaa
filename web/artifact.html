@@ -172,6 +172,7 @@ section.q{margin-top:44px;scroll-margin-top:120px}
 .verdict.ok{color:var(--ok)}
 .verdict.ng{color:var(--ng)}
 .expl .lbl{font-weight:700;color:var(--ink-strong);margin-top:14px}
+.expl .req{background:var(--surface-2);border-radius:6px;padding:9px 12px;margin-top:6px}
 .expl .lbl:first-of-type{margin-top:0}
 .expl ul{margin:8px 0 0;padding-left:0;list-style:none}
 .expl li{position:relative;padding-left:1.2em;margin-top:8px}
@@ -507,6 +508,7 @@ tbody tr:nth-child(even) td{background:var(--tint)}
       var ansText = q.answer.join('・');
       h += '<div class="expl"><div class="verdict ' + (right ? 'ok' : 'ng') + '">' +
         (right ? '\u2713 正解（' + ansText + '）' : '\u2715 不正解 — 正解は ' + ansText) + '</div>' +
+        (q.req ? '<div class="lbl">要件の分解</div><div class="req">' + q.req + '</div>' : '') +
         '<div class="lbl">決め手</div><div>' + q.key + '</div>' +
         '<div class="lbl">他の選択肢を外す理由</div><ul>' +
         q.reasons.map(function(r){ return '<li><b>' + r.l + '</b>：' + r.html + '</li>'; }).join('') +
