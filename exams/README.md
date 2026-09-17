@@ -22,8 +22,24 @@
 | [セット04](./set-04.md) | 第4分野 コスト最適化（20%） | 10 | ライフサイクル／スポット／VPCエンドポイント／Aurora Serverless／Budgets vs Cost Explorer／Intelligent-Tiering／CloudFront配信コスト／購入方法の組み合わせ／TTL |
 | [セット05](./set-05.md) | 総合（本番比率の混合） | 10 | Control Tower／DX暗号化／CloudHSM／API Gateway使用量プラン／Fargate移行／マルチAZ化／Firehose／Glue＋Athena／GWLB／gp2→gp3 |
 | [セット06](./set-06.md) | **複合（分野をまたぐ）** | 10 | セキュリティ×コスト／可用性×コスト／性能×コスト／セキュリティ×弾力性／セキュリティ×性能／弾力性×性能／コスト×運用／3分野複合／全分野 |
+| [セット07](./set-07.md) | **頻出① ネットワークと名前解決** | 10 | SG vs NACL／IP遮断／Route 53各ポリシー／エイリアス／ピアリング vs TGW／フローログ／接続ドレイニング／Lambda@Edge vs CloudFront Functions／Resolver／Egress-Only IGW |
+| [セット08](./set-08.md) | **頻出② ストレージ選択と移行** | 10 | EFS／FSx for Windows／Tape Gateway／Snowball vs DataSync／DMS+SCT／Transfer Family／S3レプリケーション／インスタンスストア／マルチパート |
+| [セット09](./set-09.md) | **頻出③ ID・運用・連携** | 10 | Cognito vs Identity Center vs AD Connector／明示的なDeny／Secrets Manager vs Parameter Store／CloudWatchエージェント／Config＋修復／EventBridge／Step Functions／ECSの2つのロール／Lambda同時実行／Patch Manager |
 
-次に作るのは **セット07（第1分野の2周目）** です。以降は配点比率の高い分野を厚めに巡回します。
+次に作るのは **セット10（頻出④：コンピューティングとデータベースの細目）** です。
+
+### セットの3つの系統
+
+| 系統 | セット | ねらい |
+|---|---|---|
+| 分野別 | 01〜04 | 公式ガイドのタスクに沿って、分野ごとの基本を一通り |
+| 形式別 | 05（総合）・06（複合） | 分野を見極める／複数要件を同時に満たす |
+| **頻出テーマ別** | **07〜09** | **出題頻度が高いのに取り違えやすい対比**を集中的に。網羅よりも「落とせない論点」を優先 |
+
+頻出セット（07〜09）は、既存問題の機械的なカバレッジ調査で**未出題だった21テーマ**（SG/NACLの戻り通信、Route 53のエイリアス、
+Storage Gateway、DataSync、Snowball、DMS、Transfer Family、FSx for Windows、S3レプリケーション、IAM Identity Center、
+Directory Service、Parameter Store、CloudWatchエージェント、ECSの2つのロール、Lambda@Edge、接続ドレイニング、
+インスタンスストア、VPCピアリング/TGW、VPCフローログ、明示的なDeny ほか）を軸に構成しています。
 
 ### セット05とセット06の違い
 
@@ -43,6 +59,9 @@
 | set-04 |  | /10 |  |
 | set-05 |  | /10 |  |
 | set-06 |  | /10 |  |
+| set-07 |  | /10 |  |
+| set-08 |  | /10 |  |
+| set-09 |  | /10 |  |
 
 ## 出題の方針（公式試験ガイドに準拠）
 
