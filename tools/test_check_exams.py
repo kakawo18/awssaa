@@ -139,5 +139,31 @@ class MultipleResponseTest(unittest.TestCase):
         self.assertTrue(any("外す理由が正解以外" in m for m in msgs), msgs)
 
 
+
+class BalanceTest(unittest.TestCase):
+    """正解記号の偏りを検出できること。"""
+
+    def test_skewed_distribution_is_reported(self):
+        dist = {"A": 18, "B": 2}
+        orig = ce.answer_distribution
+        ce.answer_distribution = lambda: dist
+        try:
+            msgs = [m for _, _, m in ce.check_balance()]
+        finally:
+            ce.answer_distribution = orig
+        self.assertTrue(any("偏っている" in m for m in msgs), msgs)
+
+    def test_even_distribution_passes(self):
+        orig = ce.answer_distribution
+        ce.answer_distribution = lambda: {"A": 6, "B": 6, "C": 5, "D": 5}
+        try:
+            self.assertEqual(ce.check_balance(), [])
+        finally:
+            ce.answer_distribution = orig
+
+    def test_repository_distribution_is_balanced(self):
+        self.assertEqual(ce.check_balance(), [])
+
+
 if __name__ == "__main__":
     unittest.main()

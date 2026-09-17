@@ -108,6 +108,38 @@ def check_file(path):
     return errors
 
 
+def answer_distribution():
+    """単一選択の正解記号の分布を数える（記号だけで当てられる問題集にしないため）。"""
+    dist = {}
+    for name in sorted(os.listdir(EXAMS)):
+        if not (name.startswith("set-") and name.endswith(".md")):
+            continue
+        with open(os.path.join(EXAMS, name), encoding="utf-8") as f:
+            for ln in f:
+                m = ANSWER_RE.match(ln.strip())
+                if m and "・" not in m.group(1):
+                    dist[m.group(1)] = dist.get(m.group(1), 0) + 1
+    return dist
+
+
+def check_balance(min_questions=20, max_share=0.40):
+    """正解記号が特定の文字に偏っていないかを検査する。
+
+    作問時に正解を先頭へ置く癖がつくと、内容を読まずに当てられる問題集になる。
+    問題数が十分あるときだけ、1文字の占有率が max_share を超えたら指摘する。
+    """
+    dist = answer_distribution()
+    total = sum(dist.values())
+    if total < min_questions:
+        return []
+    out = []
+    for letter, n in sorted(dist.items()):
+        if n / total > max_share:
+            out.append(("exams/", 0, "正解が %s に偏っている（%d/%d = %.0f%%、上限 %.0f%%）"
+                        % (letter, n, total, 100 * n / total, 100 * max_share)))
+    return out
+
+
 def check_all():
     """exams/ 配下すべてを検証し、(相対パス, 行, メッセージ) のリストを返す。"""
     out = []
@@ -119,6 +151,7 @@ def check_all():
         path = os.path.join(EXAMS, name)
         for line, msg in check_file(path):
             out.append((os.path.join("exams", name), line, msg))
+    out.extend(check_balance())
     return out
 
 
@@ -143,4 +176,8 @@ if __name__ == "__main__":
         for path, line, msg in problems:
             print("  %s:%d  %s" % (path, line, msg), file=sys.stderr)
         sys.exit(1)
-    print("\n合計 %d問 / 形式チェックはすべて通過" % sum(counts.values()))
+    dist = answer_distribution()
+    total = sum(dist.values())
+    print("\n単一選択の正解分布: " + " ".join(
+        "%s %d (%.0f%%)" % (k, v, 100 * v / total) for k, v in sorted(dist.items())))
+    print("合計 %d問 / 形式チェックはすべて通過" % sum(counts.values()))
