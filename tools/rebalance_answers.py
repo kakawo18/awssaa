@@ -5,8 +5,11 @@
 選択肢の中身を入れ替えて、正解が A〜D（複数選択は A〜E の組）へ均等に散るようにする。
 入れ替えに合わせて「正解」行と「他の選択肢を外す理由」の記号・並びも書き換える。
 
-  python3 tools/rebalance_answers.py --dry-run   # 変更後の分布だけ表示
-  python3 tools/rebalance_answers.py             # 実際に書き換える
+  python3 tools/rebalance_answers.py --dry-run          # 変更後の分布だけ表示
+  python3 tools/rebalance_answers.py                    # すべて書き換える
+  python3 tools/rebalance_answers.py --only set-10.md   # 追加したセットだけ直す
+
+既に解き終えたセットを無用に入れ替えないよう、--only で対象を絞れる。
 
 決定的に動く（同じ入力なら同じ結果）。解説の地の文が選択肢記号を参照していると
 意味がずれるため、参照は事前に取り除いておくこと。
@@ -121,12 +124,16 @@ def rebalance_file(path, rng, stats):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--only", nargs="*", metavar="FILE",
+                    help="対象のファイル名（省略時は exams/set-*.md すべて）")
     args = ap.parse_args()
 
     rng = random.Random(SEED)
     stats = {"dist": collections.Counter(), "multi_seen": 0}
     for name in sorted(os.listdir(EXAMS)):
         if not (name.startswith("set-") and name.endswith(".md")):
+            continue
+        if args.only and name not in args.only:
             continue
         path = os.path.join(EXAMS, name)
         out = rebalance_file(path, rng, stats)
@@ -139,7 +146,8 @@ def main():
     for key, n in stats["dist"].items():
         (single if len(key) == 1 else multi)["・".join(key)] += n
     total = sum(single.values())
-    print("単一選択 %d問の正解分布%s" % (total, "（変更後の見込み）" if args.dry_run else ""))
+    label = "対象ファイルの" if args.only else ""
+    print("%s単一選択 %d問の正解分布%s" % (label, total, "（変更後の見込み）" if args.dry_run else ""))
     for letter in "ABCD":
         print("  %s: %2d問 (%4.1f%%)" % (letter, single[letter], 100 * single[letter] / total))
     print("複数選択:", dict(multi))
