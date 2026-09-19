@@ -25,8 +25,11 @@
 | [セット07](./set-07.md) | **頻出① ネットワークと名前解決** | 10 | SG vs NACL／IP遮断／Route 53各ポリシー／エイリアス／ピアリング vs TGW／フローログ／接続ドレイニング／Lambda@Edge vs CloudFront Functions／Resolver／Egress-Only IGW |
 | [セット08](./set-08.md) | **頻出② ストレージ選択と移行** | 10 | EFS／FSx for Windows／Tape Gateway／Snowball vs DataSync／DMS+SCT／Transfer Family／S3レプリケーション／インスタンスストア／マルチパート |
 | [セット09](./set-09.md) | **頻出③ ID・運用・連携** | 10 | Cognito vs Identity Center vs AD Connector／明示的なDeny／Secrets Manager vs Parameter Store／CloudWatchエージェント／Config＋修復／EventBridge／Step Functions／ECSの2つのロール／Lambda同時実行／Patch Manager |
+| [セット10](./set-10.md) | **頻出④ コンピューティング細目** | 10 | 予測スケーリング／ライフサイクルフック／Beanstalk Immutable／Image Builder／Hibernate／SnapStart／HTTP API／Amazon MQ／SNSフィルタリング／ウォームプール |
+| [セット11](./set-11.md) | **頻出⑤ データベース細目** | 10 | Auroraバックトラック／高速クローン／RDS Blue-Green／Performance Insights／RCU計算／MemoryDB／Redshift Spectrum／同時実行スケーリング／特化型DB／RDS Proxyとフェイルオーバー |
+| [セット12](./set-12.md) | **頻出⑥ 運用・エッジ・AI** | 10 | ACMのus-east-1／Shield Advanced／GuardDuty自動対応／DeletionPolicy／Health Dashboard／AIサービス選択／SES／Outposts系／MGN／Cost Anomaly Detection |
 
-次に作るのは **セット10（頻出④：コンピューティングとデータベースの細目）** です。
+次に作るのは **セット13（分野別の2周目：第1分野の別角度）** です。
 
 ### セットの3つの系統
 
@@ -34,7 +37,7 @@
 |---|---|---|
 | 分野別 | 01〜04 | 公式ガイドのタスクに沿って、分野ごとの基本を一通り |
 | 形式別 | 05（総合）・06（複合） | 分野を見極める／複数要件を同時に満たす |
-| **頻出テーマ別** | **07〜09** | **出題頻度が高いのに取り違えやすい対比**を集中的に。網羅よりも「落とせない論点」を優先 |
+| **頻出テーマ別** | **07〜12** | **出題頻度が高いのに取り違えやすい対比**を集中的に。網羅よりも「落とせない論点」を優先 |
 
 頻出セット（07〜09）は、既存問題の機械的なカバレッジ調査で**未出題だった21テーマ**（SG/NACLの戻り通信、Route 53のエイリアス、
 Storage Gateway、DataSync、Snowball、DMS、Transfer Family、FSx for Windows、S3レプリケーション、IAM Identity Center、
@@ -62,6 +65,9 @@ Directory Service、Parameter Store、CloudWatchエージェント、ECSの2つ�
 | set-07 |  | /10 |  |
 | set-08 |  | /10 |  |
 | set-09 |  | /10 |  |
+| set-10 |  | /10 |  |
+| set-11 |  | /10 |  |
+| set-12 |  | /10 |  |
 
 ## 出題の方針（公式試験ガイドに準拠）
 
