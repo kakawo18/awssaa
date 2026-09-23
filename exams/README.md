@@ -5,7 +5,7 @@
 
 ## 使い方
 
-1. 1セット8〜12問・目安15分。設問を読んで**自分の答えを決めてから**「解答と解説」を開きます。
+1. 1セット8〜15問・目安15〜25分。設問を読んで**自分の答えを決めてから**「解答と解説」を開きます。
 2. 間違えた問題は、解説末尾の**参照**から教材の該当節に戻ります。
 3. 2周目は正解の選択肢ではなく、**外した3つの理由を言えるか**で確認します。
 
@@ -33,10 +33,14 @@
 | [セット15](./set-15.md) | **2周目③ 第3分野（24%）** | 10 | EBS帯域の上限／EFSスループットモード／キャッシュキー／クラスターモード／Auroraカスタムエンドポイント／Scan→Query＋GSI／クライアントアフィニティ／ジャンボフレーム／パーティション射影 |
 | [セット16](./set-16.md) | **2周目④ 第4分野（20%）** | 8 | Compute Savings Plans／Convertible RI／EBSスナップショットアーカイブ／Intelligent-Tieringのアーカイブ階層／割引共有／価格クラス／Fargate Spot／AZ間転送 |
 | [セット17](./set-17.md) | **複合2周目（分野をまたぐ）** | 10 | 署名付きURL＋Transfer Acceleration／Batch＋スポット／RDS Proxy＋Secrets Manager／DynamoDBグローバルテーブル／SCP＋コスト配分タグ／混合インスタンスポリシー／暗号化SQS＋DLQ／DX＋VPNバックアップ／Firehoseの形式変換／ステートレス化 |
+| [セット18](./set-18.md) | **実戦演習①（本番比率）** | 15 | OACとSSE-KMS／MFA条件付きの引き受け／WAFレートベース／組織トレイル／猶予期間／EFS＋ASG(1/1)／SQSの最大同時実行数／Route 53で案内ページ／ホットシャード／Flink／Inferentia／ライフサイクル／Serverless v2の自動一時停止／Compute Savings Plans |
+| [セット19](./set-19.md) | **実戦演習②（本番比率）** | 15 | プライベートAPI／シークレットの複製／ECSの`secrets`／Access Analyzerのポリシー生成／DNS Firewall＋Firewall Manager／クロスアカウントのイベントバス／Retry・Catch／Elastic Disaster Recovery／PITR＋削除保護／Redisのレプリカ／MSK／Glue ETL／Lambdaのarm64／I/O-Optimized／Budgets＋Anomaly Detection |
+| [セット20](./set-20.md) | **実戦演習③（本番比率）** | 15 | SecureTransport／IMDSv2／`rds.force_ssl`／リージョン制限のSCP／Macie＋Security Hub／FIFOのグループIDと高スループット／オリジングループ／SQSで非同期化／AZ障害時の台数（静的安定性）／GSIの書き込み容量／zero-ETL／OpenSearchで全文検索／FargateとCompute SP／開発DBのシングルAZ／CloudFrontの圧縮 |
+| [セット21](./set-21.md) | **実戦演習④（本番比率）** | 15 | オブジェクト所有権／エンドポイントポリシーと`aws:ResourceOrgID`／`iam:PassRole`／Cognitoの脅威保護／オブジェクトロック＋別アカウント複製／EventBridge Scheduler／大きなメッセージとS3／グローバルDBのスイッチオーバー／レイテンシー＋ヘルスチェック／Lambda＋EFS／PrivateLink／クローラー＋Athena／大容量取り出し／Redshift Serverless／ログの保持期間とIAクラス |
 
-次に作るのは **セット18（2周目の総合：本番比率の混合）** です。
+次に作るのは **セット22（実戦演習⑤）** です。
 
-### セットの4つの系統
+### セットの5つの系統
 
 | 系統 | セット | ねらい |
 |---|---|---|
@@ -44,6 +48,7 @@
 | 形式別 | 05（総合）・06／17（複合） | 分野を見極める／複数要件を同時に満たす |
 | **頻出テーマ別** | **07〜12** | **出題頻度が高いのに取り違えやすい対比**を集中的に。網羅よりも「落とせない論点」を優先 |
 | **分野別2周目** | **13〜16** | 01〜04と同じ分野を**別角度から**。出題数は本番の配点比（12／10／10／8問）に合わせ、1周目で触れなかった細目を補強 |
+| **実戦演習** | **18〜21** | 本番の配点比（5／4／3／3問）で分野を伏せて混ぜた15問セット。**数をこなして判断を速くする**ための演習。新しい論点と頻出論点の出し直しを混ぜている |
 
 頻出セット（07〜09）は、既存問題の機械的なカバレッジ調査で**未出題だった21テーマ**（SG/NACLの戻り通信、Route 53のエイリアス、
 Storage Gateway、DataSync、Snowball、DMS、Transfer Family、FSx for Windows、S3レプリケーション、IAM Identity Center、
@@ -80,6 +85,10 @@ Directory Service、Parameter Store、CloudWatchエージェント、ECSの2つ�
 | set-15 |  | /10 |  |
 | set-16 |  | /8 |  |
 | set-17 |  | /10 |  |
+| set-18 |  | /15 |  |
+| set-19 |  | /15 |  |
+| set-20 |  | /15 |  |
+| set-21 |  | /15 |  |
 
 ## 出題の方針（公式試験ガイドに準拠）
 
