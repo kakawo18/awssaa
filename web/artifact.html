@@ -276,6 +276,8 @@ tbody tr:nth-child(even) td{background:var(--tint)}
 .hit .where{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink-mute);display:block;margin-bottom:4px}
 .hit .ar{color:var(--accent);font-family:var(--mono);font-weight:700;padding:0 .45em}
 .hit .ans{color:var(--ink-strong);font-weight:700}
+.hit.head{border-left:4px solid var(--accent)}
+.hit.head .ht{font-size:1.08em;font-weight:700;color:var(--ink-strong)}
 .empty{margin-top:26px;color:var(--ink);font-size:.94em}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -455,8 +457,18 @@ tbody tr:nth-child(even) td{background:var(--tint)}
 
   var INDEX = [];
   DATA.forEach(function(ch){
+    // 見出しも索引する（サービス名で節そのものへ飛べるように）。k='head' は結果の先頭に出す
+    var chTitle = (ch.num ? ch.num + ' ' : '') + parts(ch).t;
+    INDEX.push({ c: ch.id, s: '', ct: chTitle, st: '章', h: chTitle, t: chTitle.toLowerCase(), k: 'head' });
     ch.sections.forEach(function(s){
-      var where = { c: ch.id, s: s.id, ct: (ch.num ? ch.num + ' ' : '') + parts(ch).t, st: (s.num ? s.num + ' ' : '') + s.title };
+      var where = { c: ch.id, s: s.id, ct: chTitle, st: (s.num ? s.num + ' ' : '') + s.title };
+      INDEX.push({ c: ch.id, s: s.id, ct: chTitle, st: chTitle, h: where.st, t: strip(where.st).toLowerCase(), k: 'head' });
+      var h3n = 0;
+      s.blocks.forEach(function(b){
+        if(b.t !== 'h3') return;
+        var label = strip(b.html);
+        INDEX.push({ c: ch.id, s: s.id + '-h' + (h3n++), ct: chTitle, st: where.st, h: b.html, t: label.toLowerCase(), k: 'head' });
+      });
       function add(html, kind){
         var text = strip(html);
         if(text.length < 2) return;
@@ -645,6 +657,10 @@ tbody tr:nth-child(even) td{background:var(--tint)}
       '<button class="fbtn mark' + (read[ch.id] ? ' on' : '') + '" id="markread">' +
       (read[ch.id] ? '✓ 読了' : 'この章を読了にする') + '</button></div>';
     main.innerHTML = h;
+    // 小見出しに検索結果から直接飛べるよう、節ごとの出現順で id を振る
+    Array.prototype.forEach.call(main.querySelectorAll('section.sec'), function(sec){
+      Array.prototype.forEach.call(sec.querySelectorAll('h3'), function(el, i){ el.id = sec.id + '-h' + i; });
+    });
     var mb = document.getElementById('markread');
     if(mb) mb.addEventListener('click', function(){
       read[ch.id] = !read[ch.id];
@@ -656,16 +672,32 @@ tbody tr:nth-child(even) td{background:var(--tint)}
     try { localStorage.setItem('saa.last', ch.id); } catch(e){}
   }
 
+  // 照合用の正規化：全角半角・大文字小文字をそろえ、括弧・記号・空白を無視する
+  // （「DR戦略」で「（DR）戦略」、「route53」で「Route 53」に当たるように）
+  function norm(t){
+    return (t.normalize ? t.normalize('NFKC') : t).toLowerCase()
+      .replace(/[\s()\[\]「」『』【】〈〉《》・,、。.:：;；\/｜|'"“”‘’-]/g, '');
+  }
+
   function results(query){
     var terms = query.trim().split(/[\s　]+/).filter(Boolean);
-    var lower = terms.map(function(t){ return t.toLowerCase(); });
+    var keys = terms.map(norm).filter(Boolean);
     var hits = INDEX.filter(function(e){
-      return lower.every(function(x){ return e.t.indexOf(x) >= 0; });
+      if(e.n === undefined) e.n = norm(e.t);
+      return keys.length && keys.every(function(x){ return e.n.indexOf(x) >= 0; });
     });
+    var heads = hits.filter(function(e){ return e.k === 'head'; });
+    hits = hits.filter(function(e){ return e.k !== 'head'; });
     hits.sort(function(a, b){ return (b.k === 'row' ? 1 : 0) - (a.k === 'row' ? 1 : 0); });
     var h = '<div class="eyebrow">検索</div><h1>' + esc(query) + '</h1>' +
-      '<div class="rescount">' + hits.length + ' 件</div>';
-    if(!hits.length){
+      '<div class="rescount">' + (heads.length + hits.length) + ' 件</div>';
+    if(heads.length){
+      h += '<div class="resgrp heads"><h3>章・節の見出し</h3>' + heads.map(function(e){
+        return '<button class="hit head" data-go="' + e.c + '"' + (e.s ? ' data-sec="' + e.s + '"' : '') +
+          '><span class="where">' + e.st + '</span><span class="ht">' + hl(e.h, terms) + '</span></button>';
+      }).join('') + '</div>';
+    }
+    if(!hits.length && !heads.length){
       h += '<div class="empty">該当なし。別の表記（略称・英語名・日本語）でも試してみてください。</div>';
     } else {
       var order = [], byCh = {};
