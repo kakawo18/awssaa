@@ -77,6 +77,15 @@ class CheckExamsTest(unittest.TestCase):
         msgs = self.check(GOOD.replace("01-compute.md", "99-nonexistent.md"))
         self.assertTrue(any("リンク先が存在しない" in m for m in msgs), msgs)
 
+    def test_bold_in_option_is_reported(self):
+        # 選択肢の太字は正解のヒントになるので禁止（キーワードは解説側に書く）
+        msgs = self.check(GOOD.replace("- **B.** 選択肢B", "- **B.** **選択肢B**"))
+        self.assertTrue(any("選択肢に太字" in m for m in msgs), msgs)
+
+    def test_keyword_line_is_allowed(self):
+        msgs = self.check(GOOD.replace("**決め手**：理由。", "**決め手**：理由。\n\n**キーワード**：用語"))
+        self.assertEqual(msgs, [])
+
     def test_question_numbering_is_checked(self):
         msgs = self.check(GOOD.replace("### Q1 ｜", "### Q3 ｜"))
         self.assertTrue(any("連番" in m for m in msgs), msgs)

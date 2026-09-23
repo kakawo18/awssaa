@@ -22,6 +22,8 @@ KEY_RE = re.compile(r"^\*\*決め手\*\*[：:]\s*(.*)$")
 # 複合問題だけが持つ任意の欄（要件を分解して見せる）
 REQ_RE = re.compile(r"^\*\*要件の分解\*\*[：:]\s*(.*)$")
 REF_RE = re.compile(r"^\*\*参照\*\*[：:]\s*(.*)$")
+# 正解の決め手になる用語（選択肢では強調しないので、解説側に書く）
+KW_RE = re.compile(r"^\*\*キーワード\*\*[：:]\s*(.*)$")
 
 
 def parse_set(path):
@@ -45,7 +47,7 @@ def parse_set(path):
             raise ValueError("%s: Q%d の見出しが不正" % (path, n + 1))
 
         body, options, reasons = [], [], []
-        answer, key, refs, req = [], "", "", ""
+        answer, key, refs, req, kw = [], "", "", "", ""
         in_details = False
         in_reasons = False
         for ln in block[1:]:
@@ -81,6 +83,10 @@ def parse_set(path):
             if m:
                 refs = bc.inline(m.group(1))
                 continue
+            m = KW_RE.match(s)
+            if m:
+                kw = bc.inline(m.group(1))
+                continue
             if s.startswith("**他の選択肢を外す理由**"):
                 in_reasons = True
                 continue
@@ -101,6 +107,7 @@ def parse_set(path):
             "multi": len(answer) > 1,
             "req": req,
             "key": key,
+            "kw": kw,
             "reasons": reasons,
             "refs": refs,
         })
