@@ -16,7 +16,7 @@
 | **Glacier Instant / Flexible / Deep Archive** | ミリ秒単位の即時取り出し＝**Instant**／数分〜数時間＝**Flexible**／12〜48時間の最安長期保管＝**Deep Archive** | 取り出しまでに許容される時間、および最低保管期間（Instant: 90日 / Flexible: 90日 / Deep Archive: 180日）。 |
 | **ライフサイクル / Intelligent-Tiering** | アクセス頻度の低下パターンが既知＝**ライフサイクル**／アクセス頻度が予測不能・不規則＝**Intelligent-Tiering** | アクセス頻度の予測可能性。※128KB未満の極小オブジェクトはIntelligent-Tieringの自動階層化対象外。 |
 | **Storage Gateway / DataSync** | オンプレミスからAWSストレージを**日常的に継続利用**＝**Storage Gateway**／オンプレミス↔AWS間の**移行・定期同期**＝**DataSync** | オンプレミス業務アプリからハイブリッドで読み書きし続けるか、一方向にバッチ同期するか。 |
-| **S3 Transfer Acceleration / CloudFront** | S3バケットへの**アップロード高速化**＝**Transfer Acceleration** | グローバルエンドユーザーへの**コンテンツ配信・キャッシュ**＝**CloudFront** | トラフィックの方向（インバウンドアップロードか、アウトバウンド配信か）。 |
+| **S3 Transfer Acceleration / CloudFront** | S3バケットへの**アップロード高速化**＝**Transfer Acceleration**／グローバルエンドユーザーへの**コンテンツ配信・キャッシュ**＝**CloudFront** | トラフィックの方向（インバウンドアップロードか、アウトバウンド配信か）。 |
 
 ---
 
@@ -27,7 +27,7 @@
 | **EC2 / Lambda** | 15分超の処理・OS完全制御・常時高負荷＝**EC2**／イベント駆動・インフラ管理不要＝**Lambda** | 連続実行時間（Lambdaは最大15分）、OS/ミドルウェアの制御要否、トラフィックの定常性（常時高負荷ではEC2のRI/SPが割安）。 |
 | **ECS / EKS** | AWSネイティブで管理負荷を最小化＝**ECS**／Kubernetesエコシステム・既存マニフェスト流用＝**EKS** | 単にコンテナを動かしたいだけか、Kubernetes（kubectl, Helm, CRD）の互換性が必須要件か。 |
 | **Fargate / EC2起動タイプ** | サーバー管理不要のサーバーレス運用＝**Fargate**／GPU利用・特殊カーネル・高密度集約＝**EC2** | GPU利用、特定インスタンスファミリの指定、デーモンセット等のホスト制御が必要か。 |
-| **Lambda / AWS Batch** | 実行時間15分以内の軽量処理＝**Lambda** | 15分を超える長時間の並列計算バッチ・ジョブキュー＝**AWS Batch** | 処理時間、およびスポットインスタンスによるコスト最適化の要否。 |
+| **Lambda / AWS Batch** | 実行時間15分以内の軽量処理＝**Lambda**／15分を超える長時間の並列計算バッチ・ジョブキュー＝**AWS Batch** | 処理時間、およびスポットインスタンスによるコスト最適化の要否。 |
 | **AWS Batch / Step Functions** | 大規模計算ジョブのスケジューリング・実行＝**AWS Batch**／処理手順・条件分岐・エラー処理のフロー制御＝**Step Functions** | 「計算リソースとジョブの実行基盤」か、「複数サービスのワークフロー制御」か。 |
 | **Elastic Beanstalk / CloudFormation** | アプリケーションコード中心の自動展開＝**Beanstalk**／インフラ全体の厳密なIaC定義＝**CloudFormation** | インフラの高度なカスタマイズが必要か、Webアプリ環境の迅速な構築を最優先とするか。 |
 | **スポット / RI / Savings Plans** | 中断耐性のあるワークロード＝**スポット**／特定インスタンスの最安コミット＝**RI**／柔軟な1〜3年コミット＝**Savings Plans** | 中断発生時に再実行可能なアーキテクチャか。将来的なインスタンスタイプ変更の可能性があるか。 |
@@ -61,7 +61,7 @@
 | **DynamoDB / DAX / ElastiCache** | 一桁ミリ秒のNoSQL＝**DynamoDB**／DynamoDB専用のマイクロ秒インメモリキャッシュ＝**DAX**／RDBMS等の汎用キャッシュ＝**ElastiCache** | データの整合性要件（DAXは結果整合性の読み取りのみをキャッシュ）。 |
 | **Redis / Memcached** | データの永続化・レプリケーション・複雑なデータ構造＝**Redis**／シンプルなKVS・マルチスレッド処理＝**Memcached** | ノード障害時のデータ永続化やPub/Sub機能が必要か。 |
 | **ElastiCache / Amazon MemoryDB** | 一時的なキャッシュ層＝**ElastiCache**／プライマリデータベースとしての高耐久性と超低遅延を両立＝**MemoryDB** | データが消失してもバックエンドから再生成可能か、唯一の正本データストアとなるか。 |
-| **Amazon QLDB / Managed Blockchain** | 中央集権的な管理者による改ざん不能な台帳履歴＝**QLDB**／複数企業・組織間で信頼を分散するコンソーシアム＝**Managed Blockchain** | 信頼できる中央管理主体が存在するか、分散合意形成が必要か。 |
+| **Amazon QLDB / Managed Blockchain** | 中央集権的な管理者による改ざん不能な台帳履歴＝**QLDB**（※2025年7月31日にサポート終了。古い設問でのみ登場）／複数企業・組織間で信頼を分散するコンソーシアム＝**Managed Blockchain** | 信頼できる中央管理主体が存在するか、分散合意形成が必要か。 |
 
 ---
 
@@ -88,9 +88,9 @@
 | **CloudTrail / CloudWatch / AWS Config** | API操作履歴（誰が・いつ・何を）＝**CloudTrail**／リソースの性能メトリクスとログ＝**CloudWatch**／リソース設定の履歴とルール準拠性＝**AWS Config** | 監視・監査の対象が「ユーザー操作」「システム状態」「構成の整合性」のどれか。 |
 | **GuardDuty / Inspector / Macie** | アカウントや通信の脅威・振る舞い検知＝**GuardDuty**／EC2・ECR・LambdaのOS/パッケージ脆弱性検査＝**Inspector**／S3内の個人情報・機密データ検出＝**Macie** | 検知対象が「不審なアクティビティ」「ソフトウェア脆弱性」「機密データの漏洩リスク」のどれか。 |
 | **AWS Security Hub / Amazon Detective** | セキュリティ検出結果の**一元集約とコンプライアンス評価**＝**Security Hub**／インシデントの根本原因・影響範囲の**深掘りグラフ調査**＝**Detective** | 「現状の課題集約」か、「発生した侵害原因の追跡分析」か。 |
-| **AWS KMS / AWS CloudHSM** | マルチテナント・マネージド暗号化・AWSネイティブ統合＝**KMS**／シングルテナント・FIPS 140-2 レベル3専用ハードウェア＝**CloudHSM** | 法規制や企業規程で専用ハードウェアによる鍵管理が義務付けられているか。 |
+| **AWS KMS / AWS CloudHSM** | マルチテナント・マネージド暗号化・AWSネイティブ統合＝**KMS**／顧客専用のシングルテナントHSMで鍵を専有管理＝**CloudHSM** | 法規制や企業規程で、他の利用者と共有しない専用ハードウェアによる鍵管理が義務付けられているか（FIPSのレベル3は現在KMSも満たすため、決め手にならない）。 |
 | **Secrets Manager / Parameter Store** | パスワードの**自動ローテーション**・シークレット管理＝**Secrets Manager**／軽量な設定値管理・無料標準パラメータ＝**Parameter Store** | 認証情報の自動更新機能が必要か、またはシンプルな環境変数・構成管理で十分か。 |
-| **IAM Identity Center / Amazon Cognito** | 社内従業員のAWSコンソール/CLIログイン・SSO＝**IAM Identity Center** | Web/モバイルアプリケーションのエンドユーザー認証＝**Cognito** | 認証対象が「社内管理者・開発者」か、「一般消費者・アプリ顧客」か。 |
+| **IAM Identity Center / Amazon Cognito** | 社内従業員のAWSコンソール/CLIログイン・SSO＝**IAM Identity Center**／Web/モバイルアプリケーションのエンドユーザー認証＝**Cognito** | 認証対象が「社内管理者・開発者」か、「一般消費者・アプリ顧客」か。 |
 | **Managed Microsoft AD / AD Connector** | クラウド上にフルマネージドActive Directoryを構築＝**Managed AD**／オンプレミスの既存ADへ認証要求を中継プロキシ＝**AD Connector** | AWS側で独立したドメインコントローラーを保持するか、オンプレミスADを正本として直結するか。 |
 | **AWS WAF / AWS Shield / Network Firewall** | L7 Webレイヤーの攻撃遮断（SQLi, XSS）＝**WAF**／L3/L4 DDoS攻撃防御＝**Shield**／VPC全体のL3-L7ステートフルパケット検査＝**Network Firewall** | 保護対象のレイヤー（HTTPトラフィックか、VPCネットワーク全体か）と脅威の種類。 |
 | **AWS Organizations / AWS Control Tower** | マルチアカウントの一括請求とSCP＝**Organizations**／ランディングゾーン構築とガードレール自動適用＝**Control Tower** | 組織ポリシーの個別適用か、マルチアカウント基盤のベストプラクティス自動構築か。 |

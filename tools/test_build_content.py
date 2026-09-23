@@ -111,5 +111,33 @@ class FigureTest(unittest.TestCase):
         self.assertIn('fill="#FFFFFF"', svg)
         self.assertNotIn("<style", svg)
 
+
+class CalloutAndTableTest(unittest.TestCase):
+    """GitHub の注記記法とセル数のずれた表を正しく扱うこと。"""
+    _parse = FigureTest._parse
+
+    def test_note_marker_becomes_kind_not_text(self):
+        ch = self._parse("# 第1章 テスト\n\n## 1.1 節\n\n> [!WARNING]\n> **注意**：本文。\n")
+        note = ch["sections"][0]["blocks"][0]
+        self.assertEqual(note["t"], "note")
+        self.assertEqual(note["kind"], "warn")
+        self.assertNotIn("[!", note["html"])
+        self.assertTrue(note["html"].startswith("<b>注意</b>"))
+
+    def test_plain_quote_has_no_kind(self):
+        ch = self._parse("# 第1章 テスト\n\n## 1.1 節\n\n> ただの引用。\n")
+        self.assertEqual(ch["sections"][0]["blocks"][0]["kind"], "")
+
+    def test_row_with_extra_cell_is_rejected(self):
+        with self.assertRaises(ValueError):
+            self._parse("# 第1章 テスト\n\n## 1.1 節\n\n| a | b |\n|---|---|\n| 1 | 2 | 3 |\n")
+
+    def test_repository_docs_have_no_callout_markers_left(self):
+        for ch in bc.build():
+            for s in ch["sections"]:
+                for b in s["blocks"]:
+                    self.assertNotIn("[!", b.get("html", ""), (ch["id"], s["title"]))
+
+
 if __name__ == "__main__":
     unittest.main()

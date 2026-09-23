@@ -121,10 +121,16 @@ def parse(path):
                 i += 1
             text = "".join(para)
             text = re.sub(r"^\*\*(章の一言|この章の使い方)\*\*[：:]\s*", "", text)
+            # GitHub の注記記法（> [!NOTE] など）。記号は本文に残さず種別として持つ
+            alert = re.match(r"^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*", text)
+            kind = ""
+            if alert:
+                kind = "warn" if alert.group(1) in ("WARNING", "CAUTION", "IMPORTANT") else "info"
+                text = text[alert.end():]
             if cur is None:
                 ch["lead"] = inline(text)
             else:
-                cur["blocks"].append({"t": "note", "html": inline(text)})
+                cur["blocks"].append({"t": "note", "kind": kind, "html": inline(text)})
             continue
         if s.startswith("## "):
             flush()
@@ -164,7 +170,12 @@ def parse(path):
                 i += 1
             rows = []
             while i < n and lines[i].strip().startswith("|"):
-                rows.append([inline(c) for c in split_row(lines[i])]); i += 1
+                cells = split_row(lines[i])
+                # 列数がずれた行は GitHub では末尾のセルが捨てられ、Web ではラベルがずれる
+                if len(cells) != len(head):
+                    raise ValueError("%s:%d: 表の列数が見出し（%d列）と違う（%d列）。セル内の区切りに | を使っていないか確認する"
+                                     % (os.path.basename(path), i + 1, len(head), len(cells)))
+                rows.append([inline(c) for c in cells]); i += 1
             if cur is not None:
                 cur["blocks"].append({"t": "table", "head": [inline(h) for h in head], "rows": rows})
             continue
