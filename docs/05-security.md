@@ -43,7 +43,7 @@
 |---|---|
 | AWS上に**本格的なMicrosoft Active Directory**が必要（オンプレADとの信頼関係構築、グループポリシーの適用、FSx for WindowsやRDS SQL Serverとのドメイン統合） | **AWS Managed Microsoft AD** |
 | 認証自体は**オンプレミスのADに委譲**し、AWS上にはディレクトリデータを保持せずプロキシとしてリクエストを転送したい | **AD Connector** |
-| 小規模環境・低コスト優先、Linuxクライアント中心の簡易なSambaベースLDAPディレクトリ | **Simple AD**（オンプレADとの信頼関係は構築不可） |
+| 小規模環境・低コスト優先、Linuxクライアント中心の簡易なSambaベースLDAPディレクトリ | **Simple AD**（オンプレADとの信頼関係は構築不可。※2026年6月30日にメンテナンス（新規受付終了）へ移行） |
 
 ---
 
