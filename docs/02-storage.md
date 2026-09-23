@@ -139,7 +139,7 @@ Glacier Flexible Retrieval の取り出しオプション：**迅速（Expedited
 | オンプレミス側のプロトコル／要件 | ゲートウェイの種類 | バックエンドの保存先 |
 |---|---|---|
 | NFS／SMBでファイル共有し、**保存データがそのままS3オブジェクトとして格納**される | **S3 File Gateway** | Amazon S3 |
-| SMBプロトコルでWindowsファイル共有をクラウドへシームレスに拡張 | **FSx File Gateway** | FSx for Windows File Server |
+| SMBプロトコルでWindowsファイル共有をクラウドへシームレスに拡張 | **FSx File Gateway**（※2024年10月28日に新規顧客の受付を終了。AWSはFSx for Windows File Serverへの直接接続を案内） | FSx for Windows File Server |
 | iSCSIブロックストレージ、**頻繁にアクセスするデータのみをローカルにキャッシュ**し、残りはクラウドに退避（ストレージ容量削減） | Volume Gateway **キャッシュ型** | Amazon S3（全データ） |
 | iSCSIブロックストレージ、**全データをオンプレミスに保持**しつつ、非同期でポイントインタイムバックアップを取得（低遅延を最優先） | Volume Gateway **保管型** | オンプレミス ＋ EBSスナップショット（S3） |
 | 既存の**バックアップソフトウェアが利用しているテープライブラリ装置**をクラウドで置き換えたい | **Tape Gateway**（VTL） | Amazon S3 ／ S3 Glacier |

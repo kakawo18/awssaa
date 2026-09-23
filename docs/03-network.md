@@ -198,7 +198,7 @@
 |---|---|---|
 | 静的・動的なWebコンテンツを**エッジでキャッシュ**して配信負荷とレイテンシを下げたい（HTTP/HTTPS） | **CloudFront** | Global Accelerator：キャッシュ機能を持たない |
 | **TCP／UDPプロトコル**（オンライン対戦ゲーム、IoT通信、VoIP/SIP音声通信など）の通信遅延を低減したい | **Global Accelerator** | CloudFront：HTTP/HTTPSプロトコルのみに対応 |
-| クライアント側のファイアウォールで許可するため、**固定の静的IPアドレス**が必要 | **Global Accelerator** | CloudFront：提供されるIPアドレスが変動するため固定できない |
+| クライアント側のファイアウォールで許可するため、**固定の静的IPアドレス**が必要 | **Global Accelerator** | CloudFront：既定ではIPアドレスが変動する。※2024年11月に**Anycast静的IP**（許可リスト登録やゼロレーティング向け）が追加されたが、設問の「固定IP＋TCP/UDP・高速フェイルオーバー」の答えは今もGlobal Accelerator |
 | リージョン全体の障害発生時、**DNSのTTL遅延を待たずに数十秒で別リージョンへトラフィックを切り替えたい** | **Global Accelerator** | Route 53 / CloudFront：クライアント側のDNSキャッシュにより切り替えにタイムラグが発生する |
 | リージョン間でトラフィックの比率をパーセンテージで調整したい | Global Accelerator（トラフィックダイヤル機能） | |
 
