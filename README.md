@@ -36,6 +36,8 @@ Web版では選択肢をタップすると正誤と解説が表示され、解�
 （`docs/` の参照リンクはその章へ遷移します）。
 
 ## Web版（スマホ用）
+👉 **https://kakawo18.github.io/awssaa/** （Safariで開いて「ホーム画面に追加」するとアプリのように使えます）
+
 `web/artifact.html` + `web/content.js` は、docs のMarkdownを1枚のWebページにまとめたものです。
 章のナビゲーション、全章横断の検索（サービス名を入れると判断表の該当行だけを抽出）、
 読了チェック、本文中の公式出典リンク（新しいタブで開く）が使えます。
@@ -52,8 +54,15 @@ python3 tools/build_content.py        # docs/*.md → web/content.js
 python3 tools/build_exams.py          # exams/*.md → web/exams.js
 python3 tools/test_build_content.py   # リンク変換・エスケープの回帰テスト
 python3 tools/test_check_exams.py     # 問題集の形式チェックの回帰テスト
+python3 tools/build_site.py           # web/ → site/（GitHub Pages 用の単体ページ。確認用）
 ```
+
+`main` にプッシュすると GitHub Actions（`.github/workflows/pages.yml`）が形式チェックとテストを実行し、通れば `site/` を組み立てて GitHub Pages に公開します。`site/` は生成物なのでコミットしません。
 Markdown のリンクは、`https://` の外部リンクだけをクリック可能な形で保持し、
 `./03-network.md` のような教材内リンクは章への遷移に変換します。それ以外のスキームは無効化してラベルだけ残します。
 
-公開URL: https://claude.ai/code/artifact/72bf835a-9480-4034-826e-cd034496a035
+公開URL:
+- GitHub Pages（ログイン不要）: https://kakawo18.github.io/awssaa/
+- Claude Artifact（本人のみ）: https://claude.ai/code/artifact/72bf835a-9480-4034-826e-cd034496a035
+
+解答状況・読了チェックはブラウザに保存されるため、開くURLごとに別々に記録されます。
