@@ -43,7 +43,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);
   -webkit-text-size-adjust:100%;font-feature-settings:"palt" 1}
 b{font-weight:700;color:var(--ink-strong)}
 code{font-family:var(--mono);font-size:.88em;color:var(--ink-strong);background:var(--surface-2);
-  padding:.1em .35em;border-radius:4px}
+  padding:.1em .35em;border-radius:4px;overflow-wrap:anywhere}
 /* 検索ハイライトは地色だけでなく下線でも示す（色の見え方に依存させない） */
 mark{background:var(--mark-bg);color:var(--mark-ink);padding:0 .2em;border-radius:2px;
   font-weight:700;box-shadow:inset 0 -2px 0 var(--mark-line)}
@@ -154,6 +154,7 @@ section.q{margin-top:44px;scroll-margin-top:120px}
   background:var(--surface);border:1px solid var(--rule-2);border-radius:8px;padding:13px 15px;
   font-size:.92em;line-height:1.75;color:var(--ink)}
 .opt:hover:not([aria-disabled="true"]){border-color:var(--accent);background:var(--tint)}
+.opt>span:not(.mk){min-width:0;overflow-wrap:anywhere}
 .opt .ol{flex:none;font-family:var(--mono);font-weight:700;color:var(--accent);min-width:1.3em}
 .opt .mk{margin-left:auto;padding-left:10px;font-weight:700;white-space:nowrap;font-size:.92em}
 .opt.correct{border-color:var(--ok);border-width:2px;background:var(--ok-weak);padding:12px 14px}
