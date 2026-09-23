@@ -53,6 +53,11 @@ def check_file(path):
         if len(got) < 4 or got != LETTERS[:len(got)]:
             err(start, "選択肢がAから連続していない、または4つ未満（検出: %s）" % ("".join(got) or "なし"))
 
+        bold = [mm.group(1) for _, mm in opts if "**" in mm.group(2)]
+        if bold:
+            err(start, "選択肢に太字がある（%s）。正解のヒントになるため、キーワードは解説の「**キーワード**」欄に書く"
+                % "".join(bold))
+
         if block.count("<details>") != 1 or block.count("</details>") != 1:
             err(start, "<details> と </details> が1組になっていない")
 
