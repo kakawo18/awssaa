@@ -30,7 +30,7 @@
 
 **他の選択肢を外す理由**
 - **A**：1と2が逆です。Identity Centerは社内の管理者・開発者向けで、一般消費者のサインアップには使いません。
-- **C**：50アカウントに個別のIAMユーザーを作る運用は破綻します。Simple ADはオンプレADとの信頼関係を張れず、要件3を満たしません。
+- **C**：50アカウントに個別のIAMユーザーを作る運用は破綻します。Simple ADはオンプレADとの信頼関係を張れず、要件3を満たしません（Simple ADは2026年6月30日に新規受付を終了しています）。
 - **D**：Directory Serviceは消費者向けのサインアップ基盤ではなく、Cognitoはドメイン参加の認証を提供しません。
 
 **参照**：[第5章 5.2 IAM Identity Center](../docs/05-security.md) ／ [第5章 5.3 AWS Directory Service](../docs/05-security.md) ／ [第5章 5.4 Amazon Cognito](../docs/05-security.md)

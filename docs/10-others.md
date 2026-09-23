@@ -127,7 +127,7 @@
 |---|---|---|
 | **AWS Snowball Edge** | 高耐久性の物理ストレージデバイスによるオフライン移送 | 数十TB〜数PBの大容量データ。**ネットワーク帯域が不十分で転送に数週間以上を要する**環境。エッジコンピューティング（EC2/Lambda）にも対応。※2025年11月7日以降は既存顧客のみ（新規顧客はDataSync／AWS Data Transfer Terminal を案内）。 |
 | **AWS Snowcone** | 超小型・軽量（約8TB〜14TB）のポータブルデバイス。**2024年11月12日に提供終了** | エッジ環境、工場、ドローン、車載など、過酷な物理環境でのデータ収集・移送（古い設問でのみ登場）。 |
-| **AWS Snowmobile** | 超大規模データ移送用の専用コンテナトラック。**現在は提供されていない**（公式ページはSnowballへ統合） | 最大100PB/台のエクサバイト級データセンター全体のクラウド移行（古い設問でのみ登場）。 |
+| **AWS Snowmobile** | 超大規模データ移送用の専用コンテナトラック。**2024年3月14日に完全終了** | 最大100PB/台のエクサバイト級データセンター全体のクラウド移行（古い設問でのみ登場）。 |
 | **AWS Application Migration Service (MGN)** | サーバーのリフト＆シフト（ブロックレベル複製） | オンプレミスや他クラウドの仮想マシン・物理サーバーを、OSやアプリを変更せず**最小のダウンタイムでEC2へ自動リフト**する。 |
 | **AWS Application Discovery Service** | 移行前のオンプレミス環境の構成調査。※2025年11月7日に新規顧客の受付を終了（後継はAWS Transform） | 既存サーバーのスペック、稼働率、ネットワーク依存関係を自動収集し、移行計画の策定を支援する。 |
 | **AWS Migration Hub** | 移行プロジェクトの進捗を一元管理。※2025年11月7日に新規顧客の受付を終了（後継はAWS Transform） | MGNやDMSなど複数の移行ツールのステータスを単一ダッシュボードで追跡する。 |
@@ -143,10 +143,10 @@
 | 世界各地の分散拠点からAmazon S3バケットへの**アップロード遅延を最適化** | **S3 Transfer Acceleration** |
 
 > [!NOTE]
-> **Snowファミリーの提供状況（2026年9月確認）**：Snowconeは2024年11月12日に提供終了、Snowball Edgeは2025年11月7日から既存顧客のみ（2026年12月31日にサポート終了予定）。AWSは新規の移行に**DataSync**（オンライン）や**AWS Data Transfer Terminal**（物理持ち込み）を案内している。ただしSAA-C03の設問は「帯域が足りない大容量移送＝Snowball」の前提で出ることが多いため、判断の対応関係はそのまま覚えておく。
+> **Snowファミリーの提供状況（2026年9月確認）**：Snowconeは2024年11月12日に提供終了、Snowball Edgeは2025年11月7日から既存顧客のみ（2026年12月31日にサポート終了予定）、Snowmobileは2024年3月14日に完全終了。AWSは新規の移行に**DataSync**（オンライン）や**AWS Data Transfer Terminal**（物理持ち込み）を案内している。ただしSAA-C03の設問は「帯域が足りない大容量移送＝Snowball」の前提で出ることが多いため、判断の対応関係はそのまま覚えておく。
 
 > [!NOTE]
-> **この章のその他の提供状況（2026年9月確認）**：Pinpoint（2026年10月30日サポート終了）、Fraud Detector・Migration Hub・Application Discovery Service（2025年11月7日新規受付終了）、Kendra（2026年7月30日新規受付終了）、Forecast（2024年7月29日新規受付終了）。いずれも既存顧客は利用を続けられ、試験では従来の役割のまま出題され得る。最新の状況は [AWS Product Lifecycle](https://aws.amazon.com/products/lifecycle/) で確認できる。
+> **この章のその他の提供状況（2026年9月確認）**：Pinpoint（2026年10月30日サポート終了）、Fraud Detector・Migration Hub・Application Discovery Service（2025年11月7日新規受付終了）、Kendra（2026年7月30日新規受付終了）、Forecast（2024年7月29日新規受付終了）。いずれも既存顧客は利用を続けられ、試験では従来の役割のまま出題され得る。最新の状況は [AWS Product Lifecycle](https://aws.amazon.com/products/lifecycle/) で確認できる（Maintenance＝新規受付終了、Sunset＝サポート終了日が決定、Full Shutdown＝完全終了）。
 
 ---
 
