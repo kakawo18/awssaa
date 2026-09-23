@@ -28,7 +28,7 @@
 | **「EC2にパブリックIPを持たせずに管理・アクセスしたい」** | NAT Gateway（アウトバウンド通信用）、**AWS Systems Manager Session Manager**（安全なインバウンドシェル接続）、VPCエンドポイント | 通信の方向性（サーバーから外部APIへ出る通信か、運用者がサーバーへ入る操作か）。※Session Managerは踏み台サーバーやSSHポート開放を完全排除する。 |
 | **「固定パブリックIPアドレスが必要（外部FW登録等）」** | Network Load Balancer (NLB)、AWS Global Accelerator、Elastic IPアドレス | プロトコル要件（HTTP/HTTPSを終端したい場合は、Global Accelerator ＋ ALB または NLB ＋ ALBの組み合わせ）。 |
 | **「ソースコード内に認証情報を埋め込まない」** | IAMロール（EC2/Lambda用）、AWS Secrets Manager、AWS Systems Manager Parameter Store | パスワードやアクセストークンの自動ローテーション機能が必要か（Secrets Manager）。 |
-| **「暗号鍵を自社の専有ハードウェアで完全に制御したい」** | AWS CloudHSM、SSE-C（顧客提供鍵）、KMSへのインポートキー | 規制要件が「AWSオペレーターによる鍵への物理的アクセスの完全排除（FIPS 140-2 レベル3）」を義務付けているか。 |
+| **「暗号鍵を自社の専有ハードウェアで完全に制御したい」** | AWS CloudHSM、SSE-C（顧客提供鍵）、KMSへのインポートキー | 規制要件が「顧客専用（シングルテナント）のHSMで、AWSオペレーターも鍵にアクセスできないこと」を義務付けているか。※古い設問は「FIPS 140-2 レベル3＝CloudHSM」を前提にしていることがあるが、現在はKMSもレベル3の認証を取得している。 |
 | **「外部パートナーやユーザーへ特定ファイルを一時的に安全共有」** | Amazon S3 事前署名URL（Presigned URL） | URLの有効期限設定、および発行主体であるIAMロールの適切なアクセス権限付与。 |
 | **「特定IPアドレスやCIDRブロックからの攻撃を遮断」** | ネットワークACL（サブネット単位・L3/L4の拒否ルール）、AWS WAF（HTTP/HTTPSのIPセット拒否）、CloudFront 地理的制限（国単位遮断） | 遮断すべきネットワーク階層（L3/L4パケットか、L7 HTTPリクエストか）。※セキュリティグループは拒否（Deny）ルールを定義できない。 |
 | **「SQLインジェクション、クロスサイトスクリプティング（XSS）防御」** | AWS WAF（マネージドルール、レート制限） | WAFの関連付け先がApplication Load Balancer、Amazon CloudFront、Amazon API Gatewayのいずれかであること（NLBには適用不可）。 |

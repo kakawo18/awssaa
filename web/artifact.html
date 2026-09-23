@@ -126,6 +126,10 @@ h3{font-family:var(--head);font-size:1em;font-weight:700;color:var(--ink-strong)
 .lede div{font-size:.94em;color:var(--ink-strong)}
 .note{margin:18px 0 0;padding:13px 15px;background:var(--surface-2);border-radius:8px;
   color:var(--ink);font-size:.9em;line-height:1.85}
+.note.info,.note.warn{border-left:4px solid var(--accent)}
+.note.warn{border-left-style:double;border-left-width:6px}
+.note .nl{display:block;font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.06em;
+  color:var(--accent);margin-bottom:2px}
 .sec ul,.sec ol{margin:14px 0 0;padding-left:1.3em}
 .sec li{margin-top:10px}
 .sec ul{list-style:none;padding-left:0}
@@ -420,7 +424,8 @@ tbody tr:nth-child(even) td{background:var(--tint)}
 
   function renderBlock(b){
     if(b.t === 'lede') return '<div class="lede"><span class="tag">' + b.label + '</span><div>' + b.html + '</div></div>';
-    if(b.t === 'note') return '<div class="note">' + b.html + '</div>';
+    if(b.t === 'note') return b.kind ? '<div class="note ' + b.kind + '"><span class="nl">' +
+      (b.kind === 'warn' ? '注意' : '補足') + '</span>' + b.html + '</div>' : '<div class="note">' + b.html + '</div>';
     if(b.t === 'h3')   return '<h3>' + b.html + '</h3>';
     if(b.t === 'figure') return '<figure class="fig">' + b.svg +
       (b.caption ? '<figcaption>' + b.caption + '</figcaption>' : '') + '</figure>';
