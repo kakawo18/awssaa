@@ -80,7 +80,7 @@
 | コンテナ化されたワークロード、Kubernetes固有機能は不要、運用負荷を最小化 | **Amazon ECS on AWS Fargate** |
 | コンテナワークロード、**Kubernetes/kubectl/Helm資産の流用**、マルチクラウド前提 | **Amazon EKS** |
 | コンテナワークロード、**GPU利用・特殊なカーネル設定・RI適用によるコスト追求** | **Amazon ECS / EKS on EC2** |
-| コンテナ化されたWebアプリ・APIを、ロードバランサーやSSL証明書を含め迅速に公開 | **AWS App Runner** |
+| コンテナ化されたWebアプリ・APIを、ロードバランサーやSSL証明書を含め迅速に公開 | **AWS App Runner**（※2026年4月30日に新規受付終了。後継はECS Express Mode） |
 | OSへのフルアクセス権限、レガシーバイナリ、特定ハードウェア依存、ライセンス持ち込み | **Amazon EC2** |
 | 15分を超える長時間の並列バッチ計算、キューイングとEC2/Spotの自動スケール | **AWS Batch** |
 

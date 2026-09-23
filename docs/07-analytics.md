@@ -12,7 +12,7 @@
 |---|---|---|
 | **Amazon Kinesis Data Streams** | **順序保証・複数コンシューマーによる並行読み出し・データの再処理**が必要なリアルタイム処理基盤（レイテンシ200ミリ秒未満） | **1日〜最大365日間保持可能**。期間内であれば何度でも再読み込みが可能 |
 | **Amazon Data Firehose**（旧 Kinesis Data Firehose） | 収集したデータを **Amazon S3、Redshift、OpenSearch、Splunk** 等へコードレスで自動配信・ロードするフルマネージド配信サービス | **保持機能なし（バッファリングのみ）**。宛先へ書き込み後はFirehose内にデータは残らない |
-| **Amazon Managed Service for Apache Flink**（旧 Kinesis Data Analytics） | ストリーミングデータに対し、標準SQLやApache Flinkを用いてリアルタイムに時系列集計（移動平均、スライディングウィンドウ、異常検知）を実行 | ストリームをインラインでリアルタイム処理 |
+| **Amazon Managed Service for Apache Flink**（旧 Kinesis Data Analytics） | ストリーミングデータに対し、Apache Flink（Flink SQLを含む）を用いてリアルタイムに時系列集計（移動平均、スライディングウィンドウ、異常検知）を実行 | ストリームをインラインでリアルタイム処理 |
 | **Amazon Kinesis Video Streams** | IPカメラ、IoTデバイス、スマートフォン等からの映像・音声ストリーミングの安全な取り込みと機械学習連携 | 暗号化して永続化・再生可能 |
 
 **試験での要点**
