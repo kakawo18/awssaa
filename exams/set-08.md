@@ -68,7 +68,7 @@ Linux上で動くコンテンツ管理システムを、複数のEC2インスタ
 
 - **A.** AWS DataSync
 - **B.** AWS Storage Gateway の S3 File Gateway
-- **C.** AWS Storage Gateway の Tape Gateway（仮想テープライブラリ）
+- **C.** Storage Gateway の Tape Gateway
 - **D.** AWS Backup
 
 <details>
@@ -147,8 +147,8 @@ Linux上で動くコンテンツ管理システムを、複数のEC2インスタ
 
 オンプレミスのOracleデータベース（4 TB）をAmazon Aurora PostgreSQLへ移行します。要件は (1) **停止時間を数分以内**に抑える、(2) スキーマとストアドプロシージャを変換する、の2つです。適切な組み合わせはどれですか。
 
-- **A.** AWS DMSのフルロードのみを実行し、完了後にアプリケーションを切り替える
-- **B.** AWS SCT（Schema Conversion Tool）でスキーマを変換し、AWS DMSの継続的レプリケーション（CDC）で差分同期してから切り替える
+- **A.** AWS DMSのフルロードを週末に実行し、完了後にアプリケーションの接続先を切り替える
+- **B.** AWS SCTでスキーマを変換し、DMSの継続的レプリケーション（CDC）で同期してから切り替える
 - **C.** Oracleのデータポンプでエクスポートし、S3経由でインポートする
 - **D.** AWS DataSyncでデータファイルを転送する
 
@@ -174,10 +174,10 @@ Linux上で動くコンテンツ管理システムを、複数のEC2インスタ
 
 取引先30社が、毎日**SFTPクライアント**でファイルを送信してきます。現在はEC2上にSFTPサーバーを構築して運用していますが、パッチ適用と可用性の確保が負担です。取引先の接続方法は変更できません。適切な移行先はどれですか。
 
-- **A.** AWS Transfer Family のSFTPエンドポイントを作成し、保存先をS3にする
+- **A.** AWS Transfer FamilyのSFTPサーバー（保存先はS3）
 - **B.** S3の事前署名URLを毎日発行して取引先へ配布する
-- **C.** AWS DataSyncのエージェントを取引先に導入してもらう
-- **D.** Amazon AppFlowで取引先のシステムと連携する
+- **C.** AWS DataSyncのエージェントを取引先に導入してもらい、毎日S3へ転送させる
+- **D.** Amazon AppFlowで取引先のシステムと連携し、ファイルをS3へ取り込む
 
 <details>
 <summary>解答と解説</summary>
@@ -234,7 +234,7 @@ Linux上で動くコンテンツ管理システムを、複数のEC2インスタ
 - **A.** EBS gp3
 - **B.** インスタンスストア（NVMe SSD）
 - **C.** EBS st1
-- **D.** Amazon EFS
+- **D.** Amazon EFS（Elastic スループットモード）
 
 <details>
 <summary>解答と解説</summary>

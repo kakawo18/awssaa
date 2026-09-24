@@ -145,6 +145,77 @@ def check_balance(min_questions=20, max_share=0.40):
     return out
 
 
+def option_length(text):
+    """選択肢の見た目の長さ（コード表記の ` は数えない）。"""
+    return len(text.replace("`", ""))
+
+
+def length_stats():
+    """セットごとに「正解が選択肢の中で一番長い」問題を数える。
+
+    返り値は {ファイル名: [単一選択の問題数, 正解が単独で最長の数, 複数選択の問題数, 正解が長い順の上位と一致する数]}。
+    """
+    stats = {}
+    for name in sorted(os.listdir(EXAMS)):
+        if not (name.startswith("set-") and name.endswith(".md")):
+            continue
+        with open(os.path.join(EXAMS, name), encoding="utf-8") as f:
+            lines = f.read().split("\n")
+        row = [0, 0, 0, 0]
+        opts, answer = {}, None
+        for ln in lines + ["### Q0 ｜ end ｜ ★"]:
+            if Q_RE.match(ln):
+                if opts and answer:
+                    lens = {k: option_length(t) for k, t in opts.items()}
+                    if len(answer) == 1:
+                        longest = max(lens.values())
+                        row[0] += 1
+                        if lens.get(answer[0]) == longest and list(lens.values()).count(longest) == 1:
+                            row[1] += 1
+                    else:
+                        top = sorted(lens, key=lambda k: -lens[k])[:len(answer)]
+                        row[2] += 1
+                        if set(top) == set(answer):
+                            row[3] += 1
+                opts, answer = {}, None
+                continue
+            m = OPT_RE.match(ln)
+            if m:
+                opts[m.group(1)] = m.group(2)
+            m = ANSWER_RE.match(ln.strip())
+            if m:
+                answer = m.group(1).split("・")
+        stats[name] = row
+    return stats
+
+
+def check_length_bias(min_questions=20, max_share=0.35, set_min=8, set_max_share=0.5):
+    """「迷ったら一番長い選択肢」で当たる問題集になっていないかを検査する。
+
+    作問では正解に条件や補足を書き足しがちで、正解だけが長くなる。
+    全体で正解が単独最長の割合が max_share を超えるか、単一選択が set_min 問以上ある
+    セットで set_max_share を超えたら指摘する。複数選択も「長い順の上位＝正解」の割合を見る。
+    """
+    stats = length_stats()
+    out = []
+    single = sum(r[0] for r in stats.values())
+    longest = sum(r[1] for r in stats.values())
+    if single >= min_questions and longest / single > max_share:
+        out.append(("exams/", 0, "正解が一番長い選択肢に偏っている（%d/%d = %.0f%%、上限 %.0f%%）"
+                    % (longest, single, 100 * longest / single, 100 * max_share)))
+    multi = sum(r[2] for r in stats.values())
+    multi_top = sum(r[3] for r in stats.values())
+    if multi >= set_min and multi_top / multi > max_share:
+        out.append(("exams/", 0, "複数選択の正解が長い選択肢に偏っている（%d/%d = %.0f%%、上限 %.0f%%）"
+                    % (multi_top, multi, 100 * multi_top / multi, 100 * max_share)))
+    for name, r in stats.items():
+        if r[0] >= set_min and r[1] / r[0] > set_max_share:
+            out.append((os.path.join("exams", name), 0,
+                        "正解が一番長い選択肢である問題が多い（%d/%d）。正解を簡潔にし、詳細は決め手に書く"
+                        % (r[1], r[0])))
+    return out
+
+
 def check_all():
     """exams/ 配下すべてを検証し、(相対パス, 行, メッセージ) のリストを返す。"""
     out = []
@@ -157,6 +228,7 @@ def check_all():
         for line, msg in check_file(path):
             out.append((os.path.join("exams", name), line, msg))
     out.extend(check_balance())
+    out.extend(check_length_bias())
     return out
 
 
@@ -185,4 +257,8 @@ if __name__ == "__main__":
     total = sum(dist.values())
     print("\n単一選択の正解分布: " + " ".join(
         "%s %d (%.0f%%)" % (k, v, 100 * v / total) for k, v in sorted(dist.items())))
+    stats = length_stats()
+    single = sum(r[0] for r in stats.values())
+    longest = sum(r[1] for r in stats.values())
+    print("正解が一番長い選択肢: %d/%d (%.0f%%)" % (longest, single, 100 * longest / single))
     print("合計 %d問 / 形式チェックはすべて通過" % sum(counts.values()))
