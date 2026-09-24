@@ -15,7 +15,7 @@ CloudFrontディストリビューションに独自ドメインのHTTPS証明�
 - **A.** AWS Private CAで証明書を再発行する
 - **B.** CloudFrontのディストリビューションを東京リージョンで作り直す
 - **C.** 証明書をALBに関連付けてから、CloudFrontのオリジンをALBに変更する
-- **D.** 証明書をバージニア北部（us-east-1）で発行またはインポートし直す
+- **D.** 証明書をus-east-1で発行し直す
 
 <details>
 <summary>解答と解説</summary>
@@ -67,9 +67,9 @@ CloudFrontディストリビューションに独自ドメインのHTTPS証明�
 GuardDutyが「EC2インスタンスが既知のマルウェア配布元と通信している」という検出結果を出したとき、**人手を介さずに自動で当該インスタンスを隔離**したいと考えています。適切な構成はどれですか。
 
 - **A.** GuardDutyの検出結果をCloudTrailに記録し、定期的に確認する
-- **B.** GuardDutyの検出結果をEventBridgeルールで受け、Lambdaで隔離用セキュリティグループへ付け替える
+- **B.** 検出結果をEventBridgeで受け、Lambdaで隔離する
 - **C.** AWS Configルールで、GuardDutyの検出結果を評価して修復する
-- **D.** Security Hubで検出結果を集約し、担当者へメール通知する
+- **D.** Security Hubで検出結果を集約し、重大度の高いものを担当者へメールで通知する
 
 <details>
 <summary>解答と解説</summary>
@@ -94,7 +94,7 @@ GuardDutyが「EC2インスタンスが既知のマルウェア配布元と通�
 CloudFormationで構築した検証環境を削除する際、**RDSインスタンスのデータだけは残したい**（またはスナップショットとして保全したい）と考えています。適切な方法はどれですか。
 
 - **A.** スタックを削除する前に、RDSに削除保護を設定する
-- **B.** テンプレートのRDSリソースに `DeletionPolicy: Snapshot`（または `Retain`）を指定する
+- **B.** RDSリソースに `DeletionPolicy: Snapshot` を指定する
 - **C.** スタックポリシーで、RDSリソースの更新を拒否する
 - **D.** スタックを削除せず、手動でリソースを1つずつ削除する
 
@@ -120,7 +120,7 @@ CloudFormationで構築した検証環境を削除する際、**RDSインスタ�
 
 あるリージョンで自社システムに断続的な障害が出ています。**AWS側のサービス障害やメンテナンスが、自分のアカウントのリソースに影響していないか**を確認したいと考えています。適切なサービスはどれですか。
 
-- **A.** AWS Health Dashboard（アカウント固有のイベントを含む）
+- **A.** AWS Health Dashboard
 - **B.** Amazon CloudWatch の標準メトリクス
 - **C.** AWS Trusted Advisor
 - **D.** AWS CloudTrail
@@ -238,8 +238,8 @@ ECサイトから、**注文確認メールを1日あたり10万通**送信し�
 
 - **A.** 各サーバーのAMIを手動で作成し、順次起動する
 - **B.** AWS DataSync で仮想ディスクをコピーし、EC2で起動する
-- **C.** AWS Database Migration Service (DMS) で移行する
-- **D.** AWS Application Discovery Service で調査し、AWS Application Migration Service (MGN) で移行する
+- **C.** AWS Database Migration Service（DMS）で、サーバーごとにデータを継続的に複製して移行する
+- **D.** Application Discovery Serviceで調査し、Application Migration Service（MGN）で移行する
 
 <details>
 <summary>解答と解説</summary>

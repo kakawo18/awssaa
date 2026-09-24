@@ -11,9 +11,9 @@
 
 企業が新規事業ごとにAWSアカウントを発行する方針を決めました。各アカウントには、ログの集約、ガードレールの適用、標準的なネットワーク構成が最初から備わっている必要があります。アカウント発行のたびに手作業で設定する運用は避けたいと考えています。適切なサービスはどれですか。
 
-- **A.** AWS Control Towerでランディングゾーンを構築し、Account Factoryでアカウントを発行する
+- **A.** AWS Control Towerでランディングゾーンを構築する
 - **B.** AWS Organizationsを有効化し、アカウント作成後にSCPを手動で適用する
-- **C.** AWS CloudFormation StackSetsのみで各アカウントへリソースを展開する
+- **C.** AWS CloudFormation StackSetsで、ログ集約やネットワークの標準構成を各アカウントへ展開する
 - **D.** AWS Service Catalogで承認済みのアカウント設定を配布する
 
 <details>
@@ -39,9 +39,9 @@
 本社データセンターとAWS間を、**帯域が安定した専用線**で接続しています。監査部門から「経路上のデータはすべて暗号化されていること」という指摘を受けました。既存の接続方式は維持したまま、最小の変更で対応する方法はどれですか。
 
 - **A.** 転送するデータをアプリケーション側でS3へアップロードしてから処理する
-- **B.** Direct Connectを解約し、Site-to-Site VPNのみに切り替える
+- **B.** Direct Connectを解約し、暗号化されるSite-to-Site VPNだけに切り替える
 - **C.** Direct Connect Gatewayを追加する
-- **D.** Direct Connectの上にIPsec VPN（またはMACsec）を構成し、通信を暗号化する
+- **D.** Direct Connectの上にIPsec VPN（またはMACsec）を構成する
 
 <details>
 <summary>解答と解説</summary>
@@ -94,7 +94,7 @@
 
 - **A.** Lambda関数URLを発行し、関数内で呼び出し回数をカウントする
 - **B.** Application Load BalancerのターゲットにLambdaを登録し、WAFのレートベースルールで制限する
-- **C.** Amazon API Gatewayで公開し、APIキーと使用量プランでパートナーごとの上限を設定する
+- **C.** API GatewayのAPIキーと使用量プランで上限を設定する
 - **D.** CloudFrontを前段に置き、キャッシュのTTLを長くする
 
 <details>
@@ -175,7 +175,7 @@
 数万台のIoTデバイスから送られるテレメトリを、**追加のコードを書かずに**S3へ集約し、Parquet形式に変換して保存したいと考えています。取り込みは数分程度の遅延が許容されます。運用負荷を最小にする構成はどれですか。
 
 - **A.** Kinesis Data Streamsで受け、独自のコンシューマーアプリケーションでS3へ書き出す
-- **B.** Amazon Data Firehose（旧 Kinesis Data Firehose）でS3へ配信し、形式変換を有効にする
+- **B.** Amazon Data Firehoseで受け、形式変換を有効にしてS3へ配信する
 - **C.** Amazon SQSで受け、Lambdaで変換してS3へ書き出す
 - **D.** Amazon EMRクラスターを常時稼働させ、デバイスから直接書き込ませる
 
@@ -255,8 +255,8 @@ S3に蓄積した生ログに対し、**スキーマを自動的に推論して�
 
 数百台のEC2インスタンスで、汎用SSD（gp2）のEBSボリュームを使用しています。現在のIOPS使用状況を調べたところ、多くのボリュームで割り当てIOPSを持て余している一方、一部のボリュームではIOPS不足のためにサイズだけを大きくして対応していました。コストと性能の両面で最も適切な対処はどれですか。
 
-- **A.** gp3へ変更し、必要なIOPSとスループットを容量とは独立に設定する
-- **B.** すべてのボリュームをio2 Block Expressへ変更する
+- **A.** gp3へ変更し、IOPSとスループットを個別に設定する
+- **B.** すべてのボリュームをio2 Block Expressへ変更し、IOPSを個別に設定する
 - **C.** IOPS不足のボリュームだけをさらに大きなサイズへ拡張する
 - **D.** スループット最適化HDD（st1）へ変更する
 

@@ -174,5 +174,38 @@ class BalanceTest(unittest.TestCase):
         self.assertEqual(ce.check_balance(), [])
 
 
+class LengthBiasTest(unittest.TestCase):
+    """正解が一番長い選択肢に偏っていないかを検出できること。"""
+
+    def with_stats(self, stats):
+        orig = ce.length_stats
+        ce.length_stats = lambda: stats
+        try:
+            return [m for _, _, m in ce.check_length_bias()]
+        finally:
+            ce.length_stats = orig
+
+    def test_longest_bias_is_reported(self):
+        msgs = self.with_stats({"set-01.md": [10, 4, 0, 0], "set-02.md": [10, 5, 0, 0]})
+        self.assertTrue(any("一番長い選択肢に偏っている" in m for m in msgs), msgs)
+
+    def test_skewed_set_is_reported(self):
+        msgs = self.with_stats({"set-01.md": [10, 6, 0, 0], "set-02.md": [20, 1, 0, 0]})
+        self.assertTrue(any("問題が多い（6/10）" in m for m in msgs), msgs)
+
+    def test_multiple_response_bias_is_reported(self):
+        msgs = self.with_stats({"set-01.md": [20, 5, 10, 8]})
+        self.assertTrue(any("複数選択" in m for m in msgs), msgs)
+
+    def test_even_lengths_pass(self):
+        self.assertEqual(self.with_stats({"set-01.md": [10, 3, 5, 1], "set-02.md": [10, 2, 5, 1]}), [])
+
+    def test_length_ignores_backticks(self):
+        self.assertEqual(ce.option_length("`aws:SourceIp` 条件"), len("aws:SourceIp 条件"))
+
+    def test_repository_has_no_length_bias(self):
+        self.assertEqual(ce.check_length_bias(), [])
+
+
 if __name__ == "__main__":
     unittest.main()
