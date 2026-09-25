@@ -13,7 +13,7 @@ AWS Certified Solutions Architect – Associate (SAA-C03) の試験ポイント�
 - `docs/11-secure.md` 〜 `docs/14-cost.md` … 第2部 試験分野別対策（判断フロー中心）
 - `docs/90-comparison.md` … 横断比較表（直前確認用）
 - `docs/91-keywords.md` … 問題文キーワードの逆引き／暗記すべき数字
-- `exams/set-NN.md` … 問題解説集（1セット8〜15問・全28セット300問）
+- `exams/set-NN.md` … 問題解説集（1セット8〜15問・全32セット360問）
 
 ## 問題解説集
 `exams/` は、教材で覚えた判断を設問の形で試すためのディレクトリです。
