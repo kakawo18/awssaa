@@ -21,6 +21,42 @@ REASON_RE = re.compile(r"^- \*\*([A-F])\*\*：\s*(\S.*)$")
 LINK_RE = re.compile(r"\]\((\.\./[^)#\s]+)")
 LETTERS = ["A", "B", "C", "D", "E", "F"]
 
+# 公式試験ガイドのタスク。各問の「**分野**」行で、どのタスクの判断を問う問題かを示す
+# （Web版の分野別の正答率に使う）。複数の分野をまたぐ問題は「／」で並べ、先頭を主な分野とする。
+TASKS = {
+    "1.1": "安全なアクセス",
+    "1.2": "安全なワークロードとアプリケーション",
+    "1.3": "データセキュリティ管理",
+    "2.1": "スケーラブルで疎結合な設計",
+    "2.2": "高可用性・耐障害性",
+    "3.1": "高性能なストレージ",
+    "3.2": "高性能なコンピューティング",
+    "3.3": "高性能なデータベース",
+    "3.4": "高性能なネットワーク",
+    "3.5": "データの取り込みと変換",
+    "4.1": "ストレージのコスト",
+    "4.2": "コンピューティングのコスト",
+    "4.3": "データベースのコスト",
+    "4.4": "ネットワークのコスト",
+}
+DOMAIN_RE = re.compile(r"^\*\*分野\*\*：(.+)$")
+DOMAIN_ITEM_RE = re.compile(r"^([1-4]\.[1-5]) (.+)$")
+# セット冒頭の「第1分野5問／第2分野4問／…」の宣言
+DECL_RE = re.compile(r"第1分野\s*(\d+)問／第2分野\s*(\d+)問／第3分野\s*(\d+)問／第4分野\s*(\d+)問")
+# 分野別セット（タイトルが「第N分野」で始まる、または「第N分野 2周目」）
+SET_DOMAIN_RE = re.compile(r"^#\s*問題セット\d+\s*｜\s*第([1-4])分野")
+
+
+def parse_domains(text):
+    """「1.3 データセキュリティ管理／4.1 ストレージのコスト」→ ["1.3", "4.1"]。形式が違えば None。"""
+    out = []
+    for part in text.split("／"):
+        m = DOMAIN_ITEM_RE.match(part.strip())
+        if not m or TASKS.get(m.group(1)) != m.group(2).strip():
+            return None
+        out.append(m.group(1))
+    return out if len(set(out)) == len(out) else None
+
 
 def check_file(path):
     """1ファイルを検証し、(行番号, メッセージ) のリストを返す。"""
@@ -38,6 +74,7 @@ def check_file(path):
     starts = [i for i, ln in enumerate(lines) if ln.startswith("### Q")]
     if not starts:
         err(0, "問題（### Q…）が1つもない")
+    primary = []   # 各問の主な分野（"1"〜"4"）
     for n, start in enumerate(starts):
         end = starts[n + 1] if n + 1 < len(starts) else len(lines)
         block = lines[start:end]
@@ -103,6 +140,28 @@ def check_file(path):
 
         if not any(ln.startswith("**参照**") for ln in block):
             err(start, "「**参照**」の行がない（根拠の章を必ず示す）")
+
+        dom_lines = [mm.group(1) for ln in block for mm in [DOMAIN_RE.match(ln.strip())] if mm]
+        if len(dom_lines) != 1:
+            err(start, "「**分野**：1.3 データセキュリティ管理」の行が1つでない（検出: %d）" % len(dom_lines))
+        else:
+            doms = parse_domains(dom_lines[0])
+            if doms is None:
+                err(start, "分野の書き方が違う（「1.3 データセキュリティ管理」の形で、タスク名は公式ガイドの名前にする）")
+            else:
+                primary.append(doms[0][0])
+
+    # 分野別セットはすべて同じ分野、比率を宣言したセットは主な分野の数が宣言と一致すること
+    head = SET_DOMAIN_RE.match(lines[0]) if lines else None
+    if head and primary and set(primary) != {head.group(1)}:
+        err(0, "第%s分野のセットに別の分野の問題がある（%s）" % (head.group(1), "".join(sorted(set(primary)))))
+    decl = DECL_RE.search("\n".join(lines[:12]))
+    if decl and len(primary) == len(starts):
+        want = [int(x) for x in decl.groups()]
+        got_n = [primary.count(str(d)) for d in range(1, 5)]
+        if want != got_n:
+            err(0, "分野の問題数が冒頭の宣言と一致しない（宣言: %s／分野の行: %s）"
+                % ("／".join(map(str, want)), "／".join(map(str, got_n))))
 
     # 教材へのリンク切れ
     for i, ln in enumerate(lines):

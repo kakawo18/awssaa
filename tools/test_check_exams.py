@@ -27,6 +27,8 @@ GOOD = """# 問題セット99 ｜ テスト
 
 **正解：B**
 
+**分野**：1.1 安全なアクセス
+
 **決め手**：理由。
 
 **他の選択肢を外す理由**
@@ -94,6 +96,40 @@ class CheckExamsTest(unittest.TestCase):
         self.assertEqual(ce.check_all(), [])
 
 
+class DomainTest(unittest.TestCase):
+    check = CheckExamsTest.check
+
+    def test_missing_domain_is_reported(self):
+        msgs = self.check(GOOD.replace("**分野**：1.1 安全なアクセス\n\n", ""))
+        self.assertTrue(any("**分野**" in m for m in msgs), msgs)
+
+    def test_unknown_task_is_reported(self):
+        msgs = self.check(GOOD.replace("1.1 安全なアクセス", "1.4 安全なアクセス"))
+        self.assertTrue(any("分野の書き方" in m for m in msgs), msgs)
+
+    def test_task_name_must_match_guide(self):
+        msgs = self.check(GOOD.replace("1.1 安全なアクセス", "1.1 IAM"))
+        self.assertTrue(any("分野の書き方" in m for m in msgs), msgs)
+
+    def test_multiple_domains_are_allowed(self):
+        msgs = self.check(GOOD.replace("1.1 安全なアクセス", "1.1 安全なアクセス／4.2 コンピューティングのコスト"))
+        self.assertEqual(msgs, [])
+        self.assertEqual(ce.parse_domains("1.3 データセキュリティ管理／4.1 ストレージのコスト"), ["1.3", "4.1"])
+
+    def test_domain_set_must_not_mix_domains(self):
+        text = GOOD.replace("# 問題セット99 ｜ テスト", "# 問題セット99 ｜ 第2分野：テスト")
+        msgs = self.check(text)
+        self.assertTrue(any("第2分野のセットに別の分野" in m for m in msgs), msgs)
+
+    def test_declared_counts_must_match(self):
+        text = GOOD.replace("# 問題セット99 ｜ テスト",
+                            "# 問題セット99 ｜ テスト\n\n> 第1分野0問／第2分野1問／第3分野0問／第4分野0問")
+        msgs = self.check(text)
+        self.assertTrue(any("冒頭の宣言と一致しない" in m for m in msgs), msgs)
+        ok = text.replace("第1分野0問／第2分野1問", "第1分野1問／第2分野0問")
+        self.assertEqual(self.check(ok), [])
+
+
 MULTI = """# 問題セット98 ｜ テスト
 
 ### Q1 ｜ トピック ｜ ★★
@@ -110,6 +146,8 @@ MULTI = """# 問題セット98 ｜ テスト
 <summary>解答と解説</summary>
 
 **正解：B・E**
+
+**分野**：2.1 スケーラブルで疎結合な設計
 
 **決め手**：理由。
 
