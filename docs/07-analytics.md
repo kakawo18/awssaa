@@ -94,7 +94,7 @@
 **概要**：Apache Hadoop、Apache Spark、Apache Hive、Presto、HBaseなどのオープンソース・ビッグデータフレームワークをAWS上で大規模に実行するためのフルマネージドクラスター基盤。
 
 - ノード構成と耐障害性：
-  - **マスターノード**：クラスター全体の管理とジョブ調整を担当（単一障害点を防ぐマルチマスター構成も可能）。
+  - **プライマリノード**（旧称マスターノード）：クラスター全体の管理とジョブ調整を担当。EMR 5.23.0以降はプライマリノードを3台にして、単一障害点をなくせる（障害時は自動で切り替わる）。
   - **コアノード**：データ処理を実行し、クラスター内部ストレージである **HDFS（Hadoop Distributed File System）のデータを保持**。障害時のデータ損失を避けるため、通常はオンデマンドインスタンスまたはリザーブドインスタンスで運用。
   - **タスクノード**：HDFSデータを保持せず、**計算処理のみを実行**。途中で停止してもジョブ全体が破損しないため、**スポットインスタンスを適用して大幅なコスト削減**を図るのが定石。
 - **EMRFS（EMR File System）**：HDFSの代わりに Amazon S3 を永続ストレージとして直接マウント・利用するアーキテクチャ。クラスターを常時稼働させる必要がなくなり、**バッチ処理完了後にクラスター自体を破棄（一時クラスター運用）**することで運用コストを劇的に最適化できます。
@@ -118,6 +118,13 @@
 | **既存のHadoop / Sparkジョブ資産**を活用し、高度な分散データ処理・機械学習パイプラインを実行したい | **Amazon EMR** |
 | アプリケーションログの**リアルタイム全文検索・インデックス化、およびダッシュボード分析** | **Amazon OpenSearch Service** |
 | 異種データソース間のデータ抽出・変換・ロード処理、および**メタデータカタログの中央管理** | **AWS Glue** |
+
+---
+
+**公式出典**
+- [Amazon Data Firehose（旧 Kinesis Data Firehose）への名称変更](https://aws.amazon.com/about-aws/whats-new/2024/02/amazon-data-firehose-formerly-kinesis-data-firehose/)（確認 2026-10-13）
+- [EMRのノードの種類（プライマリ・コア・タスク）](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-master-core-task-nodes.html)（確認 2026-10-13）
+- [OpenSearch Service の名称変更（Kibana → OpenSearch Dashboards）](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/rename.html)（確認 2026-10-13）
 
 ---
 

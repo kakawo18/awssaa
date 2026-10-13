@@ -92,7 +92,8 @@
 - [可視性タイムアウト（受信・削除・再可視化）](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html)
 - [SQS メッセージのクォータ（サイズ・保持・タイムアウト・FIFOスループット）](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html)（確認 2026-09-13）
 - [デッドレターキュー](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html)
-- [FIFO キューの正確に1回の処理](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-exactly-once-processing.html)
+- [FIFO キューの正確に1回の処理](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-exactly-once-processing.html)（確認 2026-10-13）
+- [SNS FIFOトピックのサブスクリプション（SQSのFIFO・標準キュー）](https://aws.amazon.com/sns/faqs/)（確認 2026-10-13）
 
 ---
 
@@ -100,10 +101,10 @@
 
 **概要**：完全マネージド型の**プッシュ型Pub/Sub（パブリッシュ／サブスクライブ）**メッセージングサービス。1つのトピックに発行されたメッセージを、多数のサブスクライバーへ即座に並列配信します。
 
-- 主なサブスクライバー：**Amazon SQSキュー、AWS Lambda関数、HTTPSエンドポイント、Eメール、SMS、モバイルプッシュ通知、Amazon Kinesis Data Firehose**。
+- 主なサブスクライバー：**Amazon SQSキュー、AWS Lambda関数、HTTPSエンドポイント、Eメール、SMS、モバイルプッシュ通知、Amazon Data Firehose**。
 - **SNS ＋ SQS ファンアウトパターン**：トピックへの1回の発行で複数のSQSキューへメッセージを同時配信。各サブシステムは独立したキューから独自のペースでメッセージを取得・処理でき、個別にリトライやDLQを設定可能です。
 - **メッセージフィルタリング**：サブスクリプションごとに属性フィルターポリシーを定義し、各サブスクライバーが必要とする条件に合致するメッセージのみを選択的に受信させることができます。
-- **SNS FIFOトピック**：厳密なメッセージ順序の保持と重複排除をサポート（※サブスクライバーは SQS FIFOキュー に限定されます）。
+- **SNS FIFOトピック**：メッセージグループ内の順序の保持と重複排除をサポートします。サブスクライバーは**SQSのキュー**です（Lambda・HTTPS・Eメールなどへは直接配信しません）。順序と重複排除を最後まで保つには**SQS FIFOキュー**で受けます。順序が不要な処理は**SQS標準キュー**で受けることもできます。
 
 ---
 

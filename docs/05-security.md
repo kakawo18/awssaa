@@ -41,7 +41,7 @@
 
 | 要件・特徴 | 最適なサービス |
 |---|---|
-| AWS上に**本格的なMicrosoft Active Directory**が必要（オンプレADとの信頼関係構築、グループポリシーの適用、FSx for WindowsやRDS SQL Serverとのドメイン統合） | **AWS Managed Microsoft AD** |
+| AWS上に**本格的なMicrosoft Active Directory**が必要（正式名 AWS Directory Service for Microsoft Active Directory）（オンプレADとの信頼関係構築、グループポリシーの適用、FSx for WindowsやRDS SQL Serverとのドメイン統合） | **AWS Managed Microsoft AD** |
 | 認証自体は**オンプレミスのADに委譲**し、AWS上にはディレクトリデータを保持せずプロキシとしてリクエストを転送したい | **AD Connector** |
 | 小規模環境・低コスト優先、Linuxクライアント中心の簡易なSambaベースLDAPディレクトリ | **Simple AD**（オンプレADとの信頼関係は構築不可。※2026年6月30日にメンテナンス（新規受付終了）へ移行） |
 
@@ -147,7 +147,7 @@
 **概要**：ワークロードの**ソフトウェア脆弱性（CVE）および意図しないネットワーク到達性**を自動的かつ継続的にスキャン・評価する脆弱性管理サービス。
 
 - スキャン対象：**Amazon EC2インスタンス、Amazon ECR内のコンテナイメージ、AWS Lambda関数（コードおよび依存関係）**。
-- EC2のスキャンには AWS Systems Manager（SSM）エージェントを利用し、OSパッケージやアプリケーションライブラリの既知の脆弱性を自動検出します。
+- EC2のスキャンは**ハイブリッドモード**が既定です。SSMエージェントで管理されているインスタンスはエージェントを使ってスキャンし、管理されていないインスタンスはEBSスナップショットを使う**エージェントレス**でスキャンします（エージェントを入れられない環境でも脆弱性を検出できる）（[EC2のスキャン](https://docs.aws.amazon.com/inspector/latest/user/scanning-ec2.html)、確認 2026-10-13）。
 
 ---
 
@@ -155,11 +155,13 @@
 
 | サービス | 概要と主な役割 | 試験での判断ポイント |
 |---|---|---|
-| **AWS Security Hub** | セキュリティアラートの**集約・統合ダッシュボード** ＋ ベストプラクティス自動チェック | 「GuardDuty、Inspector、Macie等の検出結果を1つの画面で一元管理し、CISベンチマークの準拠状況を評価したい」 |
+| **AWS Security Hub CSPM**（旧 AWS Security Hub） | セキュリティアラートの**集約・統合ダッシュボード** ＋ ベストプラクティス自動チェック（CIS・AWS基礎的セキュリティのベストプラクティス等の標準でスコア化） | 「GuardDuty、Inspector、Macie等の検出結果を1つの画面で一元管理し、CISベンチマークの準拠状況を評価したい」 |
 | **Amazon Detective** | セキュリティインシデントの**根本原因分析・フォレンジック調査** | グラフモデルを活用し、「インシデントがなぜ起きたのか、影響範囲はどこまで及んでいるかを詳細に追跡・調査したい」 |
 | **AWS Firewall Manager** | 複数アカウントにわたるセキュリティルール（WAF/Shield/SG/Network Firewall）の**一括集中管理** | 「AWS Organizations配下の全アカウントに共通のWAFルールやセキュリティグループポリシーを一律適用・強制したい」 |
 | **AWS Artifact** | AWSの**コンプライアンスレポートおよび各種認証アグリーメントのセルフサービスポータル** | 「AWSのSOCレポート、PCI-DSS証明書、ISO認証書類を監査機関へ提出するためにダウンロードしたい」 |
 | **AWS Audit Manager** | 規制コンプライアンス（HIPAA、GDPR等）の監査証跡収集を自動化。※2026年4月30日に新規顧客の受付を終了 | 「監査対応のための証拠収集作業を自動化し、監査レポートの作成工数を削減したい」 |
+
+**Security Hub の名前の変更（2025年12月）**：従来の Security Hub は **Security Hub CSPM** に改称され、新しい **AWS Security Hub** が一般提供されました。新しい Security Hub は、Security Hub CSPM・GuardDuty・Inspector・Macie の検出結果を**相関・分析してリスクの優先度を付ける**サービスで、Security Hub CSPM の検出結果も自動で取り込みます。SAA-C03 の設問の「検出結果の一元集約とベストプラクティス基準での点検＝Security Hub」は、現在の Security Hub CSPM の役割です（[Security Hub とは](https://docs.aws.amazon.com/securityhub/latest/userguide/what-is-securityhub-v2.html)、[Security Hub CSPM の標準](https://docs.aws.amazon.com/securityhub/latest/userguide/standards-view-manage.html)、確認 2026-10-13）。
 
 **検出・監査系サービスの目的別整理**
 
@@ -170,7 +172,7 @@
 | ログ分析と機械学習による**不審な振る舞いや脅威の検知** | **Amazon GuardDuty** |
 | EC2／コンテナ／Lambdaの**既知のソフトウェア脆弱性（CVE）診断** | **Amazon Inspector** |
 | S3バケット内の**機密情報・個人情報（PII）の検出** | **Amazon Macie** |
-| 複数のセキュリティサービスからのアラートの**一元集約とスコアリング** | **AWS Security Hub** |
+| 複数のセキュリティサービスからのアラートの**一元集約とスコアリング** | **AWS Security Hub CSPM**（旧 Security Hub） |
 | セキュリティインシデント発生時の**根本原因の深掘り調査・因果関係の分析** | **Amazon Detective** |
 
 ---

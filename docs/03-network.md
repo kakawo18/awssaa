@@ -99,7 +99,7 @@
 | 比較項目 | ゲートウェイ型エンドポイント | インターフェース型エンドポイント（AWS PrivateLink） |
 |---|---|---|
 | 実装形態 | **ルートテーブルのエントリ**（プレフィックスリスト → `vpce-xxxx`） | **サブネット内に配置されるENI**（プライベートIPアドレスを持つ） |
-| 対応サービス | **Amazon S3 および DynamoDB のみ** | ほとんどのAWSマネージドサービス、**Amazon S3（対応）**、他アカウントのサービス、サードパーティSaaS |
+| 対応サービス | **Amazon S3 および DynamoDB のみ** | ほとんどのAWSマネージドサービス、**Amazon S3 と DynamoDB も対応**（DynamoDBは2024年から）、他アカウントのサービス、サードパーティSaaS |
 | 料金体系 | **追加料金なし（無料）** | **エンドポイントごとの時間課金 ＋ 処理データ量課金（有料）** |
 | 利用可能な接続元 | **同一VPC内のリソースからのみ**（ルートテーブルを参照できる同一VPC内のコンポーネントに限定） | 同一VPC内に加え、**VPCピアリング、Transit Gateway、Site-to-Site VPN、Direct Connect経由のオンプレミス環境**からも到達可能 |
 | セキュリティグループ | 適用不可（エンドポイントポリシーで制御） | ENIに対してセキュリティグループを適用可能 |
@@ -108,7 +108,8 @@
 **S3へのプライベートアクセスの選び分け**
 - **同一VPC内からS3へ接続し、インターネット経由やNAT Gatewayの費用を回避したい** → まず**ゲートウェイ型エンドポイント**を検討（追加料金なしで利用可能）。
 - **オンプレミス環境からDirect ConnectやVPN経由でS3へプライベート接続したい** → **インターフェース型エンドポイント**を採用。ゲートウェイ型エンドポイントはVPCのルートテーブルにのみ存在するため、オンプレミス側へ経路を拡張・伝播させることができません。**Direct Connect Gatewayを経由した場合でも、S3のゲートウェイ型エンドポイントへは到達できません**。
-- 「S3＝ゲートウェイ型」と決めつけるのではなく、「**S3であっても接続元がVPCの外部であればインターフェース型が必要**」と整理します。
+- 「S3＝ゲートウェイ型」と決めつけるのではなく、「**S3であっても接続元がVPCの外部であればインターフェース型が必要**」と整理します。**DynamoDBも同じ**で、オンプレミスからはインターフェース型エンドポイントを使います（DynamoDB Streams はインターフェース型のみ対応）。
+- 同じVPCに**両方を併用**できます。VPC内のアプリは無料のゲートウェイ型を使い続け、オンプレミスのアプリだけがインターフェース型（エンドポイント固有のDNS名）を使う構成が公式に推奨されています。
 
 **エンドポイントを経由しているのにアクセスが拒否される場合**：ネットワーク経路は開通しています。**S3バケットポリシー、VPCエンドポイントポリシー、IAMポリシー**の認可設定を確認します（バケットポリシーで `aws:sourceVpce` 条件を用いて特定のエンドポイントからのみアクセスを許可している場合、異なる経路や別のエンドポイントからのリクエストは403エラーとなります）。新たなゲートウェイやルーティングを追加しても解決しません。
 
@@ -209,6 +210,7 @@
 
 **公式出典（仕様・クォータの確認）**
 - [VPCエンドポイント（S3のゲートウェイ型・インターフェース型）](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html)（確認 2026-09-13）
+- [AWS PrivateLink for DynamoDB（インターフェース型）](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/privatelink-interface-endpoints.html)（確認 2026-10-13）
 - [VPC接続Lambda関数のインターネット接続](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc-internet.html)（確認 2026-09-13）
 - [VPCサブネットのサイジングと予約IP](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html)（確認 2026-09-13）
 - [Application Load Balancer ターゲットグループの登録解除遅延](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/edit-target-group-attributes.html)（確認 2026-09-13）
