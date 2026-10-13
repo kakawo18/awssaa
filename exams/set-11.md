@@ -135,7 +135,7 @@ DynamoDBテーブルで、**1項目あたり6 KB**の項目を**毎秒80回、�
 **他の選択肢を外す理由**
 - **A**：さらに半分にした値です。結果整合性の割引を二重に適用しています。
 - **C**：強い整合性で計算した場合の値（2 × 80）です。設問は結果整合性です。
-- **D**：項目サイズの切り上げを誤り、3単位（6 KB ÷ 4 KB を3と数える）として計算した場合の値です。
+- **D**：項目サイズを誤って3単位と数え、**さらに強い整合性**で計算した場合の値（3 × 80）です。3単位でも結果整合性なら120になります。
 
 **参照**：[第4章 4.3 Amazon DynamoDB](../docs/04-database.md) ／ [付録B 主要な数値クォータ](../docs/91-keywords.md)
 
@@ -230,23 +230,23 @@ Redshiftクラスターは日中は安定していますが、**毎朝9時にレ
 
 1. SNSの友人関係をたどり、「友人の友人」を数ホップ先まで高速に検索したい
 2. 工場のセンサーが送る**時系列データ**を保存し、期間を指定した集計を高速に行いたい
-3. 金融取引の履歴を、**変更不可能かつ暗号学的に検証可能**な形で記録したい
+3. MongoDBで動いている既存のアプリケーションを、**MongoDB互換のAPIのまま**マネージドなサービスへ移したい
 
-- **A.** 1: Amazon Neptune ／ 2: Amazon Timestream ／ 3: Amazon QLDB
-- **B.** 1: Amazon DocumentDB ／ 2: Amazon Neptune ／ 3: Amazon Managed Blockchain
-- **C.** 1: Amazon Neptune ／ 2: Amazon DynamoDB ／ 3: Amazon DocumentDB
-- **D.** 1: Amazon Keyspaces ／ 2: Amazon Timestream ／ 3: Amazon QLDB
+- **A.** 1: Amazon Neptune ／ 2: Amazon Timestream ／ 3: Amazon DocumentDB
+- **B.** 1: Amazon DocumentDB ／ 2: Amazon Neptune ／ 3: Amazon Keyspaces
+- **C.** 1: Amazon Neptune ／ 2: Amazon DynamoDB ／ 3: Amazon ElastiCache
+- **D.** 1: Amazon Keyspaces ／ 2: Amazon Timestream ／ 3: Amazon DocumentDB
 
 <details>
 <summary>解答と解説</summary>
 
 **正解：A**
 
-**決め手**：**関係をたどる＝Neptune（グラフ）／時系列＝Timestream／改ざん不可能な台帳＝QLDB**。用途特化型DBは、キーワードとサービスが1対1で対応します。※QLDBは2025年7月31日にサポートを終了し、Timestream for LiveAnalyticsも2025年6月20日に新規顧客の受付を終了しました。古い設問では今もこの対応で出るため、知識として押さえておきます。
+**決め手**：**関係をたどる＝Neptune（グラフ）／時系列＝Timestream／MongoDB互換＝DocumentDB**。用途特化型DBは、キーワードとサービスが1対1で対応します。※Timestreamのうち、Timestream for LiveAnalyticsは2025年6月20日に新規顧客の受付を終了しており、新規はTimestream for InfluxDBが案内されています。また、以前は「改ざん不可能な台帳＝QLDB」も定番でしたが、QLDBは2025年7月31日にサポートを終了しました。
 
 **他の選択肢を外す理由**
-- **B**：DocumentDBはMongoDB互換のドキュメントDB、Managed Blockchainは**複数組織が対等に検証する**分散台帳で、単一所有者の台帳にはQLDBが適します。
-- **C**：DynamoDBでも時系列データは扱えますが、期間集計に最適化されたTimestreamが要件に合致します。DocumentDBに改ざん検証の仕組みはありません。
+- **B**：DocumentDBはドキュメントDBで、グラフの探索には向きません。Neptuneは時系列の集計向けではなく、KeyspacesはCassandra互換でMongoDBのAPIには対応しません。
+- **C**：DynamoDBでも時系列データは扱えますが、期間集計に最適化されたTimestreamが要件に合致します。ElastiCacheはインメモリのキャッシュで、MongoDB互換ではありません。
 - **D**：KeyspacesはCassandra互換で、グラフ探索の用途ではありません。
 
 **参照**：[第4章 4.6 その他の特化型データベースサービス](../docs/04-database.md) ／ [付録A データベース](../docs/90-comparison.md)
