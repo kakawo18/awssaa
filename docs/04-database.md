@@ -6,7 +6,7 @@
 
 ## 4.1 Amazon RDS
 
-**概要**：主要なリレーショナルデータベース（MySQL、PostgreSQL、MariaDB、Oracle、Microsoft SQL Server）をAWS上でフルマネージドで提供するサービス。OSや基盤の管理責任はAWSが担うため、ホストOSへのSSHログイン等はできません。単一のプライマリインスタンスに対し、目的に応じて「スタンバイインスタンス（可用性目的）」や「リードレプリカ（読み取りスケール目的）」を追加します。
+**概要**：主要なリレーショナルデータベース（MySQL、PostgreSQL、MariaDB、Oracle、Microsoft SQL Server、IBM Db2）をAWS上でフルマネージドで提供するサービス（AuroraもRDSの仲間として扱われます→4.2）。OSや基盤の管理責任はAWSが担うため、ホストOSへのSSHログイン等はできません。単一のプライマリインスタンスに対し、目的に応じて「スタンバイインスタンス（可用性目的）」や「リードレプリカ（読み取りスケール目的）」を追加します。
 
 **マルチAZの2つの構成とリードレプリカの比較**
 
@@ -63,12 +63,12 @@
 **派生機能・構成の選び分け**
 | 設問の要件・特徴 | 最適な選択肢 |
 |---|---|
-| 利用頻度が断続的・予測不能、夜間やアイドル時は自動停止してコストを削減したい | **Aurora Serverless v2**（ACU単位で細粒度に自動スケール） |
+| 利用頻度が断続的・予測不能、夜間やアイドル時は自動停止してコストを削減したい | **Aurora Serverless v2**（ACU単位で細粒度に自動スケール。最小容量を**0 ACU**にすると、無通信が続いたときに自動で一時停止し、停止中のインスタンス料金はかからない。ストレージ料金は続き、再開には最大15秒程度かかる） |
 | **複数リージョン間**で1秒未満のデータ複製を実現し、リージョン規模の災害時にRTO 1分未満で復旧したい | **Aurora グローバルデータベース** |
 | Microsoft SQL Server用に開発されたアプリケーションを、**コード改変を最小限に抑えて**PostgreSQLへ移行したい | **Babelfish for Aurora PostgreSQL** |
 | 読み書きのI/Oリクエストが膨大で、従量制のI/Oコストが予測困難・高額になっている | **Aurora I/O-Optimized**（固定料金制ストレージ構成） |
 
-**標準RDSとの選び分け**：Oracle、SQL Server、MariaDB等のエンジンが必須、または既存オンプレミスのライセンス持ち込み（BYOL）が必要な場合 → RDS。**圧倒的な高可用性・スループット・高速フェイルオーバー**を求め、MySQL/PostgreSQL互換で運用可能な場合 → Aurora。
+**標準RDSとの選び分け**：Oracle、SQL Server、Db2、MariaDB等のエンジンが必須、または既存オンプレミスのライセンス持ち込み（BYOL）が必要な場合 → RDS。**圧倒的な高可用性・スループット・高速フェイルオーバー**を求め、MySQL/PostgreSQL互換で運用可能な場合 → Aurora。
 
 ---
 
@@ -100,15 +100,15 @@
 
 ## 4.4 Amazon ElastiCache
 
-**概要**：インメモリ型のデータストア／キャッシュサービス（RedisおよびMemcached互換）。同一クエリ結果やセッション情報の反復読み込みにおいて、マイクロ秒単位の低遅延応答とバックエンドDBの負荷軽減を実現します。ただし、キャッシュの有効期限（TTL）や更新反映戦略（遅延読み込み、書き込みスルー）を考慮しないと、古いデータが返されるリスクがあります。
+**概要**：インメモリ型のデータストア／キャッシュサービス。エンジンは**Valkey**（Redis OSSから派生したオープンソース。現在の主力で、ノード料金も他のエンジンより安い）、**Redis OSS**、**Memcached**の3つです。同一クエリ結果やセッション情報の反復読み込みにおいて、マイクロ秒単位の低遅延応答とバックエンドDBの負荷軽減を実現します。ただし、キャッシュの有効期限（TTL）や更新反映戦略（遅延読み込み、書き込みスルー）を考慮しないと、古いデータが返されるリスクがあります。
 
-**Redis（ElastiCache for Redis） vs Memcached（ElastiCache for Memcached）の選び分け**
+**Valkey／Redis OSS vs Memcached の選び分け**（ValkeyとRedis OSSは同じ機能の系統。以下の表の「Valkey／Redis OSS」はどちらでもよい）
 
 | 要件・機能 | 最適なエンジン |
 |---|---|
-| **データの永続化、リードレプリカ、マルチAZ配置、自動フェイルオーバー**による耐障害性が必須 | **Redis** |
-| ソート済みセット（Sorted Sets）、Pub/Subメッセージング、地理空間データ、リアルタイムランキング・リーダーボード | **Redis** |
-| バックアップと復元（スナップショット取得）が必要 | **Redis** |
+| **データの永続化、リードレプリカ、マルチAZ配置、自動フェイルオーバー**による耐障害性が必須 | **Valkey／Redis OSS** |
+| ソート済みセット（Sorted Sets）、Pub/Subメッセージング、地理空間データ、リアルタイムランキング・リーダーボード | **Valkey／Redis OSS** |
+| バックアップと復元（スナップショット取得）が必要 | **Valkey／Redis OSS** |
 | **シンプルなオブジェクトキャッシュ**を**マルチスレッド**で並列処理し、キャッシュノードを水平にスケールさせるだけで十分 | **Memcached** |
 
 - キャッシュ戦略：
@@ -116,7 +116,7 @@
   - **書き込みスルー（Write-Through）**：アプリケーションがDBに書き込む際、同時にキャッシュにも書き込む方式。キャッシュは常に最新に保たれるが、一度も読み取られないデータも書き込まれる。
   - いずれの方式でも、適切な**TTL（有効期限）**を設定して古いデータの滞留を防ぐのが標準設計です。
 - **キャッシュを採用してはならない要件**：在庫引当の最終確認や口座残高照会のように、1ミリ秒の遅延もなく最新状態の整合性が求められる処理では、キャッシュを経由せずプライマリDBから直接読み取ります。また、ユーザーごとに結果が完全に異なる集計クエリなどはキャッシュヒット率が低いため不適です。
-- なお、「Redis互換のマイクロ秒応答を持ちつつ、キャッシュではなく**プライマリデータベースとして完全な耐久性（トランザクションログのマルチAZ永続化）**が求められる」場合は、**Amazon MemoryDB for Redis** を選択します。
+- なお、「Valkey／Redis OSS互換のマイクロ秒応答を持ちつつ、キャッシュではなく**プライマリデータベースとして完全な耐久性（トランザクションログのマルチAZ永続化）**が求められる」場合は、**Amazon MemoryDB**（旧称 MemoryDB for Redis。Valkey／Redis OSS互換）を選択します。
 
 ---
 
@@ -155,6 +155,9 @@
 - [ElastiCache のキャッシュ戦略](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Strategies.html)
 - [DynamoDB の読み込み整合性モデル](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html)
 - [Amazon Aurora のクォータと制約](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_Limits.html)（確認 2026-09-13）
+- [Aurora Serverless v2 の0 ACUへのスケールと自動一時停止](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless-v2-auto-pause.html)（確認 2026-10-13）
+- [ElastiCache の対応エンジン（Valkey／Redis OSS／Memcached）](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/supported-engine-versions.html)（確認 2026-10-13）
+- [Amazon RDS とは（対応エンジン）](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html)（確認 2026-10-13）
 
 ---
 

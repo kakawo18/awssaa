@@ -1,6 +1,6 @@
 # 付録A 横断比較表（復習用）
 
-> **本表の活用法**：類似・競合するAWSサービスの選定において、素早く候補を絞り込み、最終的な判断を下すための整理表である。キーワードの表層的な一致だけで安易に判断せず、第3列に記載された「接続元」「データの整合性・鮮度」「耐障害性の範囲」「プロトコル互換性」などの詳細制約を必ず検証すること。本編各章で基礎概念と動作メカニズムを理解した後の総点検・直前復習ツールとして活用する。
+> **本表の活用法**：類似・競合するAWSサービスの選定において、素早く候補を絞り込み、最終的な判断を下すための整理表です。キーワードの表層的な一致だけで安易に判断せず、第3列に記載された「接続元」「データの整合性・鮮度」「耐障害性の範囲」「プロトコル互換性」などの詳細制約を必ず検証してください。本編各章で基礎概念と動作メカニズムを理解した後の総点検・直前復習ツールとして活用します。
 
 ---
 
@@ -41,7 +41,7 @@
 |---|---|---|
 | **ALB / NLB** | HTTP/HTTPS、L7パスルーティング、WAF連携＝**ALB**／TCP/UDP、固定IP、超低遅延、高スループット＝**NLB** | プロトコル種別、固定グローバルIPの要否、およびWAFによるWebアプリケーション保護の要否。 |
 | **セキュリティグループ / ネットワークACL** | ステートフル・インスタンス単位・許可のみ＝**SG**／ステートレス・サブネット単位・明示的拒否＝**NACL** | 特定IPアドレスの遮断（Deny）が必要か（L3/L4遮断はNACL、HTTPリクエスト遮断はWAF、国単位はCloudFront）。 |
-| **ゲートウェイ型 / インターフェース型エンドポイント** | VPC内からのS3/DynamoDBアクセス（追加料金なし）＝**ゲートウェイ型**／その他のサービス、またはオンプレミス/ピアリング経由＝**インターフェース型** | **接続元が同一VPC内か、オンプレミス/別VPCか**。S3であってもオンプレミスやDirect Connect経由でアクセスする場合はインターフェース型が必須。 |
+| **ゲートウェイ型 / インターフェース型エンドポイント** | VPC内からのS3/DynamoDBアクセス（追加料金なし）＝**ゲートウェイ型**／その他のサービス、またはオンプレミス/ピアリング経由＝**インターフェース型** | **接続元が同一VPC内か、オンプレミス/別VPCか**。S3・DynamoDBであってもオンプレミスやDirect Connect経由でアクセスする場合はインターフェース型が必須。 |
 | **VPCピアリング / Transit Gateway** | 少数のVPC間を1対1で直接接続＝**ピアリング**／多数のVPC・オンプレミスをハブ＆スポークで集約＝**Transit Gateway** | VPCの接続数、および推移的ルーティング（Transitive Routing）の要否。CIDRブロックの重複がないか。 |
 | **Direct Connect / Site-to-Site VPN** | 安定した広帯域・極めて低いジッター（納期数週間）＝**Direct Connect**／即時導入・低コスト・標準IPsec暗号化＝**VPN** | 開通までのリードタイム、回線帯域の安定性要件、および暗号化要件（DXは標準では平文通信）。 |
 | **CloudFront / Global Accelerator** | HTTP/HTTPSコンテンツのキャッシュとエッジ配信＝**CloudFront**／非HTTP（TCP/UDP）、静的Anycast IP、高速フェイルオーバー＝**Global Accelerator** | キャッシュが有効なコンテンツか、プロトコル種別、および固定IPアドレスがクライアント要件か。 |
@@ -56,10 +56,10 @@
 |---|---|---|
 | **RDSマルチAZ / リードレプリカ** | 高可用性・障害時の自動フェイルオーバー＝**マルチAZ**／読み取り負荷分散・参照性能向上＝**リードレプリカ** | 「スタンバイインスタンスは参照クエリを処理できない（マルチAZ DBインスタンス）」点に留意。読み取り分散にはアプリ側の接続先変更が必要。 |
 | **Amazon RDS / Amazon Aurora** | 商用DBエンジン（Oracle/SQL Server）やBYOL＝**RDS**／高スループット・最大15台の高速自動拡張レプリカ＝**Aurora** | データベースエンジンがMySQL/PostgreSQL互換で要件を満たせるか。 |
-| **Aurora Serverless v2 / プロビジョンド** | トラフィックが不規則・急激なスパイク＝**Serverless v2**／定常的・予測可能な高負荷＝**プロビジョンド** | アイドル時の最小ACU課金、および長期リザーブドインスタンスによる割引メリットとの比較。 |
+| **Aurora Serverless v2 / プロビジョンド** | トラフィックが不規則・急激なスパイク＝**Serverless v2**／定常的・予測可能な高負荷＝**プロビジョンド** | アイドル時の扱い（最小容量を**0 ACU**にすると無通信時に自動で一時停止し、停止中のインスタンス料金はゼロ。ストレージ料金は続き、再開には最大15秒程度かかる）、および長期リザーブドインスタンスによる割引メリットとの比較。 |
 | **Amazon RDS / Amazon DynamoDB** | 複雑な結合・ACIDトランザクション・SQLクエリ＝**RDS**／キーバリュ型・一桁ミリ秒・水平無限スケール＝**DynamoDB** | データアクセスパターンが事前に固定・設計可能か。アドホックな集計や複雑なJOINが必要か。 |
 | **DynamoDB / DAX / ElastiCache** | 一桁ミリ秒のNoSQL＝**DynamoDB**／DynamoDB専用のマイクロ秒インメモリキャッシュ＝**DAX**／RDBMS等の汎用キャッシュ＝**ElastiCache** | データの整合性要件（DAXは結果整合性の読み取りのみをキャッシュ）。 |
-| **Redis / Memcached** | データの永続化・レプリケーション・複雑なデータ構造＝**Redis**／シンプルなKVS・マルチスレッド処理＝**Memcached** | ノード障害時のデータ永続化やPub/Sub機能が必要か。 |
+| **Valkey・Redis OSS / Memcached** | データの永続化・レプリケーション・複雑なデータ構造＝**Valkey／Redis OSS**（ElastiCacheの現在の主力はValkey）／シンプルなKVS・マルチスレッド処理＝**Memcached** | ノード障害時のデータ永続化やPub/Sub機能が必要か。 |
 | **ElastiCache / Amazon MemoryDB** | 一時的なキャッシュ層＝**ElastiCache**／プライマリデータベースとしての高耐久性と超低遅延を両立＝**MemoryDB** | データが消失してもバックエンドから再生成可能か、唯一の正本データストアとなるか。 |
 | **Amazon QLDB / Managed Blockchain** | 中央集権的な管理者による改ざん不能な台帳履歴＝**QLDB**（※2025年7月31日にサポート終了。古い設問でのみ登場）／複数企業・組織間で信頼を分散するコンソーシアム＝**Managed Blockchain** | 信頼できる中央管理主体が存在するか、分散合意形成が必要か。 |
 
@@ -72,10 +72,10 @@
 | **Amazon SQS / Amazon SNS** | メッセージのキューイング・分散ワーカーでの分担処理＝**SQS**／複数購読者への一斉配信（Pub/Sub同報）＝**SNS** | 「1対1の分担（キュー）」か「1対Nの同報（トピック）」か。双方を組み合わせる場合はSNS→SQSのファンアウト構成。 |
 | **Amazon SNS / Amazon EventBridge** | シンプルなPub/Sub同報・極低遅延＝**SNS**／ペイロード内容に基づくルーティング・AWSイベント連携・スキーマレジストリ＝**EventBridge** | メッセージのJSON属性による高度なフィルタリングや、SaaS/AWSサービス連携が必要か。 |
 | **Amazon SQS / Amazon Kinesis Data Streams** | 処理完了後にメッセージを削除するタスクキュー＝**SQS**／同一ストリームを複数コンシューマーが繰り返し読み直す時系列データ＝**Kinesis** | 順序保証の要件、および保持期間内における複数コンシューマーによる並列・再処理の要否。 |
-| **Kinesis Data Streams / Kinesis Data Firehose** | リアルタイムカスタム処理・データ保持・順序維持＝**Data Streams**／S3・Redshift・OpenSearch等へのサーバーレス自動ロード＝**Firehose** | データをストリーム内に一時保持して複数回読み出す必要があるか、単なるS3等への配信か。 |
+| **Kinesis Data Streams / Amazon Data Firehose** | リアルタイムカスタム処理・データ保持・順序維持＝**Data Streams**／S3・Redshift・OpenSearch等へのサーバーレス自動ロード＝**Firehose** | データをストリーム内に一時保持して複数回読み出す必要があるか、単なるS3等への配信か。 |
 | **Amazon SQS / Amazon MQ** | クラウドネイティブな新規開発＝**SQS**／既存のメッセージングプロトコル（JMS, AMQP, MQTT等）の移行＝**Amazon MQ** | オープン標準プロトコルとの後方互換性が必須要件か。 |
 | **Amazon Athena / Amazon Redshift** | S3上のデータに対するサーバーレス・アドホックSQL分析＝**Athena**／常時高頻度で実行されるペタバイト級エンタープライズDWH・BI＝**Redshift** | クエリの実行頻度、応答速度要件、および常時稼働DWHのコスト対効果。 |
-| **Amazon Athena / Amazon OpenSearch Service** | SQLによるリレーショナル・集計分析＝**Athena**／全文フリーワード検索・ログ分析・リアルタイム可視化（Kibana）＝**OpenSearch** | 分析対象のデータ形式、および全文検索やログ監視ダッシュボードが主目的か。 |
+| **Amazon Athena / Amazon OpenSearch Service** | SQLによるリレーショナル・集計分析＝**Athena**／全文フリーワード検索・ログ分析・リアルタイム可視化（OpenSearch Dashboards。旧Kibana）＝**OpenSearch** | 分析対象のデータ形式、および全文検索やログ監視ダッシュボードが主目的か。 |
 | **AWS Glue / Amazon EMR** | サーバーレスETL・データカタログ・ジョブ管理＝**Glue**／Hadoop/Sparkクラスタのきめ細かな制御・大規模並列分散処理＝**EMR** | 基盤インフラの制御要否、および既存のHadoop/Sparkエコシステム資産の活用要否。 |
 | **Amazon Kinesis / Amazon MSK** | 完全マネージド・AWSネイティブなストリーミング＝**Kinesis**／Apache Kafkaとの完全な互換性・既存資産移行＝**Amazon MSK** | Kafkaエコシステム（Kafka Connect, Schema Registry等）の利用が必須か。 |
 
@@ -87,7 +87,7 @@
 |---|---|---|
 | **CloudTrail / CloudWatch / AWS Config** | API操作履歴（誰が・いつ・何を）＝**CloudTrail**／リソースの性能メトリクスとログ＝**CloudWatch**／リソース設定の履歴とルール準拠性＝**AWS Config** | 監視・監査の対象が「ユーザー操作」「システム状態」「構成の整合性」のどれか。 |
 | **GuardDuty / Inspector / Macie** | アカウントや通信の脅威・振る舞い検知＝**GuardDuty**／EC2・ECR・LambdaのOS/パッケージ脆弱性検査＝**Inspector**／S3内の個人情報・機密データ検出＝**Macie** | 検知対象が「不審なアクティビティ」「ソフトウェア脆弱性」「機密データの漏洩リスク」のどれか。 |
-| **AWS Security Hub / Amazon Detective** | セキュリティ検出結果の**一元集約とコンプライアンス評価**＝**Security Hub**／インシデントの根本原因・影響範囲の**深掘りグラフ調査**＝**Detective** | 「現状の課題集約」か、「発生した侵害原因の追跡分析」か。 |
+| **AWS Security Hub（CSPM） / Amazon Detective** | セキュリティ検出結果の**一元集約とコンプライアンス評価**＝**Security Hub CSPM**（旧 Security Hub。2025年12月に改称）／インシデントの根本原因・影響範囲の**深掘りグラフ調査**＝**Detective** | 「現状の課題集約」か、「発生した侵害原因の追跡分析」か。 |
 | **AWS KMS / AWS CloudHSM** | マルチテナント・マネージド暗号化・AWSネイティブ統合＝**KMS**／顧客専用のシングルテナントHSMで鍵を専有管理＝**CloudHSM** | 法規制や企業規程で、他の利用者と共有しない専用ハードウェアによる鍵管理が義務付けられているか（FIPSのレベル3は現在KMSも満たすため、決め手にならない）。 |
 | **Secrets Manager / Parameter Store** | パスワードの**自動ローテーション**・シークレット管理＝**Secrets Manager**／軽量な設定値管理・無料標準パラメータ＝**Parameter Store** | 認証情報の自動更新機能が必要か、またはシンプルな環境変数・構成管理で十分か。 |
 | **IAM Identity Center / Amazon Cognito** | 社内従業員のAWSコンソール/CLIログイン・SSO＝**IAM Identity Center**／Web/モバイルアプリケーションのエンドユーザー認証＝**Cognito** | 認証対象が「社内管理者・開発者」か、「一般消費者・アプリ顧客」か。 |
