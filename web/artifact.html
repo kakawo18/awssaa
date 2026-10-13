@@ -444,6 +444,37 @@ tbody tr:nth-child(even) td{background:var(--tint)}
 .tbl td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
 .tbl tr td:first-child{font-weight:400;color:var(--ink)}
 .tblwrap{overflow-x:auto}
+.domline{font-size:.82em;color:var(--ink-mute);margin:-4px 0 4px}
+.domline b{font-family:var(--mono);font-weight:600;color:var(--ink)}
+.dgrp{margin-top:14px;background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:14px 16px 6px}
+.dhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.dhead .dn{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.04em}
+.dhead .dt{font-family:var(--head);font-weight:700;color:var(--ink-strong);flex:1;min-width:10em}
+.dhead .dw{font-size:.78em;color:var(--ink-mute)}
+.dhead .dr{font-family:var(--mono);font-weight:600;font-size:1.25em;color:var(--ink-strong);font-variant-numeric:tabular-nums}
+.dhead .dr small{font-size:.6em;color:var(--ink-mute);margin-left:2px}
+.dbar{margin-top:8px;height:8px;overflow:visible}
+.dbar>u{position:absolute;top:-4px;bottom:-4px;left:72%;width:2px;background:var(--ink-strong)}
+.dsub{margin-top:6px;font-size:.8em;color:var(--ink-mute);font-variant-numeric:tabular-nums}
+.trow{display:grid;grid-template-columns:2.4em minmax(0,1fr) 6em 7.5em 7em;gap:4px 12px;align-items:center;
+  padding:9px 0;border-top:1px solid var(--rule);font-size:.88em}
+.dgrp .trow:first-of-type{margin-top:10px}
+.trow .tk{font-family:var(--mono);font-weight:600;color:var(--accent);font-size:.92em}
+.trow .tn{min-width:0;color:var(--ink-strong)}
+.trow .tn em{font-style:normal;font-size:.82em;font-weight:700;color:var(--ng);margin-left:6px;white-space:nowrap}
+.trow .tv{font-family:var(--mono);font-size:.86em;color:var(--ink-mute);font-variant-numeric:tabular-nums;text-align:right}
+.trow .bar{height:5px}
+.trow .sbtn{justify-self:end}
+@media(max-width:600px){
+  .dhead .dt{order:4;flex-basis:100%}
+  .dhead .dw{margin-left:auto}
+  .trow{grid-template-columns:2.4em minmax(0,1fr) auto}
+  .trow .bar{grid-column:2 / 3;grid-row:2}
+  .trow .tv{grid-column:3;grid-row:2}
+  .trow .sbtn{grid-column:3;grid-row:1}
+}
+.dnote{font-size:.8em;color:var(--ink-mute);margin-top:8px;max-width:740px}
+.dnote b{color:var(--ink-strong)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -635,7 +666,7 @@ tbody tr:nth-child(even) td{background:var(--tint)}
   function renderBlock(b){
     if(b.t === 'lede') return '<div class="lede"><span class="tag">' + b.label + '</span><div>' + b.html + '</div></div>';
     if(b.t === 'note') return b.kind ? '<div class="note ' + b.kind + '"><span class="nl">' +
-      (b.kind === 'warn' ? '注意' : '補足') + '</span>' + b.html + '</div>' : '<div class="note">' + b.html + '</div>';
+      (b.kind === 'warn' ? '注意' : '補足') + '</span>' + b.html + '</div>' : '<div class="dnote">' + b.html + '</div>';
     if(b.t === 'h3')   return '<h3>' + b.html + '</h3>';
     if(b.t === 'figure') return '<figure class="fig">' + b.svg +
       (b.caption ? '<figcaption>' + b.caption + '</figcaption>' : '') + '</figure>';
@@ -971,6 +1002,7 @@ tbody tr:nth-child(even) td{background:var(--tint)}
       var right = isRight(qq, o.chosen), ansText = qq.answer.join('・');
       h += '<div class="expl"><div class="verdict ' + (right ? 'ok' : 'ng') + '">' +
         (right ? '✓ 正解（' + ansText + '）' : !o.chosen ? '✕ 未回答 — 正解は ' + ansText : '✕ 不正解 — 正解は ' + ansText) + '</div>' +
+        (qq.dom && qq.dom.length ? '<div class="domline">分野　' + qq.dom.map(function(t){ return '<b>' + t + '</b> ' + (TASKS[t] || ''); }).join('／') + '</div>' : '') +
         (qq.req ? '<div class="lbl">要件の分解</div><div class="req">' + qq.req + '</div>' : '') +
         '<div class="lbl">決め手</div><div>' + qq.key + '</div>' +
         (qq.kw ? '<div class="lbl">キーワード</div><div class="kw">' + qq.kw + '</div>' : '') +
@@ -1147,6 +1179,22 @@ tbody tr:nth-child(even) td{background:var(--tint)}
       '<div class="verdict2 ' + (a.ok >= need ? 'ok' : 'ng') + '">' + (a.ok >= need ? '✓ 目安（72%）に届いています' : '✕ 目安（72%＝' + need + '問）まであと ' + (need - a.ok) + ' 問') + '</div>' +
       '<div class="meta" style="margin-top:0"><span>時間 <b>' + fmtTime(a.sec) + '</b> / ' + fmtTime(a.limit) + (a.timeout ? '（時間切れで提出）' : '') + '</span>' +
       '<span>未回答 <b>' + un + '</b> 問</span></div></div>';
+    var byD = {};
+    DOMAINS.forEach(function(x){ byD[x.d] = blank(); });
+    set.questions.forEach(function(qq){
+      var b = byD[((qq.dom || [])[0] || '0')[0]];
+      if(!b) return;
+      b.total++; if(isRight(qq, a.ans[qq.n])) b.ok++;
+    });
+    var drows = DOMAINS.filter(function(x){ return byD[x.d].total; });
+    if(drows.length > 1){
+      h += '<div class="secthead">分野別の結果</div><div class="tblwrap"><table class="tbl"><thead><tr><th>分野</th><th>正解</th><th>正答率</th><th></th></tr></thead><tbody>' +
+        drows.map(function(x){
+          var b = byD[x.d], r = b.ok / b.total;
+          return '<tr><td>第' + x.d + '分野 ' + x.name + '</td><td class="num">' + b.ok + '/' + b.total + '</td><td class="num">' + pct(b.ok, b.total) +
+            '%</td><td>' + (r >= 0.72 ? '<span class="chip done">✓ 目安以上</span>' : '<span class="chip">▲ 要復習</span>') + '</td></tr>';
+        }).join('') + '</tbody></table></div><div class="dnote">各問の主な分野で集計しています。</div>';
+    }
     var wrong = set.questions.filter(function(qq){ return !isRight(qq, a.ans[qq.n]); });
     h += '<div class="btnrow">' + (wrong.length ? '<button class="pbtn" data-retryattempt="' + ai + '">間違えた ' + wrong.length + ' 問を解き直す</button>' : '') +
       '<button class="fbtn" data-mock="' + set.id + '">もう一度本番モード</button></div>';
@@ -1182,6 +1230,76 @@ tbody tr:nth-child(even) td{background:var(--tint)}
   }
 
   /* ---- 復習 ---- */
+  /* ---- 分野（公式試験ガイドの4分野・14タスク） ---- */
+  var TASKS = window.SAA_TASKS || {};
+  var DOMAINS = [
+    { d: '1', name: 'セキュアなアーキテクチャ', w: 30 },
+    { d: '2', name: '弾力性に優れたアーキテクチャ', w: 26 },
+    { d: '3', name: '高パフォーマンスなアーキテクチャ', w: 24 },
+    { d: '4', name: 'コストを最適化したアーキテクチャ', w: 20 }
+  ];
+  function domLabel(t){ return t + ' ' + (TASKS[t] || ''); }
+  function blank(){ return { total: 0, done: 0, ok: 0 }; }
+  // 練習の記録（本番モードの解答も反映済み）から、分野・タスクごとに数える。
+  // 複数の分野をまたぐ問題は、それぞれの分野・タスクに数える。
+  function domainStats(){
+    var st = { d: {}, t: {} };
+    DOMAINS.forEach(function(x){ st.d[x.d] = blank(); });
+    Object.keys(TASKS).forEach(function(t){ st.t[t] = blank(); });
+    EXAMS.forEach(function(s){
+      var rec = answers[s.id] || {};
+      s.questions.forEach(function(qq){
+        var c = rec[qq.n], r = c && isRight(qq, c), seen = {};
+        (qq.dom || []).forEach(function(t){
+          var b = [st.t[t] || (st.t[t] = blank())];
+          if(!seen[t[0]]){ seen[t[0]] = 1; b.push(st.d[t[0]]); }
+          b.forEach(function(x){ x.total++; if(c){ x.done++; if(r) x.ok++; } });
+        });
+      });
+    });
+    return st;
+  }
+  // そのタスクの問題を、間違い → 未回答 の順に最大20問。どちらもなければ全問から
+  function taskItems(t){
+    var wrong = [], fresh = [], all = [];
+    ORDERED.forEach(function(s){
+      var rec = answers[s.id] || {};
+      s.questions.forEach(function(qq){
+        if((qq.dom || []).indexOf(t) < 0) return;
+        var it = { s: s.id, n: qq.n }, c = rec[qq.n];
+        all.push(it);
+        if(!c) fresh.push(it); else if(!isRight(qq, c)) wrong.push(it);
+      });
+    });
+    var list = wrong.concat(fresh);
+    return { list: (list.length ? list : all).slice(0, 20), wrong: wrong.length, fresh: fresh.length, again: !list.length };
+  }
+  function domainSection(){
+    var st = domainStats(), h = '', est = 0, estOk = true;
+    DOMAINS.forEach(function(x){
+      var b = st.d[x.d];
+      if(b.done < 5) estOk = false; else est += x.w * b.ok / b.done;
+      h += '<div class="dgrp"><div class="dhead"><span class="dn">第' + x.d + '分野</span><span class="dt">' + x.name +
+        '</span><span class="dw">配点 ' + x.w + '%</span><span class="dr">' + (b.done ? pct(b.ok, b.done) + '<small>%</small>' : '–') + '</span></div>' +
+        '<div class="bar dbar" aria-hidden="true"><i style="width:' + pct(b.ok, b.done) + '%"></i><u></u></div>' +
+        '<div class="dsub">回答 ' + b.done + ' / ' + b.total + ' 問・正解 ' + b.ok + ' 問</div>';
+      Object.keys(TASKS).filter(function(t){ return t[0] === x.d; }).forEach(function(t){
+        var tb = st.t[t], ti = taskItems(t), weakT = tb.done >= 5 && tb.ok / tb.done < 0.72;
+        h += '<div class="trow"><span class="tk">' + t + '</span><span class="tn">' + TASKS[t] + (weakT ? '<em>▲ 目安未満</em>' : '') + '</span>' +
+          '<span class="bar" aria-hidden="true"><i style="width:' + pct(tb.ok, tb.done) + '%"></i></span>' +
+          '<span class="tv">' + (tb.done ? tb.ok + '/' + tb.done + '　' + pct(tb.ok, tb.done) + '%' : '0/' + tb.total + ' 問') + '</span>' +
+          '<button class="sbtn" data-dtask="' + t + '" title="' + (ti.again ? 'すべて正解済み。もう一度解く' : '間違い ' + ti.wrong + '問・未回答 ' + ti.fresh + '問') + '">' +
+          (ti.again ? 'もう一度' : ti.wrong ? '間違い ' + ti.wrong : '未回答から') + '</button></div>';
+      });
+      h += '</div>';
+    });
+    var head = '<div class="secthead">分野別の正答率</div>' +
+      '<div class="dnote">公式試験ガイドの4分野・14タスクで集計しています。縦線は合格の目安（72%）。分野をまたぐ問題はそれぞれの分野に数えます。' +
+      'ボタンを押すと、そのタスクの問題を<b>間違い → 未回答</b>の順に最大20問解けます。</div>';
+    if(estOk) head += '<div class="dnote">配点で重み付けした正答率：<b>' + Math.round(est) + '%</b>（各分野5問以上の回答から推定）</div>';
+    return head + h;
+  }
+
   function wrongItems(){
     var out = [];
     ORDERED.forEach(function(s){
@@ -1202,9 +1320,10 @@ tbody tr:nth-child(even) td{background:var(--tint)}
     var wr = wrongItems(), fl = flagItems();
     var h = '<div class="eyebrow">復習</div><h1>間違えた問題と弱点</h1>';
     if(!done && !attempts.length && !fl.length){
-      h += '<div class="empty-state">まだ記録がありません。<b>解く</b>から問題を解くと、間違えた問題・見直しの印・本番モードの結果がここに集まります。' +
+      h += '<div class="empty-state">まだ記録がありません。<b>解く</b>から問題を解くと、間違えた問題・見直しの印・本番モードの結果・分野別の正答率がここに集まります。' +
+        '下の分野別の一覧から、タスクを選んで解き始めることもできます。' +
         '<div class="btnrow"><button class="pbtn" data-go="solve">問題を解く</button></div></div>';
-      main.innerHTML = h; return;
+      main.innerHTML = h + domainSection(); return;
     }
     h += '<div class="stats">' +
       '<div class="stat"><div class="k">回答済み</div><div class="v">' + done + '<small>/ ' + total + '</small></div></div>' +
@@ -1214,6 +1333,7 @@ tbody tr:nth-child(even) td{background:var(--tint)}
     h += '<div class="btnrow"><button class="pbtn" data-retry="wrong"' + (wr.length ? '' : ' disabled') + '>間違えた ' + wr.length + ' 問を解き直す</button>' +
       '<button class="fbtn" data-retry="flag"' + (fl.length ? '' : ' disabled') + '>印を付けた ' + fl.length + ' 問を解く</button></div>' +
       '<div class="meta">解き直して正解すると、間違えた問題の一覧から外れます。</div>';
+    h += domainSection();
     var weak = EXAMS.map(function(s){ var sc = examScore(s); return { s: s, sc: sc }; })
       .filter(function(x){ return x.sc.done >= 5; })
       .sort(function(a, b){ return a.sc.ok / a.sc.done - b.sc.ok / b.sc.done; }).slice(0, 5);
@@ -1418,6 +1538,10 @@ tbody tr:nth-child(even) td{background:var(--tint)}
       var ra = attempts[+t.getAttribute('data-retryattempt')], rs = examById[ra.set];
       return startRetry(rs.questions.filter(function(qq){ return !isRight(qq, ra.ans[qq.n]); })
         .map(function(qq){ return { s: ra.set, n: qq.n }; }), rs.num + ' 本番モードで間違えた問題');
+    }
+    if((t = e.target.closest('[data-dtask]'))){
+      var dt = t.getAttribute('data-dtask'), ti = taskItems(dt);
+      return startRetry(ti.list, domLabel(dt) + (ti.again ? '（もう一度）' : '（間違い・未回答から）'));
     }
     if((t = e.target.closest('[data-retry]'))){
       if(t.disabled) return;

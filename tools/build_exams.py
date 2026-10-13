@@ -47,7 +47,7 @@ def parse_set(path):
             raise ValueError("%s: Q%d の見出しが不正" % (path, n + 1))
 
         body, options, reasons = [], [], []
-        answer, key, refs, req, kw = [], "", "", "", ""
+        answer, key, refs, req, kw, dom = [], "", "", "", "", []
         in_details = False
         in_reasons = False
         for ln in block[1:]:
@@ -70,6 +70,10 @@ def parse_set(path):
             m = ce.ANSWER_RE.match(s)
             if m:
                 answer = m.group(1).split("・")
+                continue
+            m = ce.DOMAIN_RE.match(s)
+            if m:
+                dom = ce.parse_domains(m.group(1)) or []
                 continue
             m = KEY_RE.match(s)
             if m:
@@ -110,6 +114,7 @@ def parse_set(path):
             "kw": kw,
             "reasons": reasons,
             "refs": refs,
+            "dom": dom,          # 公式ガイドのタスク（先頭が主な分野）例: ["1.3", "4.1"]
         })
 
     return {
@@ -141,9 +146,13 @@ if __name__ == "__main__":
         for q in s["questions"]:
             if not (q["answer"] and q["options"] and q["reasons"] and q["refs"]):
                 sys.exit("%s Q%d: 解析結果が欠けている" % (s["file"], q["n"]))
+            if not q["dom"]:
+                sys.exit("%s Q%d: 分野が読み取れない" % (s["file"], q["n"]))
     with open(OUT, "w", encoding="utf-8") as f:
         f.write("window.SAA_EXAMS = ")
         json.dump(sets, f, ensure_ascii=False, separators=(",", ":"))
+        f.write(";\nwindow.SAA_TASKS = ")
+        json.dump(ce.TASKS, f, ensure_ascii=False, separators=(",", ":"))
         f.write(";\n")
     print("wrote", OUT, os.path.getsize(OUT), "bytes,",
           sum(len(s["questions"]) for s in sets), "questions in", len(sets), "sets")
