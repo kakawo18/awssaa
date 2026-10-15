@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320" role="img" aria-label="1日の負荷と購入方法の重ね方。24時間ずっと必要な底の部分はSavings Plansやリザーブドインスタンス、日中に増える予測できる部分はオンデマンドとAuto Scaling、夜間の中断してよいバッチはスポットインスタンスで賄う。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor">
+  <defs>
+    <pattern id="pl-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#3F78D8" stroke-width="2" stroke-opacity="0.6"/>
+    </pattern>
+  </defs>
+  <text x="10" y="18" font-size="10.5" fill-opacity="0.7">1日の負荷（台数）と、部分ごとの購入方法</text>
+
+  <!-- axes: x = 40 + h*13.33 (0..24h), base at y=196 -->
+  <line x1="40" y1="196" x2="364" y2="196" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.4"/>
+  <line x1="40" y1="40" x2="40" y2="196" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.4"/>
+  <text x="34" y="46" text-anchor="end" font-size="9.5" fill-opacity="0.7">台数</text>
+
+  <!-- base: always-on -->
+  <rect x="40" y="156" width="320" height="40" fill="#3F78D8" fill-opacity="0.42" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="200" y="181" text-anchor="middle" font-size="10.5">常に必要な底 → Savings Plans／RI</text>
+
+  <!-- daytime increase (8h-20h) -->
+  <polygon points="147,156 173,96 280,96 307,156" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.2"/>
+  <text x="227" y="122" text-anchor="middle" font-size="10">日中の増分</text>
+  <text x="227" y="137" text-anchor="middle" font-size="9.5">→ オンデマンド</text>
+  <text x="227" y="150" text-anchor="middle" font-size="9" fill-opacity="0.75">（Auto Scaling）</text>
+
+  <!-- night batch (1h-4h) -->
+  <rect x="53" y="88" width="40" height="68" fill="url(#pl-hatch)" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="100" y="98" font-size="10">夜間バッチ</text>
+  <text x="100" y="112" font-size="9.5">→ スポット</text>
+  <text x="100" y="125" font-size="9" fill-opacity="0.75">（中断可）</text>
+
+  <!-- x ticks -->
+  <g font-size="9.5" text-anchor="middle" fill-opacity="0.8">
+    <text x="40" y="210">0時</text><text x="120" y="210">6時</text><text x="200" y="210">12時</text><text x="280" y="210">18時</text><text x="360" y="210">24時</text>
+  </g>
+
+  <!-- notes -->
+  <line x1="10" y1="226" x2="370" y2="226" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="244" font-size="10.5">底：1〜3年のコミットで最大72%引き（中断しない）</text>
+  <text x="10" y="263" font-size="10.5">日中：予測できる増減はオンデマンドで追従</text>
+  <text x="10" y="282" font-size="10.5">バッチ：中断されても再実行できるならスポット</text>
+  <text x="26" y="297" font-size="10" fill-opacity="0.75">（最大90%引き。中断の2分前に通知）</text>
+  <text x="10" y="315" font-size="9.5" fill-opacity="0.75">ファミリーを変える予定があれば Compute Savings Plans を選ぶ</text>
+</svg>

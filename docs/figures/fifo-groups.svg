@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 312" role="img" aria-label="FIFOキューのメッセージグループID。すべてのメッセージに同じグループIDを付けると、処理中の1件が終わるまで次を受け取れず1件ずつしか進まない。商品や顧客などのキーごとにグループIDを付けると、同じキーの中は順番どおりに、キーが違うメッセージは並列に処理される。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arw-ff" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+    <marker id="arw-ff-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="currentColor" fill-opacity="0.65"/>
+    </marker>
+  </defs>
+  <text x="10" y="16" font-size="10.5" fill-opacity="0.7">送信順：A1 B1 A2 C1 B2（A・B・Cは商品や顧客などのキー）</text>
+  <text x="10" y="42" font-size="10.5">すべて同じグループID</text>
+  <rect x="10" y="50" width="256" height="32" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.5"/>
+  <rect x="20" y="55" width="38" height="22" rx="4" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.55"/>
+  <text x="39" y="70" text-anchor="middle" font-size="10">B2</text>
+  <rect x="68" y="55" width="38" height="22" rx="4" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.55"/>
+  <text x="87" y="70" text-anchor="middle" font-size="10">C1</text>
+  <rect x="116" y="55" width="38" height="22" rx="4" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.55"/>
+  <text x="135" y="70" text-anchor="middle" font-size="10">A2</text>
+  <rect x="164" y="55" width="38" height="22" rx="4" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.55"/>
+  <text x="183" y="70" text-anchor="middle" font-size="10">B1</text>
+  <rect x="212" y="55" width="38" height="22" rx="4" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.55"/>
+  <text x="231" y="70" text-anchor="middle" font-size="10">A1</text>
+  <line x1="266" y1="66" x2="290" y2="66" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#arw-ff-g)"/>
+  <rect x="294" y="50" width="76" height="32" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="332" y="70" text-anchor="middle" font-size="9.5">受信側</text>
+  <text x="10" y="100" font-size="9.5">✕ 処理中の1件が終わるまで、次を受け取れない（1件ずつ）</text>
+  <line x1="10" y1="114" x2="370" y2="114" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="134" font-size="10.5">キーごとのグループID</text>
+  <rect x="10" y="142" width="256" height="30" rx="6" fill="#3F78D8" fill-opacity="0.05" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="22" y="161" font-size="9.5">グループA</text>
+  <rect x="220" y="146" width="38" height="22" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="239" y="161" text-anchor="middle" font-size="10">A1</text>
+  <rect x="174" y="146" width="38" height="22" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="193" y="161" text-anchor="middle" font-size="10">A2</text>
+  <line x1="266" y1="157" x2="290" y2="157" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-ff)"/>
+  <rect x="10" y="178" width="256" height="30" rx="6" fill="#3F78D8" fill-opacity="0.05" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="22" y="197" font-size="9.5">グループB</text>
+  <rect x="220" y="182" width="38" height="22" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="239" y="197" text-anchor="middle" font-size="10">B1</text>
+  <rect x="174" y="182" width="38" height="22" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="193" y="197" text-anchor="middle" font-size="10">B2</text>
+  <line x1="266" y1="193" x2="290" y2="193" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-ff)"/>
+  <rect x="10" y="214" width="256" height="30" rx="6" fill="#3F78D8" fill-opacity="0.05" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="22" y="233" font-size="9.5">グループC</text>
+  <rect x="220" y="218" width="38" height="22" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="239" y="233" text-anchor="middle" font-size="10">C1</text>
+  <line x1="266" y1="229" x2="290" y2="229" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-ff)"/>
+  <rect x="294" y="142" width="76" height="102" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="332" y="188" text-anchor="middle" font-size="9.5">受信側</text>
+  <text x="332" y="203" text-anchor="middle" font-size="9" fill-opacity="0.75">（並列）</text>
+  <text x="10" y="264" font-size="9.5">✓ 同じキーの中は順番どおり、キーが違えば並列に進む</text>
+  <line x1="10" y1="276" x2="370" y2="276" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="294" font-size="10.5">グループIDは「順番を守りたい単位」に付ける</text>
+  <text x="10" y="309" font-size="9" fill-opacity="0.75">標準キューに変えると、順番も1回だけの受け付けも保証されない</text>
+</svg>

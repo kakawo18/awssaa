@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 280" role="img" aria-label="Transit Gatewayのルートテーブルで本番と開発を分ける構成。本番VPCは本番用、開発VPCは開発用のルートテーブルに関連付け、どちらの表にも共有サービスVPCへの経路だけを載せる。共有サービスVPCの共有用ルートテーブルには本番と開発の両方への経路を載せる。本番と開発の間はどの表にも経路がないため通信できない。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arw-tg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+  </defs>
+  <text x="10" y="16" font-size="10.5" fill-opacity="0.7">1つのTransit Gatewayに、ルートテーブルを3つ作る</text>
+  <text x="50" y="36" text-anchor="middle" font-size="9" fill-opacity="0.75">VPC</text>
+  <text x="250" y="36" text-anchor="middle" font-size="9" fill-opacity="0.75">使うルートテーブルと、載っている経路</text>
+  <rect x="10" y="44" width="80" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="50" y="68" text-anchor="middle" font-size="10.5">本番VPC</text>
+  <line x1="90" y1="68" x2="126" y2="68" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-tg)"/>
+  <text x="108" y="61" text-anchor="middle" font-size="8" fill-opacity="0.8">関連付け</text>
+  <rect x="130" y="44" width="240" height="40" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="140" y="61" font-size="10">本番用ルートテーブル</text>
+  <text x="140" y="76" font-size="9.5" fill-opacity="0.85">経路：共有VPC だけ</text>
+  <rect x="10" y="96" width="80" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="50" y="120" text-anchor="middle" font-size="10.5">開発VPC</text>
+  <line x1="90" y1="120" x2="126" y2="120" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-tg)"/>
+  <text x="108" y="113" text-anchor="middle" font-size="8" fill-opacity="0.8">関連付け</text>
+  <rect x="130" y="96" width="240" height="40" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="140" y="113" font-size="10">開発用ルートテーブル</text>
+  <text x="140" y="128" font-size="9.5" fill-opacity="0.85">経路：共有VPC だけ</text>
+  <rect x="10" y="148" width="80" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="50" y="172" text-anchor="middle" font-size="10.5">共有VPC</text>
+  <line x1="90" y1="172" x2="126" y2="172" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-tg)"/>
+  <text x="108" y="165" text-anchor="middle" font-size="8" fill-opacity="0.8">関連付け</text>
+  <rect x="130" y="148" width="240" height="40" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="140" y="165" font-size="10">共有用ルートテーブル</text>
+  <text x="140" y="180" font-size="9.5" fill-opacity="0.85">経路：本番VPC・開発VPC</text>
+  <line x1="10" y1="206" x2="370" y2="206" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="224" font-size="10">✓ 本番・開発 → 共有：それぞれの表に経路がある</text>
+  <text x="10" y="242" font-size="10">✓ 共有 → 本番・開発：共有用の表に両方の経路がある</text>
+  <text x="10" y="260" font-size="10" font-weight="700">✕ 本番 ↔ 開発：どの表にも互いの経路がない</text>
+  <text x="10" y="276" font-size="9" fill-opacity="0.75">経路は、アタッチメントからの伝播でテーブルに載せる</text>
+</svg>

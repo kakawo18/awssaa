@@ -145,6 +145,7 @@ h3{font-family:var(--head);font-size:1em;font-weight:700;color:var(--ink-strong)
 .fig{margin:22px 0 0;padding:15px;background:var(--surface);border:1px solid var(--rule);
   border-radius:8px;box-shadow:var(--shadow);max-width:560px}
 .fig svg{display:block;width:100%;height:auto;color:var(--ink)}
+.qfig{margin-top:14px;box-shadow:none;background:var(--paper)}
 .fig figcaption{margin-top:12px;padding-top:11px;border-top:1px solid var(--rule);
   font-size:.84em;line-height:1.8;color:var(--ink)}
 
@@ -1006,6 +1007,9 @@ tbody tr:nth-child(even) td{background:var(--tint)}
         (qq.req ? '<div class="lbl">要件の分解</div><div class="req">' + qq.req + '</div>' : '') +
         '<div class="lbl">決め手</div><div>' + qq.key + '</div>' +
         (qq.kw ? '<div class="lbl">キーワード</div><div class="kw">' + qq.kw + '</div>' : '') +
+        (qq.figs || []).filter(function(fg){ return FIGS[fg.id]; }).map(function(fg){
+          return '<figure class="fig qfig">' + FIGS[fg.id] + '<figcaption>図：' + esc(fg.alt) + '</figcaption></figure>';
+        }).join('') +
         '<div class="lbl">他の選択肢を外す理由</div><ul>' +
         qq.reasons.map(function(r){ return '<li><b>' + r.l + '</b>：' + r.html + '</li>'; }).join('') +
         '</ul><div class="refs">参照：' + qq.refs + '</div></div>';
@@ -1232,6 +1236,7 @@ tbody tr:nth-child(even) td{background:var(--tint)}
   /* ---- 復習 ---- */
   /* ---- 分野（公式試験ガイドの4分野・14タスク） ---- */
   var TASKS = window.SAA_TASKS || {};
+  var FIGS = window.SAA_FIGS || {};
   var DOMAINS = [
     { d: '1', name: 'セキュアなアーキテクチャ', w: 30 },
     { d: '2', name: '弾力性に優れたアーキテクチャ', w: 26 },

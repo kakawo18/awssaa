@@ -19,6 +19,9 @@ OPT_RE = re.compile(r"^- \*\*([A-F])\.\*\*\s+(\S.*)$")
 ANSWER_RE = re.compile(r"^\*\*正解：([A-F](?:・[A-F])*)\*\*\s*$")
 REASON_RE = re.compile(r"^- \*\*([A-F])\*\*：\s*(\S.*)$")
 LINK_RE = re.compile(r"\]\((\.\./[^)#\s]+)")
+# 解説の中に置く図（要点集と同じ図を、GitHub 用の docs/figures から参照する）
+FIG_LINE_RE = re.compile(r"^!\[([^\]]+)\]\(\.\./docs/figures/([A-Za-z0-9_-]+)\.svg\)$")
+FIG_SRC = os.path.join(ROOT, "web", "figures")
 LETTERS = ["A", "B", "C", "D", "E", "F"]
 
 # 公式試験ガイドのタスク。各問の「**分野**」行で、どのタスクの判断を問う問題かを示す
@@ -141,6 +144,22 @@ def check_file(path):
         if not any(ln.startswith("**参照**") for ln in block):
             err(start, "「**参照**」の行がない（根拠の章を必ず示す）")
 
+        try:
+            d_at = block.index("<details>")
+        except ValueError:
+            d_at = len(block)
+        figs = [(i, mm) for i, ln in enumerate(block) for mm in [FIG_LINE_RE.match(ln.strip())] if mm]
+        for i, mm in figs:
+            if i < d_at:
+                err(start + i, "図は解説（<details>の中）に置く。設問文に置くと答えのヒントになる")
+            if not os.path.exists(os.path.join(FIG_SRC, mm.group(2) + ".svg")):
+                err(start + i, "図の原本 web/figures/%s.svg がない" % mm.group(2))
+        if len(figs) > 2:
+            err(start, "図は1問に2つまで（検出: %d）" % len(figs))
+        stray = [i for i, ln in enumerate(block) if ln.strip().startswith("![") and not FIG_LINE_RE.match(ln.strip())]
+        for i in stray:
+            err(start + i, "図の行の形式が違う（![説明](../docs/figures/<id>.svg) の形にする）")
+
         dom_lines = [mm.group(1) for ln in block for mm in [DOMAIN_RE.match(ln.strip())] if mm]
         if len(dom_lines) != 1:
             err(start, "「**分野**：1.3 データセキュリティ管理」の行が1つでない（検出: %d）" % len(dom_lines))
@@ -163,8 +182,10 @@ def check_file(path):
             err(0, "分野の問題数が冒頭の宣言と一致しない（宣言: %s／分野の行: %s）"
                 % ("／".join(map(str, want)), "／".join(map(str, got_n))))
 
-    # 教材へのリンク切れ
+    # 教材へのリンク切れ（図の行は元の web/figures/ を上で確かめ、docs/figures/ の複製は build_exams.py が書き出す）
     for i, ln in enumerate(lines):
+        if FIG_LINE_RE.match(ln.strip()):
+            continue
         for rel in LINK_RE.findall(ln):
             if not os.path.exists(os.path.normpath(os.path.join(os.path.dirname(path), rel))):
                 err(i, "リンク先が存在しない: %s" % rel)

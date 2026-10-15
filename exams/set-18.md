@@ -400,6 +400,8 @@ ECサイトのクリックストリームをKinesis Data Streamsで受けてい�
 
 **キーワード**：S3 Standard-IA／S3 Glacier Deep Archive
 
+![ライフサイクルでクラスを移していく例と、各クラスの最低保存期間](../docs/figures/s3-lifecycle.svg)
+
 **他の選択肢を外す理由**
 - **A**：One Zone-IAは単一AZに保存されるため、AZ障害でログを失う可能性があります。90日以降も即時取り出しは不要なので、Glacier Instant Retrievalは割高です。
 - **B**：アクセスパターンが既知なので、監視料金のかかるIntelligent-Tieringより、ライフサイクルで明示的に移すほうが安くなります（アーカイブ階層もオプトインが必要です）。

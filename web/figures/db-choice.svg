@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 442" role="img" aria-label="データベースの選び方。大量のデータを集計・分析するならRedshift。JOINやトランザクションが必要なら、OracleやSQL ServerはRDS、MySQL・PostgreSQL互換で高い性能が必要ならAurora。キーで引き、大規模でも一桁ミリ秒で返すならDynamoDB。メモリ上でマイクロ秒単位で読み書きするなら、作り直せるキャッシュはElastiCache、正本のデータはMemoryDB。それ以外はグラフのNeptuneなど目的別のデータベースを選ぶ。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor">
+  <defs>
+    <marker id="arw-db" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+    <marker id="arw-db-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="currentColor" fill-opacity="0.65"/>
+    </marker>
+  </defs>
+  <text x="10" y="16" font-size="10.5" fill-opacity="0.7">上から順に確かめ、「はい」になった所が答え</text>
+  <rect x="10" y="28" width="196" height="44" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="108" y="47" text-anchor="middle" font-size="10">大量のデータを</text>
+  <text x="108" y="62" text-anchor="middle" font-size="10">集計・分析する（DWH）？</text>
+  <line x1="206" y1="50" x2="228" y2="50" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-db)"/>
+  <text x="217" y="42" text-anchor="middle" font-size="8" fill-opacity="0.8">はい</text>
+  <rect x="232" y="28" width="138" height="44" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="301" y="47" text-anchor="middle" font-size="11">Redshift</text>
+  <text x="301" y="62" text-anchor="middle" font-size="8.5" fill-opacity="0.75">列指向で集計が速い</text>
+  <line x1="108" y1="72" x2="108" y2="91" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.4" marker-end="url(#arw-db-g)"/>
+  <text x="114" y="86" font-size="8.5" fill-opacity="0.8">いいえ</text>
+  <rect x="10" y="94" width="196" height="44" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="108" y="113" text-anchor="middle" font-size="10">JOIN・トランザクションが</text>
+  <text x="108" y="128" text-anchor="middle" font-size="10">必要なリレーショナル？</text>
+  <line x1="206" y1="116" x2="228" y2="116" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-db)"/>
+  <text x="217" y="108" text-anchor="middle" font-size="8" fill-opacity="0.8">はい</text>
+  <rect x="232" y="94" width="138" height="66" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="242" y="111" font-size="8.5" fill-opacity="0.75">Oracle・SQL Server</text>
+  <text x="242" y="125" font-size="10.5">→ RDS</text>
+  <text x="242" y="139" font-size="8.5" fill-opacity="0.75">MySQL・PostgreSQL互換</text>
+  <text x="242" y="153" font-size="10.5">→ Aurora（高性能）</text>
+  <line x1="108" y1="138" x2="108" y2="179" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.4" marker-end="url(#arw-db-g)"/>
+  <text x="114" y="163" font-size="8.5" fill-opacity="0.8">いいえ</text>
+  <rect x="10" y="182" width="196" height="44" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="108" y="201" text-anchor="middle" font-size="10">キーで引き、大規模でも</text>
+  <text x="108" y="216" text-anchor="middle" font-size="10">一桁ミリ秒で返す？</text>
+  <line x1="206" y1="204" x2="228" y2="204" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-db)"/>
+  <text x="217" y="196" text-anchor="middle" font-size="8" fill-opacity="0.8">はい</text>
+  <rect x="232" y="182" width="138" height="44" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="301" y="201" text-anchor="middle" font-size="11">DynamoDB</text>
+  <text x="301" y="216" text-anchor="middle" font-size="8.5" fill-opacity="0.75">さらに速く読むならDAX</text>
+  <line x1="108" y1="226" x2="108" y2="245" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.4" marker-end="url(#arw-db-g)"/>
+  <text x="114" y="240" font-size="8.5" fill-opacity="0.8">いいえ</text>
+  <rect x="10" y="248" width="196" height="44" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="108" y="267" text-anchor="middle" font-size="10">メモリ上に置いて</text>
+  <text x="108" y="282" text-anchor="middle" font-size="10">マイクロ秒単位で読み書きする？</text>
+  <line x1="206" y1="270" x2="228" y2="270" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-db)"/>
+  <text x="217" y="262" text-anchor="middle" font-size="8" fill-opacity="0.8">はい</text>
+  <rect x="232" y="248" width="138" height="66" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="242" y="265" font-size="8.5" fill-opacity="0.75">作り直せるキャッシュ</text>
+  <text x="242" y="279" font-size="10.5">→ ElastiCache</text>
+  <text x="242" y="293" font-size="8.5" fill-opacity="0.75">これが正本のデータ</text>
+  <text x="242" y="307" font-size="10.5">→ MemoryDB</text>
+  <line x1="108" y1="292" x2="108" y2="333" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.4" marker-end="url(#arw-db-g)"/>
+  <text x="114" y="317" font-size="8.5" fill-opacity="0.8">いいえ</text>
+  <rect x="10" y="336" width="196" height="44" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="108" y="355" text-anchor="middle" font-size="11">目的別のデータベース</text>
+  <text x="108" y="370" text-anchor="middle" font-size="8.5" fill-opacity="0.75">グラフ・ドキュメント・時系列など</text>
+  <line x1="10" y1="394" x2="370" y2="394" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="415" font-size="9.5" fill-opacity="0.8">グラフ＝Neptune、MongoDB互換＝DocumentDB、</text>
+  <text x="10" y="432" font-size="9.5" fill-opacity="0.8">時系列＝Timestream</text>
+</svg>

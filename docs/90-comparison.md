@@ -18,6 +18,10 @@
 | **Storage Gateway / DataSync** | オンプレミスからAWSストレージを**日常的に継続利用**＝**Storage Gateway**／オンプレミス↔AWS間の**移行・定期同期**＝**DataSync** | オンプレミス業務アプリからハイブリッドで読み書きし続けるか、一方向にバッチ同期するか。 |
 | **S3 Transfer Acceleration / CloudFront** | S3バケットへの**アップロード高速化**＝**Transfer Acceleration**／グローバルエンドユーザーへの**コンテンツ配信・キャッシュ**＝**CloudFront** | トラフィックの方向（インバウンドアップロードか、アウトバウンド配信か）。 |
 
+![図：ストレージの選び方（上から順に確かめる）](./figures/storage-choice.svg)
+
+**図：** 迷ったら、使う場所（オンプレミスか）、読み書きの方法（APIかファイルか）、共有する台数の順に確かめます。共有ファイルはOSとプロトコルでEFSとFSxを分け、1台用ならデータが消えてよいかでインスタンスストアとEBSを分けます。
+
 ---
 
 ## コンピューティング
@@ -32,6 +36,10 @@
 | **Elastic Beanstalk / CloudFormation** | アプリケーションコード中心の自動展開＝**Beanstalk**／インフラ全体の厳密なIaC定義＝**CloudFormation** | インフラの高度なカスタマイズが必要か、Webアプリ環境の迅速な構築を最優先とするか。 |
 | **スポット / RI / Savings Plans** | 中断耐性のあるワークロード＝**スポット**／特定インスタンスの最安コミット＝**RI**／柔軟な1〜3年コミット＝**Savings Plans** | 中断発生時に再実行可能なアーキテクチャか。将来的なインスタンスタイプ変更の可能性があるか。 |
 | **Dedicated Host / Dedicated Instance** | ソケット数・物理コア単位のBYOLライセンス管理＝**Dedicated Host**／他テナントとのハードウェア分離のみ＝**Dedicated Instance** | ソフトウェアライセンスが物理ソケット・物理コア数にバインドされているか。 |
+
+![図：コンピューティングの選び方（上から順に確かめる）](./figures/compute-choice.svg)
+
+**図：** 処理時間が15分以内でイベントから起動するならLambdaが最初の候補です。コンテナはKubernetesの互換が必要かでEKSとECSを分け、サーバーを管理したくなければFargateで動かします。長時間のバッチはAWS Batch、OSまで制御するならEC2です。
 
 ---
 
@@ -62,6 +70,10 @@
 | **Valkey・Redis OSS / Memcached** | データの永続化・レプリケーション・複雑なデータ構造＝**Valkey／Redis OSS**（ElastiCacheの現在の主力はValkey）／シンプルなKVS・マルチスレッド処理＝**Memcached** | ノード障害時のデータ永続化やPub/Sub機能が必要か。 |
 | **ElastiCache / Amazon MemoryDB** | 一時的なキャッシュ層＝**ElastiCache**／プライマリデータベースとしての高耐久性と超低遅延を両立＝**MemoryDB** | データが消失してもバックエンドから再生成可能か、唯一の正本データストアとなるか。 |
 | **Amazon QLDB / Managed Blockchain** | 中央集権的な管理者による改ざん不能な台帳履歴＝**QLDB**（※2025年7月31日にサポート終了。古い設問でのみ登場）／複数企業・組織間で信頼を分散するコンソーシアム＝**Managed Blockchain** | 信頼できる中央管理主体が存在するか、分散合意形成が必要か。 |
+
+![図：データベースの選び方（上から順に確かめる）](./figures/db-choice.svg)
+
+**図：** 集計・分析ならRedshift、JOINやトランザクションが必要ならRDSかAurora、キーで引くだけならDynamoDBです。メモリ上に置く場合は、消えても作り直せるならElastiCache、正本として保存するならMemoryDBを選びます。
 
 ---
 

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 330" role="img" aria-label="Organizationsの階層とSCPの継承。ルートに付けたSCPは配下のすべてのOUとメンバーアカウントに、OUに付けたSCPはそのOUの配下のアカウントに適用され、アカウントで使えるのは経路上のSCPすべてが許可する範囲だけになる。管理アカウントにはSCPが適用されない。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <!-- root -->
+  <rect x="130" y="10" width="120" height="40" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="190" y="27" text-anchor="middle" font-size="10.5">ルート</text>
+  <text x="190" y="42" text-anchor="middle" font-size="8.5" fill-opacity="0.8">SCP：東京・大阪以外を拒否</text>
+
+  <!-- management account -->
+  <rect x="270" y="10" width="100" height="40" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="4 3"/>
+  <text x="320" y="27" text-anchor="middle" font-size="10">管理アカウント</text>
+  <text x="320" y="42" text-anchor="middle" font-size="8.5" font-weight="700">✕ SCPの対象外</text>
+  <line x1="250" y1="30" x2="270" y2="30" stroke="currentColor" stroke-opacity="0.45"/>
+
+  <!-- OUs -->
+  <line x1="190" y1="50" x2="190" y2="66" stroke="currentColor" stroke-opacity="0.5"/>
+  <line x1="95" y1="66" x2="285" y2="66" stroke="currentColor" stroke-opacity="0.5"/>
+  <line x1="95" y1="66" x2="95" y2="80" stroke="currentColor" stroke-opacity="0.5"/>
+  <line x1="285" y1="66" x2="285" y2="80" stroke="currentColor" stroke-opacity="0.5"/>
+  <rect x="20" y="80" width="150" height="40" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="95" y="97" text-anchor="middle" font-size="10.5">OU：本番</text>
+  <text x="95" y="112" text-anchor="middle" font-size="8.5" fill-opacity="0.8">SCP：CloudTrail停止を拒否</text>
+  <rect x="210" y="80" width="150" height="40" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="285" y="97" text-anchor="middle" font-size="10.5">OU：開発</text>
+  <text x="285" y="112" text-anchor="middle" font-size="8.5" fill-opacity="0.8">SCP：大きなインスタンスを拒否</text>
+
+  <!-- accounts -->
+  <g stroke="currentColor" stroke-opacity="0.5">
+    <line x1="95" y1="120" x2="95" y2="134"/><line x1="55" y1="134" x2="135" y2="134"/>
+    <line x1="55" y1="134" x2="55" y2="146"/><line x1="135" y1="134" x2="135" y2="146"/>
+    <line x1="285" y1="120" x2="285" y2="134"/><line x1="245" y1="134" x2="325" y2="134"/>
+    <line x1="245" y1="134" x2="245" y2="146"/><line x1="325" y1="134" x2="325" y2="146"/>
+  </g>
+  <g font-size="9.5" text-anchor="middle">
+    <rect x="22" y="146" width="66" height="28" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+    <text x="55" y="164">本番A</text>
+    <rect x="102" y="146" width="66" height="28" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+    <text x="135" y="164">本番B</text>
+    <rect x="212" y="146" width="66" height="28" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+    <text x="245" y="164">開発A</text>
+    <rect x="292" y="146" width="66" height="28" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+    <text x="325" y="164">開発B</text>
+  </g>
+
+  <!-- example -->
+  <rect x="10" y="190" width="360" height="56" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="18" y="208" font-size="10">本番Aで使えるのは、ルートとOU：本番のSCPを</text>
+  <text x="18" y="223" font-size="10">両方満たし、さらにIAMポリシーで許可された操作だけ</text>
+  <text x="18" y="238" font-size="9" fill-opacity="0.75">（東京・大阪の中で、CloudTrailを止めない操作）</text>
+
+  <!-- notes -->
+  <text x="10" y="268" font-size="10.5">SCPは上の階層から下へすべて引き継がれる</text>
+  <text x="10" y="287" font-size="10.5">メンバーアカウントのルートユーザーにも適用される</text>
+  <text x="10" y="306" font-size="10.5">管理アカウントには適用されない</text>
+  <text x="26" y="322" font-size="9.5" fill-opacity="0.75">→ 管理アカウントでは業務のリソースを動かさない</text>
+</svg>

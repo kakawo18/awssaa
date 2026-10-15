@@ -47,7 +47,7 @@ def parse_set(path):
             raise ValueError("%s: Q%d の見出しが不正" % (path, n + 1))
 
         body, options, reasons = [], [], []
-        answer, key, refs, req, kw, dom = [], "", "", "", "", []
+        answer, key, refs, req, kw, dom, figs = [], "", "", "", "", [], []
         in_details = False
         in_reasons = False
         for ln in block[1:]:
@@ -70,6 +70,10 @@ def parse_set(path):
             m = ce.ANSWER_RE.match(s)
             if m:
                 answer = m.group(1).split("・")
+                continue
+            m = ce.FIG_LINE_RE.match(s)
+            if m:
+                figs.append({"id": m.group(2), "alt": m.group(1)})
                 continue
             m = ce.DOMAIN_RE.match(s)
             if m:
@@ -114,7 +118,8 @@ def parse_set(path):
             "kw": kw,
             "reasons": reasons,
             "refs": refs,
-            "dom": dom,          # 公式ガイドのタスク（先頭が主な分野）例: ["1.3", "4.1"]
+            "dom": dom,
+            "figs": figs,        # 解説に表示する図 [{"id", "alt"}]          # 公式ガイドのタスク（先頭が主な分野）例: ["1.3", "4.1"]
         })
 
     return {
@@ -124,6 +129,19 @@ def parse_set(path):
         "title": title,
         "questions": questions,
     }
+
+
+def figures(sets):
+    """解説で使う図の SVG を集める。GitHub 表示用の docs/figures/ の複製もここで書き出す。"""
+    out = {}
+    for s in sets:
+        for q in s["questions"]:
+            for fg in q["figs"]:
+                if fg["id"] not in out:
+                    svg = bc.figure_svg(fg["id"])
+                    bc.write_standalone_figure(fg["id"], svg)
+                    out[fg["id"]] = svg
+    return out
 
 
 def build():
@@ -151,6 +169,8 @@ if __name__ == "__main__":
     with open(OUT, "w", encoding="utf-8") as f:
         f.write("window.SAA_EXAMS = ")
         json.dump(sets, f, ensure_ascii=False, separators=(",", ":"))
+        f.write(";\nwindow.SAA_FIGS = ")
+        json.dump(figures(sets), f, ensure_ascii=False, separators=(",", ":"))
         f.write(";\nwindow.SAA_TASKS = ")
         json.dump(ce.TASKS, f, ensure_ascii=False, separators=(",", ":"))
         f.write(";\n")
