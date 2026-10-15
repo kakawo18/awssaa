@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 330" role="img" aria-label="SQSの可視性タイムアウトの時間軸。可視性タイムアウト30秒に対して処理に60秒かかると、30秒の時点でメッセージが再び見えるようになり、ワーカーBが同じメッセージを受信する。30秒から60秒の間は2台が同じメッセージを処理する二重処理になる。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <defs>
+    <pattern id="hatch-sqs" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#3F78D8" stroke-width="2" stroke-opacity="0.5"/>
+    </pattern>
+  </defs>
+  <text x="10" y="18" font-size="10.5" fill-opacity="0.7">可視性タイムアウト30秒・処理に60秒かかる場合</text>
+
+  <!-- overlap band (double processing) -->
+  <rect x="166" y="78" width="96" height="96" fill="url(#hatch-sqs)"/>
+
+  <!-- row: message -->
+  <text x="10" y="50" font-size="10.5">メッセージ</text>
+  <rect x="70" y="36" width="96" height="22" rx="4" fill="#3F78D8" fill-opacity="0.16" stroke="#3F78D8" stroke-width="1.4"/>
+  <text x="118" y="51" text-anchor="middle" font-size="10">不可視（30秒）</text>
+  <rect x="168" y="36" width="190" height="22" rx="4" fill="#3F78D8" fill-opacity="0.16" stroke="#3F78D8" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <text x="263" y="51" text-anchor="middle" font-size="10">再び見える → Bが受信して不可視</text>
+
+  <!-- row: worker A -->
+  <text x="10" y="98" font-size="10.5">ワーカーA</text>
+  <rect x="70" y="84" width="192" height="22" rx="4" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.55"/>
+  <text x="118" y="99" text-anchor="middle" font-size="10">処理（60秒）</text>
+  <line x1="262" y1="78" x2="262" y2="112" stroke="currentColor" stroke-width="1.6"/>
+  <text x="268" y="99" font-size="10">Aが削除</text>
+
+  <!-- row: worker B -->
+  <text x="10" y="146" font-size="10.5">ワーカーB</text>
+  <rect x="168" y="132" width="190" height="22" rx="4" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.55" stroke-dasharray="4 3"/>
+  <text x="300" y="147" text-anchor="middle" font-size="10">同じメッセージを処理</text>
+
+  <!-- overlap label -->
+  <rect x="168" y="160" width="92" height="20" rx="4" fill="#3F78D8"/>
+  <text x="214" y="174" text-anchor="middle" font-size="10.5" fill="#FFFFFF" font-weight="700">✕ 二重処理</text>
+
+  <!-- axis -->
+  <line x1="70" y1="196" x2="362" y2="196" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.4"/>
+  <line x1="70" y1="192" x2="70" y2="200" stroke="currentColor" stroke-opacity="0.6"/>
+  <line x1="166" y1="192" x2="166" y2="200" stroke="currentColor" stroke-opacity="0.6"/>
+  <line x1="262" y1="192" x2="262" y2="200" stroke="currentColor" stroke-opacity="0.6"/>
+  <text x="70" y="212" text-anchor="middle" font-size="10">0秒</text>
+  <text x="166" y="212" text-anchor="middle" font-size="10">30秒</text>
+  <text x="262" y="212" text-anchor="middle" font-size="10">60秒</text>
+  <line x1="358" y1="192" x2="358" y2="200" stroke="currentColor" stroke-opacity="0.6"/>
+  <text x="358" y="212" text-anchor="middle" font-size="10">90秒</text>
+  <text x="70" y="224" font-size="9.5" fill-opacity="0.7">Aが受信</text>
+
+  <!-- remedies -->
+  <line x1="10" y1="236" x2="370" y2="236" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="254" font-size="11">① 可視性タイムアウトを処理時間より長くする</text>
+  <text x="24" y="269" font-size="10" fill-opacity="0.75">処理中に ChangeMessageVisibility で延長してもよい</text>
+  <text x="10" y="288" font-size="11">② それでも再配信は起こるので、処理を冪等にする</text>
+  <text x="10" y="307" font-size="11">③ 受信回数が maxReceiveCount を超えたら DLQ へ移す</text>
+  <text x="24" y="322" font-size="10" fill-opacity="0.75">失敗を繰り返すメッセージが先頭をふさがない</text>
+</svg>

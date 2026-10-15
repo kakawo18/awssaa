@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 344" role="img" aria-label="VPCエンドポイントの到達範囲。VPC内のEC2はゲートウェイ型とインターフェース型のどちらからもS3やDynamoDBに届く。Direct ConnectやVPNでつないだオンプレミスからは、サブネットのENIであるインターフェース型には届くが、ルートテーブルの経路であるゲートウェイ型には届かない。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arw-ep" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+  </defs>
+
+  <!-- on-premises -->
+  <rect x="10" y="6" width="160" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="90" y="24" text-anchor="middle" font-size="11.5">オンプレミス</text>
+  <text x="90" y="39" text-anchor="middle" font-size="9.5" fill-opacity="0.7">VPCの外</text>
+
+  <!-- VPC -->
+  <rect x="10" y="66" width="360" height="188" rx="10" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="360" y="83" text-anchor="end" font-size="10.5" fill-opacity="0.7">VPC</text>
+
+  <rect x="230" y="90" width="128" height="36" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="294" y="112" text-anchor="middle" font-size="11.5">EC2（VPC内）</text>
+
+  <rect x="20" y="166" width="156" height="72" rx="6" fill="#3F78D8" fill-opacity="0.12" stroke="#3F78D8" stroke-width="1.6"/>
+  <text x="98" y="186" text-anchor="middle" font-size="11.5">インターフェース型</text>
+  <text x="98" y="201" text-anchor="middle" font-size="9.5" fill-opacity="0.8">サブネット内のENI</text>
+  <text x="98" y="215" text-anchor="middle" font-size="9.5" fill-opacity="0.8">（プライベートIP・有料）</text>
+  <text x="98" y="231" text-anchor="middle" font-size="9.5" font-weight="700">✓ オンプレミスからも届く</text>
+
+  <rect x="204" y="166" width="156" height="72" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="282" y="186" text-anchor="middle" font-size="11.5">ゲートウェイ型</text>
+  <text x="282" y="201" text-anchor="middle" font-size="9.5" fill-opacity="0.8">ルートテーブルの経路</text>
+  <text x="282" y="215" text-anchor="middle" font-size="9.5" fill-opacity="0.8">（S3・DynamoDBのみ・無料）</text>
+  <text x="282" y="231" text-anchor="middle" font-size="9.5" font-weight="700">✕ オンプレミスからは届かない</text>
+
+  <!-- S3 / DynamoDB -->
+  <rect x="110" y="282" width="160" height="36" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="190" y="304" text-anchor="middle" font-size="11.5">S3 ／ DynamoDB</text>
+
+  <!-- on-prem -> interface (reachable) -->
+  <line x1="52" y1="46" x2="52" y2="162" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-ep)"/>
+  <text x="58" y="100" font-size="10">✓ Direct Connect</text>
+  <text x="58" y="114" font-size="10">／VPN 経由で届く</text>
+
+  <!-- EC2 -> both -->
+  <line x1="294" y1="126" x2="294" y2="162" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-ep)"/>
+  <polyline points="230,108 162,108 162,162" fill="none" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-ep)"/>
+  <text x="300" y="150" font-size="10">✓</text>
+  <text x="168" y="128" font-size="10">✓</text>
+
+  <!-- endpoints -> service -->
+  <line x1="98" y1="238" x2="150" y2="278" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-ep)"/>
+  <line x1="282" y1="238" x2="230" y2="278" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-ep)"/>
+
+  <!-- not reachable note -->
+  <text x="10" y="338" font-size="9.5" fill-opacity="0.75">ゲートウェイ型の経路はVPCのルートテーブルにしかなく、外へ伝わらない</text>
+</svg>
