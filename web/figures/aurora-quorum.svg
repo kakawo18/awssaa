@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 330" role="img" aria-label="Auroraのストレージ。3つのAZに2つずつ、合計6つのコピーを持つ。書き込みは6つのうち4つ、読み取りは3つの応答で成立する。1つのAZが止まって4つ残れば書き込みも読み取りも続き、さらに1つ失って3つになると読み取りだけが続き、2つのAZが止まると読み取りもできない。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor">
+  <!-- instances -->
+  <rect x="26" y="8" width="96" height="26" rx="5" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="74" y="25" text-anchor="middle" font-size="10">ライター</text>
+  <rect x="142" y="8" width="96" height="26" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="190" y="25" text-anchor="middle" font-size="10">リーダー</text>
+  <rect x="258" y="8" width="96" height="26" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="306" y="25" text-anchor="middle" font-size="10">リーダー</text>
+  <g stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2">
+    <line x1="74" y1="34" x2="74" y2="50"/><line x1="190" y1="34" x2="190" y2="50"/><line x1="306" y1="34" x2="306" y2="50"/>
+  </g>
+
+  <!-- shared storage volume -->
+  <rect x="14" y="50" width="352" height="78" rx="8" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="190" y="66" text-anchor="middle" font-size="9.5" fill-opacity="0.75">共有ストレージ（全インスタンスが同じデータを読む）</text>
+  <g font-size="10" text-anchor="middle">
+    <text x="74" y="120">AZ-a</text><text x="190" y="120">AZ-b</text><text x="306" y="120">AZ-c</text>
+  </g>
+  <g fill="#3F78D8" fill-opacity="0.35" stroke="#3F78D8" stroke-width="1.2">
+    <rect x="50" y="76" width="20" height="26" rx="3"/><rect x="78" y="76" width="20" height="26" rx="3"/>
+    <rect x="166" y="76" width="20" height="26" rx="3"/><rect x="194" y="76" width="20" height="26" rx="3"/>
+    <rect x="282" y="76" width="20" height="26" rx="3"/><rect x="310" y="76" width="20" height="26" rx="3"/>
+  </g>
+  <line x1="132" y1="72" x2="132" y2="126" stroke="currentColor" stroke-opacity="0.2"/>
+  <line x1="248" y1="72" x2="248" y2="126" stroke="currentColor" stroke-opacity="0.2"/>
+
+  <text x="10" y="150" font-size="10.5">書き込みは6つ中<tspan font-weight="700">4つ</tspan>、読み取りは<tspan font-weight="700">3つ</tspan>の応答で成立</text>
+
+  <!-- scenarios -->
+  <g font-size="10">
+    <text x="10" y="176" fill-opacity="0.7">失ったコピー</text>
+    <text x="200" y="176" text-anchor="middle" fill-opacity="0.7">残り</text>
+    <text x="270" y="176" text-anchor="middle" fill-opacity="0.7">書き込み</text>
+    <text x="336" y="176" text-anchor="middle" fill-opacity="0.7">読み取り</text>
+    <line x1="10" y1="182" x2="370" y2="182" stroke="currentColor" stroke-opacity="0.2"/>
+
+    <text x="10" y="200">なし</text>
+    <text x="200" y="200" text-anchor="middle">6</text>
+    <text x="270" y="200" text-anchor="middle">✓</text><text x="336" y="200" text-anchor="middle">✓</text>
+
+    <text x="10" y="222">AZを1つ（2コピー）</text>
+    <text x="200" y="222" text-anchor="middle">4</text>
+    <text x="270" y="222" text-anchor="middle">✓</text><text x="336" y="222" text-anchor="middle">✓</text>
+
+    <text x="10" y="244">AZを1つ＋さらに1コピー</text>
+    <text x="200" y="244" text-anchor="middle">3</text>
+    <text x="270" y="244" text-anchor="middle" font-weight="700">✕</text><text x="336" y="244" text-anchor="middle">✓</text>
+
+    <text x="10" y="266">AZを2つ（4コピー）</text>
+    <text x="200" y="266" text-anchor="middle">2</text>
+    <text x="270" y="266" text-anchor="middle" font-weight="700">✕</text><text x="336" y="266" text-anchor="middle" font-weight="700">✕</text>
+  </g>
+  <line x1="10" y1="280" x2="370" y2="280" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="298" font-size="9.5" fill-opacity="0.75">失ったコピーは自動で修復される。リーダーは同じストレージを読むため、</text>
+  <text x="10" y="313" font-size="9.5" fill-opacity="0.75">レプリケーションの遅れが小さく、ライターの障害時はリーダーへ切り替わる</text>
+</svg>

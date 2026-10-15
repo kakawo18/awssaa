@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320" role="img" aria-label="SQSとKinesis Data Streamsの違い。SQSでは1件のメッセージを1台が処理して削除するとキューから消える。Kinesisのシャードではレコードが保持期間のあいだ残り、複数のコンシューマーがそれぞれ自分の読み取り位置から読み、障害後は前の位置へ巻き戻して読み直せる。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arw-ks" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+  </defs>
+
+  <!-- SQS -->
+  <text x="10" y="18" font-size="11.5">SQS：読んで処理したら消す</text>
+  <g font-size="10" text-anchor="middle">
+    <rect x="20" y="34" width="40" height="28" rx="4" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="3 3"/>
+    <text x="40" y="52" fill-opacity="0.5">m1</text>
+    <rect x="64" y="34" width="40" height="28" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+    <text x="84" y="52">m2</text>
+    <rect x="108" y="34" width="40" height="28" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+    <text x="128" y="52">m3</text>
+    <rect x="152" y="34" width="40" height="28" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+    <text x="172" y="52">m4</text>
+  </g>
+  <rect x="250" y="34" width="110" height="28" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="305" y="52" text-anchor="middle" font-size="10">ワーカー</text>
+  <path d="M40,62 C40,84 250,84 250,56" fill="none" stroke="#3F78D8" stroke-width="1.4" marker-end="url(#arw-ks)"/>
+  <text x="96" y="96" font-size="9.5">m1を処理して削除 → キューから消える</text>
+  <text x="10" y="118" font-size="9.5" fill-opacity="0.75">別のシステムが同じm1を読むことはできない（読ませるならSNSで同報）</text>
+
+  <line x1="10" y1="132" x2="370" y2="132" stroke="currentColor" stroke-opacity="0.2"/>
+
+  <!-- Kinesis -->
+  <text x="10" y="154" font-size="11.5">Kinesis Data Streams：保持期間のあいだ残る</text>
+  <text x="10" y="176" font-size="9.5" fill-opacity="0.75">シャード（パーティションキーごとに順序を保つ）</text>
+  <g font-size="10" text-anchor="middle">
+    <rect x="20" y="186" width="40" height="28" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+    <text x="40" y="204">1</text>
+    <rect x="64" y="186" width="40" height="28" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+    <text x="84" y="204">2</text>
+    <rect x="108" y="186" width="40" height="28" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+    <text x="128" y="204">3</text>
+    <rect x="152" y="186" width="40" height="28" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+    <text x="172" y="204">4</text>
+    <rect x="196" y="186" width="40" height="28" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+    <text x="216" y="204">5</text>
+    <rect x="240" y="186" width="40" height="28" rx="4" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.2"/>
+    <text x="260" y="204">6</text>
+  </g>
+  <line x1="284" y1="200" x2="330" y2="200" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.4" marker-end="url(#arw-ks)"/>
+  <text x="336" y="204" font-size="9.5" fill-opacity="0.75">新着</text>
+
+  <!-- consumers' positions -->
+  <g font-size="9.5">
+    <line x1="260" y1="214" x2="260" y2="236" stroke="currentColor" stroke-width="1.4"/>
+    <text x="260" y="250" text-anchor="middle">A：即時処理</text>
+    <line x1="128" y1="214" x2="128" y2="236" stroke="currentColor" stroke-width="1.4"/>
+    <text x="128" y="250" text-anchor="middle">B：分析（遅れて読む）</text>
+    <line x1="40" y1="214" x2="40" y2="262" stroke="currentColor" stroke-width="1.4" stroke-dasharray="3 2"/>
+    <text x="40" y="276" text-anchor="middle">C：障害後に</text>
+    <text x="40" y="289" text-anchor="middle">巻き戻し</text>
+  </g>
+  <text x="96" y="282" font-size="9.5" fill-opacity="0.75">各コンシューマーが自分の位置から読む。</text>
+  <text x="96" y="296" font-size="9.5" fill-opacity="0.75">読んでも消えない（既定24時間〜最大365日保持）</text>
+  <text x="10" y="316" font-size="9.5" fill-opacity="0.75">複数のシステムが同じデータを読む・過去から読み直す → Kinesis</text>
+</svg>
