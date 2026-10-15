@@ -96,6 +96,29 @@ class CheckExamsTest(unittest.TestCase):
         self.assertEqual(ce.check_all(), [])
 
 
+class FigureTest(unittest.TestCase):
+    check = CheckExamsTest.check
+    LINE = "![図：説明](../docs/figures/sqs-visibility.svg)"
+
+    def test_figure_in_explanation_passes(self):
+        text = GOOD.replace("**他の選択肢を外す理由**", self.LINE + "\n\n**他の選択肢を外す理由**")
+        self.assertEqual(self.check(text), [])
+
+    def test_figure_in_question_body_is_reported(self):
+        msgs = self.check(GOOD.replace("設問文。", "設問文。\n\n" + self.LINE))
+        self.assertTrue(any("解説（<details>の中）に置く" in m for m in msgs), msgs)
+
+    def test_missing_figure_source_is_reported(self):
+        line = self.LINE.replace("sqs-visibility", "no-such-figure")
+        msgs = self.check(GOOD.replace("**他の選択肢を外す理由**", line + "\n\n**他の選択肢を外す理由**"))
+        self.assertTrue(any("図の原本" in m for m in msgs), msgs)
+
+    def test_malformed_figure_line_is_reported(self):
+        line = "![図](./figures/sqs-visibility.svg)"
+        msgs = self.check(GOOD.replace("**他の選択肢を外す理由**", line + "\n\n**他の選択肢を外す理由**"))
+        self.assertTrue(any("図の行の形式" in m for m in msgs), msgs)
+
+
 class DomainTest(unittest.TestCase):
     check = CheckExamsTest.check
 
