@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 330" role="img" aria-label="セキュリティグループとネットワークACLの戻り通信。クライアントからポート443への要求は、ネットワークACLとセキュリティグループのインバウンドで許可して届く。戻りの通信は、ステートフルなセキュリティグループでは自動で通るが、ステートレスなネットワークACLではアウトバウンドで宛先1024〜65535を許可しないと落ちる。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arw-sn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+  </defs>
+
+  <!-- client -->
+  <rect x="10" y="78" width="72" height="84" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="46" y="116" text-anchor="middle" font-size="11">クライアント</text>
+  <text x="46" y="132" text-anchor="middle" font-size="9" fill-opacity="0.7">ポート49152</text>
+
+  <!-- subnet with NACL boundary -->
+  <rect x="112" y="30" width="258" height="180" rx="8" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.45"/>
+  <text x="362" y="46" text-anchor="end" font-size="10" fill-opacity="0.7">サブネット</text>
+  <rect x="104" y="30" width="16" height="180" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="4 3"/>
+  <text x="112" y="24" text-anchor="middle" font-size="10.5">NACL</text>
+
+  <!-- SG around EC2 -->
+  <rect x="226" y="66" width="134" height="108" rx="8" fill="none" stroke="#3F78D8" stroke-width="1.8"/>
+  <text x="232" y="82" font-size="10.5">SG</text>
+  <rect x="268" y="96" width="78" height="48" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="307" y="118" text-anchor="middle" font-size="11">EC2</text>
+  <text x="307" y="133" text-anchor="middle" font-size="9" fill-opacity="0.7">ポート443</text>
+
+  <!-- request -->
+  <line x1="82" y1="104" x2="264" y2="104" stroke="#3F78D8" stroke-width="1.8" marker-end="url(#arw-sn)"/>
+  <circle cx="160" cy="92" r="8" fill="#3F78D8" fill-opacity="0.16" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="160" y="96" text-anchor="middle" font-size="10">1</text>
+  <text x="174" y="96" font-size="9.5">要求 → 443</text>
+
+  <!-- return -->
+  <line x1="264" y1="138" x2="86" y2="138" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" stroke-dasharray="5 3"/>
+  <polygon points="84,138 94,133 94,143" fill="currentColor" fill-opacity="0.75"/>
+  <circle cx="246" cy="156" r="8" fill="#3F78D8" fill-opacity="0.16" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="246" y="160" text-anchor="middle" font-size="10">2</text>
+  <circle cx="112" cy="156" r="8" fill="#3F78D8" fill-opacity="0.16" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="112" y="160" text-anchor="middle" font-size="10">3</text>
+  <text x="130" y="132" font-size="9.5">戻り → 49152</text>
+
+  <!-- notes -->
+  <line x1="10" y1="226" x2="370" y2="226" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="244" font-size="10.5">① 要求：NACLとSGのインバウンドで443を許可</text>
+  <text x="10" y="264" font-size="10.5">② 戻り：SGはステートフルなので ✓ 自動で通る</text>
+  <text x="10" y="284" font-size="10.5">③ 戻り：NACLはステートレス。アウトバウンドで</text>
+  <text x="26" y="300" font-size="10.5">宛先1024〜65535を許可しないと ✕ 落ちる</text>
+  <text x="10" y="320" font-size="9.5" fill-opacity="0.7">同じサブネット内の通信はNACLを通らない（SGだけで制御）</text>
+</svg>
