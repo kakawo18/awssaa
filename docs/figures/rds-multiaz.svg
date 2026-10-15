@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 300" role="img" aria-label="RDSの3つの構成の比較。マルチAZ DBインスタンスはスタンバイへ同期複製するがスタンバイは読めず、切り替えは60〜120秒。マルチAZ DBクラスターは読めるスタンバイ2台へ半同期で複製し、切り替えは35秒未満。リードレプリカは非同期複製で読めるが、障害時は手動で昇格する。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arw-rds" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+    <marker id="arw-rds-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="currentColor" fill-opacity="0.6"/>
+    </marker>
+  </defs>
+
+  <!-- column guides -->
+  <line x1="128" y1="8" x2="128" y2="292" stroke="currentColor" stroke-opacity="0.15"/>
+  <line x1="252" y1="8" x2="252" y2="292" stroke="currentColor" stroke-opacity="0.15"/>
+
+  <!-- headings -->
+  <text x="64" y="18" text-anchor="middle" font-size="11">マルチAZ</text>
+  <text x="64" y="32" text-anchor="middle" font-size="11">DBインスタンス</text>
+  <text x="190" y="18" text-anchor="middle" font-size="11">マルチAZ</text>
+  <text x="190" y="32" text-anchor="middle" font-size="11">DBクラスター</text>
+  <text x="316" y="18" text-anchor="middle" font-size="11">リードレプリカ</text>
+  <text x="316" y="32" text-anchor="middle" font-size="10" fill-opacity="0.7">（別リージョンも可）</text>
+
+  <!-- app boxes -->
+  <rect x="24" y="44" width="80" height="24" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="64" y="60" text-anchor="middle" font-size="10.5">アプリ</text>
+  <rect x="140" y="44" width="100" height="24" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="190" y="60" text-anchor="middle" font-size="10.5">アプリ</text>
+  <rect x="264" y="44" width="104" height="24" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="316" y="60" text-anchor="middle" font-size="10.5">アプリ</text>
+
+  <!-- primaries -->
+  <rect x="24" y="100" width="80" height="30" rx="5" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="64" y="119" text-anchor="middle" font-size="10.5">プライマリ</text>
+  <rect x="146" y="100" width="64" height="30" rx="5" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="178" y="119" text-anchor="middle" font-size="10.5">ライター</text>
+  <rect x="264" y="100" width="64" height="30" rx="5" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="296" y="119" text-anchor="middle" font-size="10.5">プライマリ</text>
+
+  <!-- app -> primary (read/write) -->
+  <line x1="64" y1="68" x2="64" y2="96" stroke="#3F78D8" stroke-width="1.6" marker-end="url(#arw-rds)"/>
+  <line x1="178" y1="68" x2="178" y2="96" stroke="#3F78D8" stroke-width="1.6" marker-end="url(#arw-rds)"/>
+  <line x1="296" y1="68" x2="296" y2="96" stroke="#3F78D8" stroke-width="1.6" marker-end="url(#arw-rds)"/>
+  <text x="70" y="86" font-size="9" fill-opacity="0.8">読み書き</text>
+
+  <!-- secondaries -->
+  <rect x="24" y="172" width="80" height="30" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="4 3"/>
+  <text x="64" y="191" text-anchor="middle" font-size="10.5">スタンバイ</text>
+  <rect x="134" y="172" width="52" height="30" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="160" y="185" text-anchor="middle" font-size="9.5">リーダー</text>
+  <text x="160" y="197" text-anchor="middle" font-size="9.5">（AZ-b）</text>
+  <rect x="194" y="172" width="52" height="30" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="220" y="185" text-anchor="middle" font-size="9.5">リーダー</text>
+  <text x="220" y="197" text-anchor="middle" font-size="9.5">（AZ-c）</text>
+  <rect x="290" y="172" width="78" height="30" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="329" y="191" text-anchor="middle" font-size="10.5">レプリカ</text>
+
+  <!-- replication -->
+  <line x1="64" y1="130" x2="64" y2="168" stroke="#3F78D8" stroke-width="1.6" marker-end="url(#arw-rds)"/>
+  <text x="70" y="153" font-size="9.5">同期</text>
+  <line x1="166" y1="130" x2="160" y2="168" stroke="#3F78D8" stroke-width="1.6" marker-end="url(#arw-rds)"/>
+  <line x1="190" y1="130" x2="214" y2="168" stroke="#3F78D8" stroke-width="1.6" marker-end="url(#arw-rds)"/>
+  <text x="168" y="153" font-size="9.5">半同期</text>
+  <line x1="306" y1="130" x2="318" y2="168" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#arw-rds-g)"/>
+  <text x="268" y="153" font-size="9.5">非同期</text>
+
+  <!-- app -> readable secondaries -->
+  <polyline points="232,68 232,84 240,84 240,168" fill="none" stroke="#3F78D8" stroke-width="1.4" stroke-dasharray="2 2" marker-end="url(#arw-rds)"/>
+  <polyline points="360,68 360,168" fill="none" stroke="#3F78D8" stroke-width="1.4" stroke-dasharray="2 2" marker-end="url(#arw-rds)"/>
+
+  <!-- readability marks -->
+  <text x="64" y="218" text-anchor="middle" font-size="10" font-weight="700">✕ 読めない</text>
+  <text x="190" y="218" text-anchor="middle" font-size="10" font-weight="700">✓ 読める</text>
+  <text x="316" y="218" text-anchor="middle" font-size="10" font-weight="700">✓ 読める</text>
+
+  <!-- failover row -->
+  <line x1="10" y1="232" x2="370" y2="232" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="248" font-size="9.5" fill-opacity="0.7">障害時の切り替え</text>
+  <text x="64" y="266" text-anchor="middle" font-size="10.5">自動</text>
+  <text x="64" y="281" text-anchor="middle" font-size="10">60〜120秒</text>
+  <text x="190" y="266" text-anchor="middle" font-size="10.5">自動</text>
+  <text x="190" y="281" text-anchor="middle" font-size="10">35秒未満</text>
+  <text x="316" y="266" text-anchor="middle" font-size="10.5">手動で昇格</text>
+  <text x="316" y="281" text-anchor="middle" font-size="10">自動ではない</text>
+</svg>

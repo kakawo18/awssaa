@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 300" role="img" aria-label="S3ライフサイクルの例。作成から30日まではStandard、30日でStandard-IA、90日でGlacier Flexible Retrieval、365日でDeep Archiveへ移り、7年で削除する。移行先のクラスには最低保存期間があり、IAは30日、Glacier Flexible Retrievalは90日、Deep Archiveは180日。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <text x="10" y="18" font-size="10.5" fill-opacity="0.7">ライフサイクルルールの例（目盛りは等間隔ではない）</text>
+
+  <!-- retrieval row -->
+  <text x="10" y="32" font-size="9.5" fill-opacity="0.7">各クラスの上：取り出しにかかる時間</text>
+  <text x="54" y="44" text-anchor="middle" font-size="9.5">即時</text>
+  <text x="134" y="44" text-anchor="middle" font-size="9.5">即時</text>
+  <text x="226" y="44" text-anchor="middle" font-size="9.5">数分〜数時間</text>
+  <text x="314" y="44" text-anchor="middle" font-size="9.5">12〜48時間</text>
+
+  <!-- class bands (colder = darker) -->
+  <rect x="14" y="54" width="80" height="44" fill="#3F78D8" fill-opacity="0.08" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="54" y="80" text-anchor="middle" font-size="10.5">Standard</text>
+  <rect x="94" y="54" width="80" height="44" fill="#3F78D8" fill-opacity="0.18" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="134" y="80" text-anchor="middle" font-size="10.5">Standard-IA</text>
+  <rect x="174" y="54" width="104" height="44" fill="#3F78D8" fill-opacity="0.30" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="226" y="73" text-anchor="middle" font-size="10.5">Glacier</text>
+  <text x="226" y="88" text-anchor="middle" font-size="10.5">Flexible Retrieval</text>
+  <rect x="278" y="54" width="72" height="44" fill="#3F78D8" fill-opacity="0.45" stroke="#3F78D8" stroke-width="1.2"/>
+  <text x="314" y="73" text-anchor="middle" font-size="10.5">Deep</text>
+  <text x="314" y="88" text-anchor="middle" font-size="10.5">Archive</text>
+  <text x="358" y="80" text-anchor="middle" font-size="12" font-weight="700">✕</text>
+
+  <!-- day axis -->
+  <line x1="14" y1="112" x2="350" y2="112" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.4"/>
+  <line x1="14" y1="106" x2="14" y2="118" stroke="currentColor" stroke-opacity="0.6"/>
+  <line x1="94" y1="106" x2="94" y2="118" stroke="currentColor" stroke-opacity="0.6"/>
+  <line x1="174" y1="106" x2="174" y2="118" stroke="currentColor" stroke-opacity="0.6"/>
+  <line x1="278" y1="106" x2="278" y2="118" stroke="currentColor" stroke-opacity="0.6"/>
+  <line x1="350" y1="106" x2="350" y2="118" stroke="currentColor" stroke-opacity="0.6"/>
+  <text x="14" y="132" text-anchor="middle" font-size="10">0日</text>
+  <text x="94" y="132" text-anchor="middle" font-size="10">30日</text>
+  <text x="174" y="132" text-anchor="middle" font-size="10">90日</text>
+  <text x="278" y="132" text-anchor="middle" font-size="10">365日</text>
+  <text x="350" y="132" text-anchor="middle" font-size="10">7年で削除</text>
+
+  <!-- minimum storage durations -->
+  <text x="10" y="156" font-size="10.5" fill-opacity="0.7">各クラスの最低保存期間</text>
+  <text x="54" y="178" text-anchor="middle" font-size="10">なし</text>
+  <text x="134" y="178" text-anchor="middle" font-size="10">30日</text>
+  <text x="226" y="178" text-anchor="middle" font-size="10">90日</text>
+  <text x="314" y="178" text-anchor="middle" font-size="10">180日</text>
+
+  <!-- notes -->
+  <line x1="10" y1="202" x2="370" y2="202" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="222" font-size="11">最低保存期間より前に移行・削除すると、</text>
+  <text x="10" y="238" font-size="11">残りの日数分の料金がかかる</text>
+  <text x="10" y="260" font-size="10" fill-opacity="0.8">例：Deep Archiveに移して60日で削除 → 180日分を課金</text>
+  <text x="10" y="280" font-size="10" fill-opacity="0.8">IA系は128 KB未満のオブジェクトも128 KB分を課金</text>
+</svg>
