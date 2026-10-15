@@ -182,8 +182,10 @@ def check_file(path):
             err(0, "分野の問題数が冒頭の宣言と一致しない（宣言: %s／分野の行: %s）"
                 % ("／".join(map(str, want)), "／".join(map(str, got_n))))
 
-    # 教材へのリンク切れ
+    # 教材へのリンク切れ（図の行は元の web/figures/ を上で確かめ、docs/figures/ の複製は build_exams.py が書き出す）
     for i, ln in enumerate(lines):
+        if FIG_LINE_RE.match(ln.strip()):
+            continue
         for rel in LINK_RE.findall(ln):
             if not os.path.exists(os.path.normpath(os.path.join(os.path.dirname(path), rel))):
                 err(i, "リンク先が存在しない: %s" % rel)

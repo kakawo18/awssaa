@@ -113,6 +113,17 @@ class FigureTest(unittest.TestCase):
         msgs = self.check(GOOD.replace("**他の選択肢を外す理由**", line + "\n\n**他の選択肢を外す理由**"))
         self.assertTrue(any("図の原本" in m for m in msgs), msgs)
 
+    def test_figure_without_docs_copy_passes(self):
+        # 問題集だけで使う図は、docs/figures/ の複製を build_exams.py が後から書き出す
+        src = os.path.join(ce.FIG_SRC, "test-exam-only.svg")
+        with open(src, "w", encoding="utf-8") as f:
+            f.write("<svg/>")
+        try:
+            line = self.LINE.replace("sqs-visibility", "test-exam-only")
+            self.assertEqual(self.check(GOOD.replace("**他の選択肢を外す理由**", line + "\n\n**他の選択肢を外す理由**")), [])
+        finally:
+            os.unlink(src)
+
     def test_malformed_figure_line_is_reported(self):
         line = "![図](./figures/sqs-visibility.svg)"
         msgs = self.check(GOOD.replace("**他の選択肢を外す理由**", line + "\n\n**他の選択肢を外す理由**"))

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 330" role="img" aria-label="3つのスケーリング方式の動き。毎朝9時に負荷が急に増える場合、ターゲット追跡は負荷が上がってから台数を増やすため立ち上がりで不足する。スケジュールされたスケーリングは決めた時刻に先に増やす。予測スケーリングは過去の周期から増加を予測して先に増やす。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor">
+  <defs>
+    <pattern id="sp-hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.5"/>
+    </pattern>
+  </defs>
+  <text x="10" y="16" font-size="10.5" fill-opacity="0.7">毎朝9時に負荷が急に増える場合（灰色＝負荷、青＝台数）</text>
+
+  <!-- panel 1: target tracking (x: 7h=80 .. 11h=360, 70px/h) -->
+  <text x="10" y="44" font-size="10.5">ターゲット</text>
+  <text x="10" y="58" font-size="10.5">追跡</text>
+  <polyline points="80,86 192,86 220,46 360,46" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="5"/>
+  <polyline points="80,86 236,86 236,70 254,70 254,56 272,56 272,46 360,46" fill="none" stroke="#3F78D8" stroke-width="2"/>
+  <polygon points="220,46 272,46 272,56 254,56 254,70 236,70 236,86 192,86" fill="url(#sp-hatch)"/>
+  <text x="282" y="70" font-size="9.5">✕ 立ち上がりで不足</text>
+  <text x="10" y="76" font-size="8.5" fill-opacity="0.7">上がってから増やす</text>
+
+  <line x1="10" y1="100" x2="370" y2="100" stroke="currentColor" stroke-opacity="0.15"/>
+
+  <!-- panel 2: scheduled -->
+  <text x="10" y="128" font-size="10.5">スケジュール</text>
+  <polyline points="80,170 192,170 220,130 360,130" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="5"/>
+  <polyline points="80,170 176,170 176,126 360,126" fill="none" stroke="#3F78D8" stroke-width="2"/>
+  <text x="176" y="186" text-anchor="middle" font-size="9" fill-opacity="0.8">8:45に増やす</text>
+  <text x="268" y="154" font-size="9.5">✓ 時刻が決まっている</text>
+  <text x="10" y="160" font-size="8.5" fill-opacity="0.7">決めた時刻に増やす</text>
+
+  <line x1="10" y1="196" x2="370" y2="196" stroke="currentColor" stroke-opacity="0.15"/>
+
+  <!-- panel 3: predictive -->
+  <text x="10" y="224" font-size="10.5">予測</text>
+  <polyline points="80,264 192,264 220,224 360,224" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="5"/>
+  <polyline points="80,264 160,264 186,220 360,220" fill="none" stroke="#3F78D8" stroke-width="2"/>
+  <text x="282" y="248" font-size="9.5">✓ 周期がある</text>
+  <text x="10" y="256" font-size="8.5" fill-opacity="0.7">過去の周期から先回り</text>
+
+  <!-- axis -->
+  <line x1="80" y1="280" x2="360" y2="280" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.2"/>
+  <g font-size="9.5" text-anchor="middle" fill-opacity="0.8">
+    <text x="80" y="294">7時</text><text x="150" y="294">8時</text><text x="220" y="294">9時</text><text x="290" y="294">10時</text><text x="360" y="294">11時</text>
+  </g>
+  <text x="10" y="318" font-size="9.5" fill-opacity="0.75">起動後の初期化が長いときは、ウォームプールで準備済みの台数を待機させる</text>
+</svg>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 290" role="img" aria-label="Auto Scalingのデフォルトの終了ポリシー。AZ-aに4台、AZ-bとAZ-cに3台ずつあるとき、まず台数が最も多いAZ-aを選び、その中で古い起動テンプレートを使う2台に絞り、次の課金時間に最も近い1台を終了する。終了後は3台ずつになる。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor">
+  <text x="10" y="16" font-size="10.5" fill-opacity="0.7">スケールインで1台を終了するとき（デフォルトの終了ポリシー）</text>
+
+  <!-- AZ-a -->
+  <rect x="10" y="28" width="112" height="96" rx="6" fill="#3F78D8" fill-opacity="0.06" stroke="#3F78D8" stroke-width="1.6"/>
+  <text x="66" y="46" text-anchor="middle" font-size="10.5">AZ-a：4台</text>
+  <rect x="18" y="56" width="44" height="26" rx="4" fill="#3F78D8" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="40" y="73" text-anchor="middle" font-size="10" fill="#fff">旧</text>
+  <rect x="70" y="56" width="44" height="26" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="3 2"/>
+  <text x="92" y="73" text-anchor="middle" font-size="10">旧</text>
+  <rect x="18" y="90" width="44" height="26" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="40" y="107" text-anchor="middle" font-size="10">新</text>
+  <rect x="70" y="90" width="44" height="26" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="92" y="107" text-anchor="middle" font-size="10">新</text>
+
+  <!-- AZ-b -->
+  <rect x="134" y="28" width="112" height="96" rx="6" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.4"/>
+  <text x="190" y="46" text-anchor="middle" font-size="10.5">AZ-b：3台</text>
+  <rect x="142" y="56" width="44" height="26" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <rect x="194" y="56" width="44" height="26" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <rect x="142" y="90" width="44" height="26" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+
+  <!-- AZ-c -->
+  <rect x="258" y="28" width="112" height="96" rx="6" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.4"/>
+  <text x="314" y="46" text-anchor="middle" font-size="10.5">AZ-c：3台</text>
+  <rect x="266" y="56" width="44" height="26" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <rect x="318" y="56" width="44" height="26" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <rect x="266" y="90" width="44" height="26" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+
+  <text x="10" y="142" font-size="9" fill-opacity="0.75">旧＝古い起動テンプレート（点線）。青く塗った1台が終了する</text>
+
+  <!-- steps -->
+  <line x1="10" y1="154" x2="370" y2="154" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="174" font-size="10.5">① 台数が最も多いAZを選ぶ</text>
+  <text x="26" y="190" font-size="9.5" fill-opacity="0.75">→ AZ-a（AZの間の台数をそろえるのが先）</text>
+  <text x="10" y="212" font-size="10.5">② そのAZで、古い起動テンプレートの台に絞る</text>
+  <text x="26" y="228" font-size="9.5" fill-opacity="0.75">→ 旧の2台</text>
+  <text x="10" y="250" font-size="10.5">③ 次の課金時間に最も近い1台を終了する</text>
+  <text x="26" y="266" font-size="9.5" fill-opacity="0.75">→ 終了後は3台・3台・3台</text>
+  <text x="10" y="284" font-size="9" fill-opacity="0.7">ランダムに選ぶのは、ここまでで1台に絞れなかったときだけ</text>
+</svg>

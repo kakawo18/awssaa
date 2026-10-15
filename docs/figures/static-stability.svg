@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 250" role="img" aria-label="静的安定性の考え方。ピーク時に6台必要なとき、AZ-aが止まると、2台ずつでは残り4台で不足し、3台ずつでは残り6台でちょうど足り、4台ずつでは残り8台で余分なコストがかかる。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <text x="10" y="16" font-size="10.5" fill-opacity="0.7">ピーク時に6台必要。AZ-aが止まったら何台残るか</text>
+  <text x="115" y="38" text-anchor="middle" font-size="9.5" fill-opacity="0.8">AZ-a（停止）</text>
+  <text x="193" y="38" text-anchor="middle" font-size="9.5" fill-opacity="0.8">AZ-b</text>
+  <text x="271" y="38" text-anchor="middle" font-size="9.5" fill-opacity="0.8">AZ-c</text>
+  <text x="10" y="61" font-size="10.5">2台ずつ</text>
+  <text x="10" y="74" font-size="8.5" fill-opacity="0.75">合計6台</text>
+  <rect x="80" y="46" width="70" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="3 3"/>
+  <rect x="86" y="57" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="2 2"/>
+  <rect x="101" y="57" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="2 2"/>
+  <rect x="158" y="46" width="70" height="34" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.4"/>
+  <rect x="164" y="57" width="12" height="12" rx="2" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.6"/>
+  <rect x="179" y="57" width="12" height="12" rx="2" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.6"/>
+  <rect x="236" y="46" width="70" height="34" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.4"/>
+  <rect x="242" y="57" width="12" height="12" rx="2" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.6"/>
+  <rect x="257" y="57" width="12" height="12" rx="2" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.6"/>
+  <text x="314" y="61" font-size="10.5">残り4台</text>
+  <text x="314" y="74" font-size="8.5" fill-opacity="0.8">✕ 不足</text>
+  <text x="10" y="107" font-size="10.5">3台ずつ</text>
+  <text x="10" y="120" font-size="8.5" fill-opacity="0.75">合計9台</text>
+  <rect x="80" y="92" width="70" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="3 3"/>
+  <rect x="86" y="103" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="2 2"/>
+  <rect x="101" y="103" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="2 2"/>
+  <rect x="116" y="103" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="2 2"/>
+  <rect x="158" y="92" width="70" height="34" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.4"/>
+  <rect x="164" y="103" width="12" height="12" rx="2" fill="#3F78D8" fill-opacity="0.5" stroke="#3F78D8"/>
+  <rect x="179" y="103" width="12" height="12" rx="2" fill="#3F78D8" fill-opacity="0.5" stroke="#3F78D8"/>
+  <rect x="194" y="103" width="12" height="12" rx="2" fill="#3F78D8" fill-opacity="0.5" stroke="#3F78D8"/>
+  <rect x="236" y="92" width="70" height="34" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.4"/>
+  <rect x="242" y="103" width="12" height="12" rx="2" fill="#3F78D8" fill-opacity="0.5" stroke="#3F78D8"/>
+  <rect x="257" y="103" width="12" height="12" rx="2" fill="#3F78D8" fill-opacity="0.5" stroke="#3F78D8"/>
+  <rect x="272" y="103" width="12" height="12" rx="2" fill="#3F78D8" fill-opacity="0.5" stroke="#3F78D8"/>
+  <rect x="306" y="92" width="64" height="34" rx="5" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="314" y="107" font-size="10.5">残り6台</text>
+  <text x="314" y="120" font-size="8.5">✓ 足りる</text>
+  <text x="10" y="153" font-size="10.5">4台ずつ</text>
+  <text x="10" y="166" font-size="8.5" fill-opacity="0.75">合計12台</text>
+  <rect x="80" y="138" width="70" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="3 3"/>
+  <rect x="86" y="149" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="2 2"/>
+  <rect x="101" y="149" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="2 2"/>
+  <rect x="116" y="149" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="2 2"/>
+  <rect x="131" y="149" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="2 2"/>
+  <rect x="158" y="138" width="70" height="34" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.4"/>
+  <rect x="164" y="149" width="12" height="12" rx="2" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.6"/>
+  <rect x="179" y="149" width="12" height="12" rx="2" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.6"/>
+  <rect x="194" y="149" width="12" height="12" rx="2" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.6"/>
+  <rect x="209" y="149" width="12" height="12" rx="2" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.6"/>
+  <rect x="236" y="138" width="70" height="34" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.4"/>
+  <rect x="242" y="149" width="12" height="12" rx="2" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.6"/>
+  <rect x="257" y="149" width="12" height="12" rx="2" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.6"/>
+  <rect x="272" y="149" width="12" height="12" rx="2" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.6"/>
+  <rect x="287" y="149" width="12" height="12" rx="2" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.6"/>
+  <text x="314" y="153" font-size="10.5">残り8台</text>
+  <text x="314" y="166" font-size="8.5" fill-opacity="0.8">余分にコスト</text>
+  <line x1="10" y1="190" x2="370" y2="190" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="208" font-size="10.5">残りの2つのAZで6台 → 1AZあたり3台（合計9台）</text>
+  <text x="10" y="227" font-size="9.5" fill-opacity="0.8">障害の後に台数を増やすのを待たず、先に余力を持っておく</text>
+  <text x="10" y="243" font-size="9.5" fill-opacity="0.8">考え方を静的安定性と呼ぶ</text>
+</svg>

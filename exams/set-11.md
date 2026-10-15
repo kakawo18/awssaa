@@ -262,6 +262,8 @@ Redshiftクラスターは日中は安定していますが、**毎朝9時にレ
 
 **決め手**：**関係をたどる＝Neptune（グラフ）／時系列＝Timestream／MongoDB互換＝DocumentDB**。用途特化型DBは、キーワードとサービスが1対1で対応します。※Timestreamのうち、Timestream for LiveAnalyticsは2025年6月20日に新規顧客の受付を終了しており、新規はTimestream for InfluxDBが案内されています。また、以前は「改ざん不可能な台帳＝QLDB」も定番でしたが、QLDBは2025年7月31日にサポートを終了しました。
 
+![データベースの選び方（上から順に確かめる）](../docs/figures/db-choice.svg)
+
 **他の選択肢を外す理由**
 - **B**：DocumentDBはドキュメントDBで、グラフの探索には向きません。Neptuneは時系列の集計向けではなく、KeyspacesはCassandra互換でMongoDBのAPIには対応しません。
 - **C**：DynamoDBでも時系列データは扱えますが、期間集計に最適化されたTimestreamが要件に合致します。ElastiCacheはインメモリのキャッシュで、MongoDB互換ではありません。
