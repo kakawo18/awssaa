@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320" role="img" aria-label="SSE-KMSで暗号化されたオブジェクトを別アカウントから読むには、S3の権限とKMSの権限の両方が必要で、それぞれリソース側（バケットポリシーとキーポリシー）と呼び出し側（IAMポリシー）の両方で許可する。KMSのキーポリシーが抜けていると、S3の許可が揃っていてもAccessDeniedになる。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arw-kms" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+  </defs>
+
+  <!-- accounts -->
+  <rect x="10" y="10" width="120" height="70" rx="8" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.45"/>
+  <text x="18" y="26" font-size="9.5" fill-opacity="0.7">アカウントB（読む側）</text>
+  <rect x="24" y="36" width="92" height="32" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="70" y="57" text-anchor="middle" font-size="10.5">IAMロール</text>
+
+  <rect x="170" y="10" width="200" height="70" rx="8" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.45"/>
+  <text x="178" y="26" font-size="9.5" fill-opacity="0.7">アカウントA（持つ側）</text>
+  <rect x="180" y="36" width="88" height="32" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="224" y="51" text-anchor="middle" font-size="10">S3バケット</text>
+  <text x="224" y="63" text-anchor="middle" font-size="8.5" fill-opacity="0.7">SSE-KMSで暗号化</text>
+  <rect x="278" y="36" width="84" height="32" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="320" y="57" text-anchor="middle" font-size="10">KMSキー</text>
+  <line x1="116" y1="52" x2="176" y2="52" stroke="#3F78D8" stroke-width="1.6" marker-end="url(#arw-kms)"/>
+  <line x1="268" y1="52" x2="276" y2="52" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.2"/>
+
+  <!-- grid -->
+  <text x="10" y="104" font-size="10.5">GetObjectが通るには、4つの許可がすべて必要</text>
+  <g font-size="9.5" fill-opacity="0.75">
+    <text x="130" y="126" text-anchor="middle">Aのリソース側</text>
+    <text x="290" y="126" text-anchor="middle">Bの呼び出し側</text>
+  </g>
+  <text x="10" y="152" font-size="10.5">S3</text>
+  <rect x="56" y="136" width="148" height="28" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="130" y="154" text-anchor="middle" font-size="9.5">✓ バケットポリシーでBを許可</text>
+  <rect x="216" y="136" width="148" height="28" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="290" y="154" text-anchor="middle" font-size="9.5">✓ IAMで s3:GetObject</text>
+  <text x="10" y="190" font-size="10.5">KMS</text>
+  <rect x="56" y="174" width="148" height="28" rx="5" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="130" y="192" text-anchor="middle" font-size="9.5">✓ キーポリシーでBを許可</text>
+  <rect x="216" y="174" width="148" height="28" rx="5" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="290" y="192" text-anchor="middle" font-size="9.5">✓ IAMで kms:Decrypt</text>
+
+  <!-- notes -->
+  <line x1="10" y1="218" x2="370" y2="218" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="236" font-size="10.5">S3の2つだけ許可しても、KMSで復号できずに</text>
+  <text x="26" y="252" font-size="10.5">✕ AccessDenied</text>
+  <text x="10" y="272" font-size="10.5">書き込み（PutObject）には kms:GenerateDataKey も要る</text>
+  <text x="10" y="294" font-size="9.5" fill-opacity="0.75">同じアカウントでも、キーポリシーで許可されていなければ</text>
+  <text x="10" y="309" font-size="9.5" fill-opacity="0.75">IAMだけでは使えない（既定のキーポリシーはIAMへ委任する）</text>
+</svg>
