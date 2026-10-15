@@ -53,7 +53,7 @@ CloudFrontディストリビューションに独自ドメインのHTTPS証明�
 
 **分野**：1.2 安全なワークロードとアプリケーション
 
-**決め手**：**SRT（Shield Response Team）の支援と、DDoSに起因するスケーリング費用の補償はShield Advancedの機能**です。要件(1)(2)が出たら即決できます。
+**決め手**：**SRT（Shield Response Team）の支援と、DDoSに起因するスケーリング費用の補償はShield Advancedの機能**です。要件(1)(2)は、Shield Advancedでしか満たせません。
 
 **他の選択肢を外す理由**
 - **B**：StandardはすべてのAWS利用者に自動適用される基本的なL3/L4防御で、専門チームの支援や費用補償はありません。
