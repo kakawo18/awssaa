@@ -155,6 +155,8 @@ RDS for PostgreSQLのデータベースについて、監査で「**クライア
 
 **キーワード**：Amazon Macie／AWS Security Hub
 
+![監視と検知のサービスが見ているもの](../docs/figures/security-services.svg)
+
 **他の選択肢を外す理由**
 - **A**：InspectorはEC2・ECR・Lambdaの脆弱性を評価するサービスで、S3の中身は検査しません。
 - **C**：Detectiveはインシデントの原因調査のためのサービスで、機密データの検出はしません。
@@ -471,6 +473,8 @@ EC2上のWebサーバーが、画像やJavaScriptなどの**静的ファイル**
 **決め手**：静的ファイルをS3＋CloudFrontへ移すと、**エッジのキャッシュから配信される分だけEC2の負荷とオリジンからの転送が減ります**（S3からCloudFrontへの転送は無料です）。さらにCloudFrontで圧縮を有効にすれば、利用者へ送るバイト数そのものが減ります。
 
 **キーワード**：CloudFront（OAC）／CloudFrontの圧縮
+
+![データ転送料金がかかる経路と、かからない経路](../docs/figures/transfer-cost.svg)
 
 **他の選択肢を外す理由**
 - **B**：負荷には対応できても、転送料金は減らず、インスタンスの料金は上がります。

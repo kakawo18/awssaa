@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 425" role="img" aria-label="メッセージングの選び方。JMSやAMQPなど既存の方式で動くアプリを移すならAmazon MQ。1件を1つの処理に渡して終わったら消すならSQSで、順番が必要ならFIFO。同じメッセージを複数の宛先に配るなら、全員へ配るだけならSNS、内容で振り分けたりSaaSと連携したりするならEventBridge。ストリームを保持して複数の処理が読み直すならKinesis Data Streamsで、Kafka互換が必須ならMSK。S3などへそのまま届けるだけならData Firehose。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arw-ms" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+    <marker id="arw-ms-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="currentColor" fill-opacity="0.65"/>
+    </marker>
+  </defs>
+  <text x="10" y="16" font-size="10.5" fill-opacity="0.7">上から順に確かめ、「はい」になった所が答え</text>
+  <rect x="10" y="28" width="196" height="44" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="108" y="47" text-anchor="middle" font-size="10">JMS・AMQPなど既存の方式の</text>
+  <text x="108" y="62" text-anchor="middle" font-size="10">アプリをそのまま移す？</text>
+  <line x1="206" y1="50" x2="228" y2="50" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-ms)"/>
+  <text x="217" y="42" text-anchor="middle" font-size="8" fill-opacity="0.8">はい</text>
+  <rect x="232" y="28" width="138" height="44" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="301" y="47" text-anchor="middle" font-size="11">Amazon MQ</text>
+  <text x="301" y="62" text-anchor="middle" font-size="8.5" fill-opacity="0.75">コードの書き換えを減らす</text>
+  <line x1="108" y1="72" x2="108" y2="91" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.4" marker-end="url(#arw-ms-g)"/>
+  <text x="114" y="86" font-size="8.5" fill-opacity="0.8">いいえ</text>
+  <rect x="10" y="94" width="196" height="44" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="108" y="113" text-anchor="middle" font-size="10">1件を1つの処理に渡し、</text>
+  <text x="108" y="128" text-anchor="middle" font-size="10">終わったら消す？</text>
+  <line x1="206" y1="116" x2="228" y2="116" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-ms)"/>
+  <text x="217" y="108" text-anchor="middle" font-size="8" fill-opacity="0.8">はい</text>
+  <rect x="232" y="94" width="138" height="44" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="301" y="113" text-anchor="middle" font-size="11">SQS</text>
+  <text x="301" y="128" text-anchor="middle" font-size="8.5" fill-opacity="0.75">順番が必要ならFIFO</text>
+  <line x1="108" y1="138" x2="108" y2="157" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.4" marker-end="url(#arw-ms-g)"/>
+  <text x="114" y="152" font-size="8.5" fill-opacity="0.8">いいえ</text>
+  <rect x="10" y="160" width="196" height="44" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="108" y="179" text-anchor="middle" font-size="10">同じメッセージを</text>
+  <text x="108" y="194" text-anchor="middle" font-size="10">複数の宛先に配る？</text>
+  <line x1="206" y1="182" x2="228" y2="182" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-ms)"/>
+  <text x="217" y="174" text-anchor="middle" font-size="8" fill-opacity="0.8">はい</text>
+  <rect x="232" y="160" width="138" height="66" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="242" y="177" font-size="8.5" fill-opacity="0.75">全員に同じものを配る</text>
+  <text x="242" y="191" font-size="10.5">→ SNS</text>
+  <text x="242" y="205" font-size="8.5" fill-opacity="0.75">内容で振り分け・SaaS連携</text>
+  <text x="242" y="219" font-size="10.5">→ EventBridge</text>
+  <line x1="108" y1="204" x2="108" y2="245" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.4" marker-end="url(#arw-ms-g)"/>
+  <text x="114" y="229" font-size="8.5" fill-opacity="0.8">いいえ</text>
+  <rect x="10" y="248" width="196" height="44" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="108" y="267" text-anchor="middle" font-size="10">流れてくる記録を保持し、</text>
+  <text x="108" y="282" text-anchor="middle" font-size="10">複数の処理が読み直す？</text>
+  <line x1="206" y1="270" x2="228" y2="270" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-ms)"/>
+  <text x="217" y="262" text-anchor="middle" font-size="8" fill-opacity="0.8">はい</text>
+  <rect x="232" y="248" width="138" height="66" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="242" y="265" font-size="8.5" fill-opacity="0.75">AWSの仕組みで</text>
+  <text x="242" y="279" font-size="10.5">→ Kinesis Data Streams</text>
+  <text x="242" y="293" font-size="8.5" fill-opacity="0.75">Kafka互換が必須</text>
+  <text x="242" y="307" font-size="10.5">→ MSK</text>
+  <line x1="108" y1="292" x2="108" y2="333" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.4" marker-end="url(#arw-ms-g)"/>
+  <text x="114" y="317" font-size="8.5" fill-opacity="0.8">いいえ</text>
+  <rect x="10" y="336" width="196" height="44" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="108" y="355" text-anchor="middle" font-size="11">Data Firehose</text>
+  <text x="108" y="370" text-anchor="middle" font-size="8.5" fill-opacity="0.75">S3などへそのまま届ける</text>
+  <line x1="10" y1="394" x2="370" y2="394" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="415" font-size="9.5" fill-opacity="0.8">SNSから複数のSQSへ配る形（ファンアウト）もよく使う</text>
+</svg>

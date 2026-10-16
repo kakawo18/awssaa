@@ -41,6 +41,10 @@
 > [!NOTE]
 > **データ転送料金の原則**：AWSへの**インバウンドデータ転送（外部からAWS内への受信）は原則無料**。一方、**アウトバウンドデータ転送（AWSからインターネットへの送信）および異なるAZ間・異なるリージョン間のデータ転送は有料**となります。
 
+![図：データ転送料金がかかる経路と、かからない経路](./figures/transfer-cost.svg)
+
+**図：** 同じAZの中のプライベートIPでの通信は無料ですが、AZをまたぐと送る側と受ける側の両方に料金がかかります。AWSのオリジンからCloudFrontへの転送は無料なので、配信をCloudFront経由にすると、オリジンからインターネットへの送信がなくなります。VPCからS3へは、NAT Gatewayを通すと時間料金と処理料金がかかり、ゲートウェイ型エンドポイントを通せば無料です（[EC2の料金](https://aws.amazon.com/ec2/pricing/on-demand/)・[CloudFrontのFAQ](https://aws.amazon.com/cloudfront/faqs/)・[ゲートウェイエンドポイント](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html)、確認 2026-10-16）。
+
 ---
 
 ## 14.3 コンピューティングのコスト最適化

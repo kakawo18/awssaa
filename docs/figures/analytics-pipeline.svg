@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 368" role="img" aria-label="データ分析の流れとサービスの位置。取り込むのはKinesisとData Firehose、データベースからはDMS。ためるのはS3のデータレイクで、権限はLake Formationで管理する。整えるのはGlueのカタログとETL、Sparkなどを自分で制御するならEMR。分析はS3をそのままSQLで調べるAthena、高頻度のBIにはRedshift、全文検索やログ分析にはOpenSearch。見るのはQuickSight。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arw-ap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+    <marker id="arw-ap-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="currentColor" fill-opacity="0.65"/>
+    </marker>
+  </defs>
+  <text x="10" y="16" font-size="10.5" fill-opacity="0.7">左の段を上から下へ流れる。右は各段で使うサービス</text>
+  <rect x="10" y="28" width="64" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="42" y="53" font-size="10.5" text-anchor="middle">取り込む</text>
+  <rect x="84.0" y="28" width="140.0" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="154.0" y="46" font-size="9.5" text-anchor="middle">Kinesis・Firehose</text>
+  <text x="154.0" y="61" font-size="8.5" text-anchor="middle" fill-opacity="0.8">流れてくるデータ</text>
+  <rect x="230.0" y="28" width="140.0" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="300.0" y="46" font-size="10.5" text-anchor="middle">DMS</text>
+  <text x="300.0" y="61" font-size="8.5" text-anchor="middle" fill-opacity="0.8">データベースから</text>
+  <line x1="42" y1="68" x2="42" y2="81" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#arw-ap-g)"/>
+  <rect x="10" y="84" width="64" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="42" y="109" font-size="10.5" text-anchor="middle">ためる</text>
+  <rect x="84.0" y="84" width="140.0" height="40" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="154.0" y="102" font-size="10.5" text-anchor="middle">S3</text>
+  <text x="154.0" y="117" font-size="8.5" text-anchor="middle" fill-opacity="0.8">データレイク（正本）</text>
+  <rect x="230.0" y="84" width="140.0" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="300.0" y="102" font-size="9.5" text-anchor="middle">Lake Formation</text>
+  <text x="300.0" y="117" font-size="8.5" text-anchor="middle" fill-opacity="0.8">列・行単位の権限</text>
+  <line x1="42" y1="124" x2="42" y2="137" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#arw-ap-g)"/>
+  <rect x="10" y="140" width="64" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="42" y="165" font-size="10.5" text-anchor="middle">整える</text>
+  <rect x="84.0" y="140" width="140.0" height="40" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="154.0" y="158" font-size="10.5" text-anchor="middle">Glue</text>
+  <text x="154.0" y="173" font-size="8.5" text-anchor="middle" fill-opacity="0.8">カタログ・ETL</text>
+  <rect x="230.0" y="140" width="140.0" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="300.0" y="158" font-size="10.5" text-anchor="middle">EMR</text>
+  <text x="300.0" y="173" font-size="8.5" text-anchor="middle" fill-opacity="0.8">Spark・Hadoopを制御</text>
+  <line x1="42" y1="180" x2="42" y2="193" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#arw-ap-g)"/>
+  <rect x="10" y="196" width="64" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="42" y="221" font-size="10.5" text-anchor="middle">分析する</text>
+  <rect x="84.0" y="196" width="91.3" height="40" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="129.7" y="214" font-size="10.5" text-anchor="middle">Athena</text>
+  <text x="129.7" y="229" font-size="8.5" text-anchor="middle" fill-opacity="0.8">S3をそのままSQL</text>
+  <rect x="181.3" y="196" width="91.3" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="227.0" y="214" font-size="10.5" text-anchor="middle">Redshift</text>
+  <text x="227.0" y="229" font-size="8.5" text-anchor="middle" fill-opacity="0.8">高頻度のBI・DWH</text>
+  <rect x="278.7" y="196" width="91.3" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="324.3" y="214" font-size="10.5" text-anchor="middle">OpenSearch</text>
+  <text x="324.3" y="229" font-size="8.5" text-anchor="middle" fill-opacity="0.8">全文検索・ログ</text>
+  <line x1="42" y1="236" x2="42" y2="249" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#arw-ap-g)"/>
+  <rect x="10" y="252" width="64" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="42" y="277" font-size="10.5" text-anchor="middle">見る</text>
+  <rect x="84.0" y="252" width="286.0" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="227.0" y="270" font-size="10.5" text-anchor="middle">QuickSight</text>
+  <text x="227.0" y="285" font-size="8.5" text-anchor="middle" fill-opacity="0.8">ダッシュボード</text>
+  <line x1="10" y1="308" x2="370" y2="308" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="326" font-size="9.5">Glueのデータカタログは、Athena・EMR・Redshift Spectrum</text>
+  <text x="10" y="341" font-size="9.5">が共通の表の定義として使う</text>
+  <text x="10" y="359" font-size="9.5" fill-opacity="0.8">たまに調べるならAthena、常に使うならRedshift</text>
+</svg>
