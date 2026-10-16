@@ -157,6 +157,8 @@ Application Load Balancer（ALB）の背後で動くWebアプリケーション�
 
 **キーワード**：SQLインジェクション・XSS → AWS WAF
 
+![通信の経路のどこで、何が止めるか](../docs/figures/defense-layers.svg)
+
 **他の選択肢を外す理由**
 - **A**：セキュリティグループには拒否ルールがなく、リクエストの中身も検査できません。
 - **B**：Shield AdvancedはDDoS攻撃への対策で、SQLインジェクションなどのアプリケーション層の攻撃は防ぎません。

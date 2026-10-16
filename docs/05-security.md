@@ -60,6 +60,10 @@
 - **IDプール（Identity Pools / Federated Identities）**：認証済み（またはゲスト）ユーザーに対し、**AWSリソースへ直接アクセスするためのIAM一時認証情報（STSトークン）**を発行（例：Cognitoでログインしたユーザーに、S3の自分専用プレフィックスへの直接アップロード権限を付与する）。
 - 「一般顧客向けモバイルアプリの会員登録・ログイン」＝Amazon Cognito、「社内エンジニアのAWSマネジメントコンソールアクセス」＝IAM Identity Center。
 
+![図：ユーザープールは利用者を確かめ、IDプールはAWSの一時的な鍵を渡す](./figures/cognito-pools.svg)
+
+**図：** ユーザープールはサインインを受け付けてJWTを発行し、API GatewayやALBはこのトークンを検証して利用者を確かめます。アプリがS3やDynamoDBを直接呼ぶ場合は、IDプールがトークンをIAMロールの一時認証情報に交換します。APIを呼ぶだけの構成ならIDプールは要りません。
+
 ---
 
 ## 5.5 AWS WAF

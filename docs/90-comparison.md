@@ -56,6 +56,8 @@
 | **Route 53 フェイルオーバー / Global Accelerator** | DNSレベルの切り替え（TTLの遅延許容）＝**Route 53**／IPレベルの即時切り替え（数秒〜数十秒）＝**Global Accelerator** | 障害発生時のフェイルオーバー許容時間（DNSキャッシュTTLの影響を排除したいか）。 |
 | **CloudFront Functions / Lambda@Edge** | 超軽量・サブミリ秒・ビューア側イベントのみ＝**CloudFront Functions**／オリジン側イベント・外部ネットワークアクセス・重い処理＝**Lambda@Edge** | 処理時間、外部API呼び出しの要否、およびリクエストボディの参照要否。 |
 
+**図で確かめる**：SGとNACL（→第3章 3.2）、エンドポイントの届く範囲とピアリング／Transit Gateway（→3.3）、Route 53のルーティング（→3.4）、CloudFrontとGlobal Accelerator（→3.6）。
+
 ---
 
 ## データベース
@@ -116,6 +118,8 @@
 | **AWS Organizations / AWS Control Tower** | マルチアカウントの一括請求とSCP＝**Organizations**／ランディングゾーン構築とガードレール自動適用＝**Control Tower** | 組織ポリシーの個別適用か、マルチアカウント基盤のベストプラクティス自動構築か。 |
 | **AWS Trusted Advisor / Compute Optimizer** | コスト・性能・耐障害性・セキュリティの**総合点検**＝**Trusted Advisor**／機械学習による**インスタンス適正サイズの具体的推奨**＝**Compute Optimizer** | アカウント全体のベストプラクティス監査か、リソースのサイジング最適化か。 |
 | **AWS Systems Manager / CloudFormation** | 稼働中サーバー群の**運用管理・パッチ適用・コマンド実行**＝**SSM**／インフラリソース全体の**プロビジョニング自動化（IaC）**＝**CloudFormation** | 「リソース作成後の定常運用」か、「インフラの初期構築・再現」か。 |
+
+WAF・Shield・Network Firewall・NACL・SGが通信の経路のどこで止めるかは、第11章 11.3の図で確かめられます。
 
 ![図：監視と検知のサービスが見ているもの](./figures/security-services.svg)
 
