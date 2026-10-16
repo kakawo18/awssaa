@@ -91,6 +91,14 @@
 | **AWS Glue / Amazon EMR** | サーバーレスETL・データカタログ・ジョブ管理＝**Glue**／Hadoop/Sparkクラスタのきめ細かな制御・大規模並列分散処理＝**EMR** | 基盤インフラの制御要否、および既存のHadoop/Sparkエコシステム資産の活用要否。 |
 | **Amazon Kinesis / Amazon MSK** | 完全マネージド・AWSネイティブなストリーミング＝**Kinesis**／Apache Kafkaとの完全な互換性・既存資産移行＝**Amazon MSK** | Kafkaエコシステム（Kafka Connect, Schema Registry等）の利用が必須か。 |
 
+![図：メッセージングの選び方（上から順に確かめる）](./figures/messaging-choice.svg)
+
+**図：** 最初に既存のプロトコルに縛られているかを確かめ、次にメッセージを1つの処理に渡すのか、複数の宛先に配るのか、ストリームとして保持して読み直すのかで分けます。どれにも当たらず、S3などへ届けるだけならData Firehoseです。
+
+![図：データ分析の流れと、各段で使うサービス](./figures/analytics-pipeline.svg)
+
+**図：** 分析のサービスは、取り込む・ためる・整える・分析する・見るのどの段で使うかで整理できます。中心はS3のデータレイクで、Glueのデータカタログを通して、AthenaやEMRが同じデータを読みます。
+
 ---
 
 ## セキュリティ・運用管理
@@ -108,6 +116,10 @@
 | **AWS Organizations / AWS Control Tower** | マルチアカウントの一括請求とSCP＝**Organizations**／ランディングゾーン構築とガードレール自動適用＝**Control Tower** | 組織ポリシーの個別適用か、マルチアカウント基盤のベストプラクティス自動構築か。 |
 | **AWS Trusted Advisor / Compute Optimizer** | コスト・性能・耐障害性・セキュリティの**総合点検**＝**Trusted Advisor**／機械学習による**インスタンス適正サイズの具体的推奨**＝**Compute Optimizer** | アカウント全体のベストプラクティス監査か、リソースのサイジング最適化か。 |
 | **AWS Systems Manager / CloudFormation** | 稼働中サーバー群の**運用管理・パッチ適用・コマンド実行**＝**SSM**／インフラリソース全体の**プロビジョニング自動化（IaC）**＝**CloudFormation** | 「リソース作成後の定常運用」か、「インフラの初期構築・再現」か。 |
+
+![図：監視と検知のサービスが見ているもの](./figures/security-services.svg)
+
+**図：** 左の3つは起きたことを記録し、右の3つは危ないものを見つけます。それぞれの検出結果はSecurity Hub CSPMに集まり、原因や影響範囲を深く調べるときはDetectiveを使います。
 
 ---
 

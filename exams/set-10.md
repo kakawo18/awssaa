@@ -231,6 +231,8 @@ Java製のLambda関数で、**初回呼び出しの遅延（コールドスタ�
 
 **決め手**：**既存のJMS／AMQPなど標準プロトコルのアプリをコード変更なしで移行するならAmazon MQ**（ActiveMQ／RabbitMQのマネージド版）です。新規開発ならSQS/SNSを選びます。
 
+![メッセージングの選び方（上から順に確かめる）](../docs/figures/messaging-choice.svg)
+
 **他の選択肢を外す理由**
 - **B**：SNSもAWS独自のPub/Subで、プロトコル互換性がありません。
 - **C**：SQSはAWS独自のAPIで、JMSクライアントからそのまま利用することはできません（コード変更が必要）。
