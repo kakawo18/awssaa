@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 300" role="img" aria-label="CognitoのユーザープールとIDプールの役割。ユーザープールは利用者のサインインを受け付けてJWTを発行し、API GatewayやALBはそのトークンを検証する。IDプールはトークンをIAMロールの一時認証情報に交換し、アプリはその認証情報でS3やDynamoDBを直接呼び出す。" font-family="'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif" font-size="12" fill="currentColor" color="#1B212E">
+  <rect width="100%" height="100%" rx="10" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arw-cg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#3F78D8"/>
+    </marker>
+    <marker id="arw-cg-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="currentColor" fill-opacity="0.65"/>
+    </marker>
+  </defs>
+  <text x="10" y="16" font-size="10.5">① ユーザープール：利用者が誰かを確かめる</text>
+  <rect x="10" y="28" width="90" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="55" y="46" font-size="10" text-anchor="middle">アプリ</text>
+  <text x="55" y="60" font-size="8.5" text-anchor="middle" fill-opacity="0.75">（利用者）</text>
+  <rect x="140" y="28" width="120" height="40" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="200" y="45" font-size="10.5" text-anchor="middle">ユーザープール</text>
+  <text x="200" y="60" font-size="8.5" text-anchor="middle" fill-opacity="0.8">サインイン・MFA</text>
+  <line x1="100" y1="48" x2="136" y2="48" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-cg)"/>
+  <rect x="150" y="96" width="100" height="26" rx="13" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="200" y="113" font-size="9.5" text-anchor="middle">JWT（トークン）</text>
+  <line x1="200" y1="68" x2="200" y2="92" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-cg)"/>
+  <rect x="280" y="92" width="90" height="34" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="325" y="106" font-size="8.5" text-anchor="middle">API Gateway・ALB</text>
+  <text x="325" y="120" font-size="8.5" text-anchor="middle" fill-opacity="0.8">トークンを検証</text>
+  <line x1="250" y1="109" x2="276" y2="109" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-cg)"/>
+  <line x1="10" y1="140" x2="370" y2="140" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="160" font-size="10.5">② IDプール：AWSの一時的な鍵を渡す</text>
+  <rect x="140" y="172" width="120" height="40" rx="6" fill="#3F78D8" fill-opacity="0.14" stroke="#3F78D8" stroke-width="1.5"/>
+  <text x="200" y="189" font-size="10.5" text-anchor="middle">IDプール</text>
+  <text x="200" y="204" font-size="8.5" text-anchor="middle" fill-opacity="0.8">トークンを交換</text>
+  <line x1="215" y1="122" x2="215" y2="168" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-cg)"/>
+  <rect x="280" y="172" width="90" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="325" y="189" font-size="9.5" text-anchor="middle">IAMロールの</text>
+  <text x="325" y="203" font-size="9.5" text-anchor="middle">一時認証情報</text>
+  <line x1="260" y1="192" x2="276" y2="192" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-cg)"/>
+  <rect x="280" y="232" width="90" height="34" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="325" y="248" font-size="9.5" text-anchor="middle">S3・DynamoDB</text>
+  <text x="325" y="261" font-size="8.5" text-anchor="middle" fill-opacity="0.8">アプリから直接</text>
+  <line x1="325" y1="212" x2="325" y2="228" stroke="#3F78D8" stroke-width="1.5" marker-end="url(#arw-cg)"/>
+  <text x="10" y="190" font-size="8.5" fill-opacity="0.75">ゲスト（未ログイン）</text>
+  <text x="10" y="203" font-size="8.5" fill-opacity="0.75">にも別のロールで渡せる</text>
+  <line x1="10" y1="278" x2="370" y2="278" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="10" y="295" font-size="9.5" fill-opacity="0.85">APIを呼ぶだけなら①で足り、AWSを直接呼ぶときに②を足す</text>
+</svg>
