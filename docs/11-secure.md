@@ -145,6 +145,7 @@
 
 ### 運用上の留意点と制約
 - S3バケットポリシーで `aws:sourceVpce` による拒否条件を設定すると、AWSマネジメントコンソールからの直接閲覧も遮断されます。運用監視やデータ確認が必要な場合は、同一VPC内の踏み台環境を経由するか、除外条件（管理ロールのARN等）を慎重に定義する必要があります。
+- VPCエンドポイントを通るリクエストでは、条件キー `aws:SourceIp` を使えません。経路で絞るときは、エンドポイント単位なら `aws:SourceVpce`、VPC単位なら `aws:SourceVpc` を使います（[VPCエンドポイントからのアクセスの制御](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies-vpc-endpoint.html)・[S3のゲートウェイエンドポイント](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html)、確認 2026-10-20）。
 - KMSキーポリシーにおいて、書き込み処理には `kms:GenerateDataKey`、読み取り処理には `kms:Decrypt` の権限が必須となります（`kms:Decrypt` のみではオブジェクトの書き込みに失敗する点に留意）。
 
 ### 条件変更時の再評価
