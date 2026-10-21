@@ -5,6 +5,7 @@
 章への遷移になる）。問題文・選択肢・解説を分けて持たせ、ページ側で
 「選択肢をタップ → 正誤と解説」を実現できる形にする。
 """
+import html
 import json
 import os
 import re
@@ -50,8 +51,20 @@ def parse_set(path):
         answer, key, refs, req, kw, dom, figs = [], "", "", "", "", [], []
         in_details = False
         in_reasons = False
+        code = None  # 設問文の ``` で囲んだ行（ポリシーのJSONなど）。字下げを保ったまま <pre> にする
         for ln in block[1:]:
             s = ln.strip()
+            if not in_details and s.startswith("```"):
+                if code is None:
+                    code = []
+                else:
+                    body.append('<pre class="qcode"><code>%s</code></pre>'
+                                % html.escape("\n".join(code), quote=False))
+                    code = None
+                continue
+            if code is not None:
+                code.append(ln)
+                continue
             if s.startswith("<details>"):
                 in_details = True
                 continue
