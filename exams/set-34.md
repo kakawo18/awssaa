@@ -29,7 +29,7 @@ EC2上のワーカーが、SQSの標準キューから注文のメッセージ�
 
 **キーワード**：可視性タイムアウト ＞ 1件の処理時間
 
-![図：可視性タイムアウトより処理が長いと、同じメッセージが二重に処理される](../docs/figures/sqs-visibility.svg)
+![可視性タイムアウトより処理が長いと、同じメッセージが二重に処理される](../docs/figures/sqs-visibility.svg)
 
 **他の選択肢を外す理由**
 - **A**：配信遅延は、送信してから最初に見えるようになるまでの時間です。受信した後に隠しておく時間は変わりません。
@@ -64,7 +64,7 @@ EC2上のワーカーが、SQSの標準キューから注文のメッセージ�
 
 **キーワード**：クロスアカウント＝リソース側と呼び出す側の両方で許可／読み取り＝kms:Decrypt
 
-![図：SSE-KMSで暗号化されたオブジェクトには、S3とKMSの両方の許可が要る](../docs/figures/kms-two-permissions.svg)
+![SSE-KMSで暗号化されたオブジェクトには、S3とKMSの両方の許可が要る](../docs/figures/kms-two-permissions.svg)
 
 **他の選択肢を外す理由**
 - **B**：`kms:GenerateDataKey` は、新しいオブジェクトを暗号化して書き込むときに使う権限です。読み取りには使いません。
@@ -128,7 +128,7 @@ VPCには、S3用のゲートウェイ型VPCエンドポイントが2つあり�
 
 **キーワード**：経路を1つに絞る＝`aws:SourceVpce` の不一致をDeny
 
-![図：EC2のアプリがKMSで暗号化したS3のオブジェクトを読むまでに通る3つの関門](../docs/figures/access-layers.svg)
+![EC2のアプリがKMSで暗号化したS3のオブジェクトを読むまでに通る3つの関門](../docs/figures/access-layers.svg)
 
 **他の選択肢を外す理由**
 - **A**：VPCエンドポイントを通るリクエストでは、`aws:SourceIp` にプライベートIPアドレスが入らないため、この条件は使えません。エンドポイント経由のリクエストも拒否されます。
@@ -192,7 +192,7 @@ ALBの背後に、Auto Scalingグループで管理するEC2を置いていま�
 
 **キーワード**：UDP・固定IP・速い切り替え → Global Accelerator ＋ NLB
 
-![図：CloudFrontはエッジでキャッシュし、Global Acceleratorは固定IPで最寄りのエッジから通す](../docs/figures/cloudfront-ga.svg)
+![CloudFrontはエッジでキャッシュし、Global Acceleratorは固定IPで最寄りのエッジから通す](../docs/figures/cloudfront-ga.svg)
 
 **他の選択肢を外す理由**
 - **A**：ALBはHTTPとHTTPSのロードバランサーで、UDPを受けられません。
@@ -225,7 +225,7 @@ AWS Organizationsで、すべてのメンバーアカウントについて、**�
 
 **キーワード**：`StringNotEquals` ＋ `NotAction`（グローバルサービスの除外）＋ SCP
 
-![図：SCPはルートからOU、アカウントへと引き継がれる](../docs/figures/organizations-scp.svg)
+![SCPはルートからOU、アカウントへと引き継がれる](../docs/figures/organizations-scp.svg)
 
 **他の選択肢を外す理由**
 - **A**：`StringEquals` だと、東京への要求を拒否します。条件が逆です。
@@ -258,7 +258,7 @@ AWS Organizationsで、すべてのメンバーアカウントについて、**�
 
 **キーワード**：めったに見ない・ミリ秒で取り出す・複数AZ → Glacier Instant Retrieval
 
-![図：S3のストレージクラスの位置関係](../docs/figures/s3-classes.svg)
+![S3のストレージクラスの位置関係](../docs/figures/s3-classes.svg)
 
 **他の選択肢を外す理由**
 - **A**：要件は満たしますが、四半期に1回のアクセスであれば、保管料金はGlacier Instant Retrievalの方が安くなります。
@@ -291,7 +291,7 @@ RDS for PostgreSQLのデータベースについて、次の要件がありま�
 
 **キーワード**：読めるスタンバイ・35秒未満のフェイルオーバー → マルチAZ DBクラスター
 
-![図：マルチAZ DBインスタンス・マルチAZ DBクラスター・リードレプリカの違い](../docs/figures/rds-multiaz.svg)
+![マルチAZ DBインスタンス・マルチAZ DBクラスター・リードレプリカの違い](../docs/figures/rds-multiaz.svg)
 
 **他の選択肢を外す理由**
 - **B**：マルチAZ DBインスタンスのスタンバイは、読み取りのクエリを受けられません。フェイルオーバーにもより長い時間がかかります。
@@ -448,7 +448,7 @@ Lambda関数がRDS for MySQLに接続しています。データベースのパ�
 
 **キーワード**：コードなしでParquetへ → Firehoseのレコード形式の変換＋Glueデータカタログ
 
-![図：データ分析の流れと、各段で使うサービス](../docs/figures/analytics-pipeline.svg)
+![データ分析の流れと、各段で使うサービス](../docs/figures/analytics-pipeline.svg)
 
 **他の選択肢を外す理由**
 - **A**：変換は動きますが、Lambda関数のコードを書いて保守する必要があります。
@@ -482,7 +482,7 @@ Lambda関数がRDS for MySQLに接続しています。データベースのパ�
 
 **キーワード**：S3・DynamoDB → ゲートウェイ型エンドポイント（プライベートサブネットのルートテーブルに関連付ける）
 
-![図：データ転送料金がかかる経路と、かからない経路](../docs/figures/transfer-cost.svg)
+![データ転送料金がかかる経路と、かからない経路](../docs/figures/transfer-cost.svg)
 
 **他の選択肢を外す理由**
 - **A**：インターフェース型エンドポイントは、時間料金とデータ処理料金がかかります。S3には無料のゲートウェイ型が使えるため、費用を最も下げる方法になりません。
