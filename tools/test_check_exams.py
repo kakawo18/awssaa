@@ -98,7 +98,12 @@ class CheckExamsTest(unittest.TestCase):
 
 class FigureTest(unittest.TestCase):
     check = CheckExamsTest.check
-    LINE = "![図：説明](../docs/figures/sqs-visibility.svg)"
+    LINE = "![説明](../docs/figures/sqs-visibility.svg)"
+
+    def test_caption_prefix_is_reported(self):
+        line = "![図：説明](../docs/figures/sqs-visibility.svg)"
+        msgs = self.check(GOOD.replace("**他の選択肢を外す理由**", line + "\n\n**他の選択肢を外す理由**"))
+        self.assertTrue(any("「図：」で始めない" in m for m in msgs), msgs)
 
     def test_figure_in_explanation_passes(self):
         text = GOOD.replace("**他の選択肢を外す理由**", self.LINE + "\n\n**他の選択肢を外す理由**")

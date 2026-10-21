@@ -154,6 +154,8 @@ def check_file(path):
                 err(start + i, "図は解説（<details>の中）に置く。設問文に置くと答えのヒントになる")
             if not os.path.exists(os.path.join(FIG_SRC, mm.group(2) + ".svg")):
                 err(start + i, "図の原本 web/figures/%s.svg がない" % mm.group(2))
+            if mm.group(1).startswith("図："):
+                err(start + i, "図の説明を「図：」で始めない（Web版が「図：」を付けるため二重になる）")
         if len(figs) > 2:
             err(start, "図は1問に2つまで（検出: %d）" % len(figs))
         stray = [i for i, ln in enumerate(block) if ln.strip().startswith("![") and not FIG_LINE_RE.match(ln.strip())]

@@ -208,6 +208,7 @@
 - **オリジンアクセス制御（OAC）**：S3バケットをパブリック公開せず、CloudFrontからのみ安全にアクセスさせるための最新機能（従来のOAIの後継）。
 - **セキュリティと暗号化**：AWS WAF をエッジに直接統合可能。カスタムドメインのSSL/TLS証明書（ACM）は、必ず**バージニア北部リージョン（us-east-1）**で発行する必要があります。
 - 署名付きURL（単一ファイルへのアクセス保護）／署名付きCookie（会員制サイト等で複数コンテンツへのアクセスを一括保護）。
+- **キャッシュキー**：キャッシュポリシーで、キャッシュを分ける基準にするクエリ文字列・ヘッダー・Cookieを決めます。値の違う項目を含めるほどキャッシュが細かく分かれ、ヒット率が下がります。広告の計測用のパラメータなど、内容に関係しない値は含めません。キャッシュキーに含めずにオリジンへ渡したい値は、オリジンリクエストポリシーで送ります（[キャッシュポリシー](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-key-understand-cache-policy.html)・[オリジンリクエストポリシー](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html)、確認 2026-10-21）。
 
 ### AWS Global Accelerator
 - **仕組み**：ユーザーに対して**2つの静的Anycast IPv4アドレス**を提供し、世界中のエッジロケーションでトラフィックを受け入れて即座にAWSプライベートバックボーンネットワークへ引き込みます。
