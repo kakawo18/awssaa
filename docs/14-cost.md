@@ -53,6 +53,7 @@
 |---|---|
 | **中断耐性のあるバッチ処理、CI/CD環境、ビッグデータ分散計算（EMR等）** | **EC2 スポットインスタンス**（オンデマンド比で最大90%割引、Fargate SpotやAWS Batchでの活用）。※「中断されても処理を再試行・継続できるか」が選定の必須前提。Auto ScalingやEC2 Fleetの配分戦略は **price-capacity-optimized**（空き容量の多いプールの中から安いものを選ぶ）が推奨。lowest-price は価格だけを見るため中断が増えやすい（[配分戦略](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-fleet-allocation-strategy.html)、確認 2026-10-21）。 |
 | 1年または3年間にわたり継続的かつ安定して稼働する定常ワークロード | **Compute Savings Plans** または **EC2 Instance Savings Plans**（高い柔軟性とコミット割引）、**リザーブドインスタンス（RI）**。 |
+| Savings PlansやRIの割引をさらに大きくしたい | **期間は3年、支払いは全額前払い**が最も割引が大きい（前払いなし → 一部前払い → 全額前払いの順に大きくなる） |
 | 開発・検証環境が夜間や休日もアイドル稼働している | **スケジュールスケーリング**または**AWS Instance Scheduler**を用いた営業時間外の自動停止。 |
 | 低負荷なEC2インスタンスの過剰サイジング | **AWS Compute Optimizer**に基づくダウンサイジング、**AWS Gravitonプロセッサ搭載インスタンス**への移行（優れた価格性能比）。 |
 | トラフィックが断続的、またはアクセスがまれなワークロード | **AWS Lambda**（リクエストがないアイドル時は課金ゼロ）。※Fargateはタスクが1台でも起動していれば時間課金が継続する点に留意。 |
