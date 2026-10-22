@@ -32,6 +32,36 @@
 
 **組織に関する条件キーの違い**：`aws:PrincipalOrgID` は**リクエストした主体**の組織、`aws:ResourceOrgID` は**アクセスされるリソース**の組織、`aws:SourceOrgID` は**AWSのサービスが別のリソースの代わりに**リクエストするときの元のリソースの組織です。「組織内のすべてのアカウントからバケットを読ませる（今後追加されるアカウントも含む）」は、バケットポリシーで `aws:PrincipalOrgID` を使います（[グローバル条件キー](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html)、確認 2026-10-21）。
 
+### ポリシーのJSONを読む5つの手順
+
+試験では、ポリシーを見せて「この設定内容として正しいもの」を選ばせる問題が出ます。次の順に読めば、選択肢を1つずつ確かめられます。
+
+1. **Effectで分け、Denyから読む**：Denyの文に当たる操作は、ほかの文やほかのポリシーでどれだけ許可されていても拒否されます。
+2. **Actionは「操作の名前」だけを見る**：`*` は0文字以上の任意の文字です。`s3:Get*` はGetで始まるすべての操作、`ec2:*Snapshot*` は名前にSnapshotを含むすべての操作（作成・削除・一覧の表示も含む）です。Actionは**どの操作か**を決めるだけで、**どのリソースか**はResourceとConditionで決まります。リストに並べた操作は、それぞれ別々に当てはまります（「AかつB」ではありません）。
+3. **Resourceで対象を絞る**：ARNの形を見ます。S3は**バケット**（`arn:aws:s3:::bucket`）と**オブジェクト**（`arn:aws:s3:::bucket/*`）が別のリソースで、`s3:ListBucket` はバケット、`s3:GetObject`・`s3:PutObject` はオブジェクトに対して許可します。
+4. **Conditionは「キーの間はAND、値の間はOR」**：別々の条件キーはすべて満たす必要があり、1つのキーに並べた値はどれか1つに当たれば満たします。`StringNotEquals`・`NotIpAddress` などの**否定の演算子は、リクエストにそのキーがないときも当てはまります**（Denyなら拒否されます）。`...IfExists` は、キーがあるときだけ条件を評価し、ないときは当てはまるとみなします。
+5. **最後に全体で判断する**：明示的なDeny ＞ Allow ＞ 暗黙の拒否（どこにも許可がない）。同じアカウントの中なら、IDベースのポリシーとリソースベースのポリシーの**どちらかの許可**で足ります（KMSは例外で、キーポリシーが起点）。別のアカウントからは**両方の許可**が必要です。SCPとアクセス許可境界は上限を決めるだけで、許可を与えません。
+
+**`NotAction` と `NotResource`**：「書かれたもの以外のすべて」を意味します。**Allow＋NotAction** は「書かれた操作以外を許可」で、書かれた操作を拒否するわけではありません（別の文やポリシーで許可されれば使えます）。**Deny＋NotAction** は「書かれた操作以外をすべて拒否」です。
+
+**よく出る条件キー**
+| 条件キー | 意味 |
+|---|---|
+| `aws:SourceIp` | 送信元のパブリックIPアドレス（VPCエンドポイント経由のリクエストでは使えない） |
+| `aws:SourceVpce` ／ `aws:SourceVpc` | 通ったVPCエンドポイント／VPC |
+| `aws:SecureTransport` | HTTPS（TLS）で送られたか |
+| `aws:MultiFactorAuthPresent` | MFAで認証したか（長期のアクセスキーでのリクエストにはこのキーがない → `BoolIfExists` で扱う） |
+| `aws:PrincipalOrgID` | リクエストした主体の組織 |
+| `aws:RequestedRegion` | 操作の対象のリージョン |
+| `aws:PrincipalTag/キー` ／ `ec2:ResourceTag/キー` | 主体のタグ／リソースのタグ（タグで権限を分けるABAC） |
+| `s3:x-amz-server-side-encryption` | アップロードで指定した暗号化の方式 |
+| `s3:prefix` | `ListBucket` で指定したプレフィックス |
+| `kms:ViaService` | KMSのキーを使ったサービス（S3経由だけに限る、など） |
+| `sts:ExternalId` | ロールを引き受けるときの外部ID |
+| `aws:SourceArn` ／ `aws:SourceAccount` | AWSのサービスが代わりに呼び出すときの、元のリソース／アカウント |
+
+（[条件の演算子](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html)・[ポリシーの評価](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html)・[別のアカウントからの評価](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic-cross-account.html)、確認 2026-10-22）
+
 ---
 
 ## 5.2 AWS IAM Identity Center（旧 AWS SSO）
