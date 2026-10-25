@@ -70,6 +70,46 @@
 - S3への画像アップロード → S3イベント通知 → AWS Lambda → **Amazon Rekognition**でラベル検出 → 結果をDynamoDBへ保存。
 - コールセンターの通話録音（S3） → **Amazon Transcribe**で文字起こし → **Amazon Comprehend**で顧客感情を分析。
 
+### 取り違えやすい機能の対応
+
+選択肢では、あるサービスの機能名を別のサービスに付けた「偽機能」がよく出ます。変換の向き（音声→文字か、文字→音声か）で見分けます。
+
+| やりたいこと | 使う機能 | 取り違えやすい誤り |
+|---|---|---|
+| 複数ページのPDFから、項目と値・表を取り出す | **Textractの非同期の分析**（StartDocumentAnalysis。完了をSNSで受け取り、GetDocumentAnalysisで結果を取得）。複数ページの文書はPDFかTIFFで、非同期で処理する | 同期の AnalyzeDocument で一度に処理する／RekognitionのDetectTextで項目と値を取る |
+| 音声の文字起こしから個人情報を除く | **Transcribeの個人情報の秘匿**（文字起こしの中の個人情報を `[PII]` に置き換える） | 保存後にMacieで消す（Macieは見つけて知らせるだけ） |
+| テキストの個人情報を、保存する前に見つける | **ComprehendのDetectPiiEntities**（個人情報の種類と文字の位置を返す。伏せ字にする処理は呼び出す側で行う） | Macie（S3のデータを調べるサービス） |
+| 2枚の写真の顔が同じ人物か確かめる | **RekognitionのCompareFaces**（1対1で比べて類似度を返す。既定のしきい値は80%） | コレクションに全員を登録して検索する（1対多の検索） |
+| 読み上げの発音を直す（テキスト→音声） | **Pollyのレキシコン**（単語と読み方の対応表。SynthesizeSpeechで名前を指定） | Transcribeのカスタム語彙 |
+| 専門用語の文字起こしを直す（音声→テキスト） | **Transcribeのカスタム語彙** | Pollyのレキシコン |
+| 翻訳で、ブランド名などを決めた表記にする | **Translateのカスタム用語**（原文の言葉と訳語の対応をCSVなどで登録） | 「Translateのカスタム語彙」（存在しない） |
+| 会話で必要な情報を聞き取り、システムを調べて答える | **Lexのボット＋Lambda関数**（必要な情報がそろったらLambda関数で処理する） | Polly・Transcribeでボットを作る |
+
+出典：[Textractの複数ページの文書](https://docs.aws.amazon.com/textract/latest/dg/async-analyzing-with-sqs.html)・[Transcribeの個人情報の秘匿](https://docs.aws.amazon.com/transcribe/latest/dg/pii-redaction.html)・[ComprehendのPIIのリアルタイム分析](https://docs.aws.amazon.com/comprehend/latest/dg/realtime-pii-api.html)・[RekognitionのCompareFaces](https://docs.aws.amazon.com/rekognition/latest/APIReference/API_CompareFaces.html)・[Pollyのレキシコン](https://docs.aws.amazon.com/polly/latest/dg/managing-lexicons.html)・[Transcribeのカスタム語彙](https://docs.aws.amazon.com/transcribe/latest/dg/improving-accuracy.html)・[Translateのカスタム用語](https://docs.aws.amazon.com/translate/latest/dg/how-custom-terminology.html)・[LexのFulfillment](https://docs.aws.amazon.com/lexv2/latest/dg/intent-fulfillment.html)（確認 2026-10-25）
+
+### SageMakerの推論の4つの方式
+
+| 方式 | 向いている使い方 | 上限・特徴 |
+|---|---|---|
+| **リアルタイム推論** | 常に低い遅延で答える | 入力は最大25 MB、処理は60秒まで。待っている間もインスタンスの料金がかかる |
+| **サーバーレス推論** | たまにしか使わない・量が読めない。起動の待ち（コールドスタート）を許容できる | 入力は最大4 MB、処理は60秒まで。処理した時間だけ課金 |
+| **非同期推論** | 大きな入力・長い処理を1件ずつ受け付け、終わったら通知する | 入力は最大1 GB、処理は最大1時間。結果はS3、完了はSNSで通知。処理がないときはインスタンスを0台まで減らせる |
+| **バッチ変換** | S3にあるデータ全体をまとめて推論する（毎晩のスコアリングなど） | エンドポイントを持たず、ジョブの間だけインスタンスが動く |
+
+学習の費用は、**マネージドスポットトレーニング**で下げます。スポットのキャパシティで学習ジョブを実行し、中断されたら次のスポットのインスタンスで再開します。**チェックポイントをS3に保存**しておけば、最初からではなく途中から再開できます。割引のコミットには、EC2向けのSavings Plansではなく**SageMaker Savings Plans**が対象です。
+
+出典：[SageMakerの推論の方式](https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model-options.html)・[マネージドスポットトレーニング](https://docs.aws.amazon.com/sagemaker/latest/dg/model-managed-spot-training.html)・[チェックポイント](https://docs.aws.amazon.com/sagemaker/latest/dg/model-checkpoints.html)・[Savings PlansのFAQ](https://aws.amazon.com/savingsplans/faqs/)（確認 2026-10-25）
+
+### Amazon Bedrockの構成で問われること
+
+- **閉域で呼ぶ**：bedrock-runtime の**インターフェース型VPCエンドポイント（PrivateLink）**を作り、**プライベートDNSを有効**にすると、コードを変えずにVPCの中から呼べます。無効にすると、コードでエンドポイントのURLを指定し直す必要があります。ゲートウェイ型はS3とDynamoDBだけです。
+- **入出力の安全対策**：**ガードレール**で、拒否する話題（例：銀行のチャットで投資の助言を扱わない）、機密情報のフィルター（個人情報を遮断またはマスク）、有害な内容のフィルターなどを設定し、プロンプトと回答に適用します。
+- **大量の処理を安く**：**バッチ推論**は、S3に置いた多数の依頼をまとめて非同期で処理し、結果をS3に書き出します。対応するモデルでは、オンデマンドより安い価格です。
+
+出典：[BedrockのインターフェースVPCエンドポイント](https://docs.aws.amazon.com/bedrock/latest/userguide/vpc-interface-endpoints.html)・[Bedrockのガードレール](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)・[Bedrockのバッチ推論](https://docs.aws.amazon.com/bedrock/latest/userguide/batch-inference.html)・[Bedrockの料金](https://aws.amazon.com/bedrock/pricing/)（確認 2026-10-25）
+
+**新規の受付を終了した機能**：Rekognitionのストリーミング動画の分析は、2026年4月30日に新規の利用者の受付を終了しました（ほかのRekognitionの機能は影響を受けません）。Comprehendのトピックのモデリング・イベントの検出も、提供の変更の対象としてAWSの「Services in Maintenance」に載っています。古い問題集で正解になっていても、今の構成の正解にはしません（[Rekognitionの提供の変更](https://docs.aws.amazon.com/rekognition/latest/dg/rekognition-availability-changes.html)・[Services in Maintenance](https://docs.aws.amazon.com/general/latest/gr/maintenance_services.html)、確認 2026-10-25）。
+
 ---
 
 ## 10.9〜10.11 コスト管理サービス
